@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://4u5n4vqelpxd"]
+
+[ext_resource type="Script" uid="uid://3vxxfvp53pav" path="res://Scripts/SkillData.gd" id="1_2hjch"]
+
+[resource]
+script = ExtResource("1_2hjch")
+skill_id = 14
+skill_name = "Magbante"
+skill_description = "Taunts all enemies and raises own DEF by 40%—58% for 2 turns."
+skill_type = "Skill"
+damage_bonus_per_level = 0.0
+heal_bonus_per_level = 0.0
+heal_flat_per_level = 0
+sp_cost = 1
+energy_gain = 30
+element = "Earth"
+effect_type = "Buff"
+effect_value = 0.3
+effect_duration = 2
+target_type = "AoE"
+trigger_card_category = "none"
+trigger_card_type = "none"
+trigger_effect = "none"
+metadata/_custom_type_script = "uid://3vxxfvp53pav"

@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3 uid="uid://dqhgq5sc2nqyu"]
+
+[ext_resource type="Script" uid="uid://b50fh8nq7j0g2" path="res://Scripts/EnemyData.gd" id="1_khwgk"]
+
+[resource]
+script = ExtResource("1_khwgk")
+enemy_id = 3
+enemy_name = "Dagis"
+english_name = "Mouse"
+max_hp = 5000
+base_attack = 180
+base_defense = 120
+speed = 115
+hp_per_level = 90.0
+attack_per_level = 4.0
+defense_per_level = 2.0
+shield_element = "Fire"
+shield_hp = 2000
+shield_hp_per_level = 50.0
+is_shield_active = true
+reward_gold = 5
+reward_exp = 30
+metadata/_custom_type_script = "uid://b50fh8nq7j0g2"

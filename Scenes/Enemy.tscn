@@ -1,0 +1,57 @@
+[gd_scene format=3 uid="uid://d027g76unt2h0"]
+
+[ext_resource type="Texture2D" uid="uid://dih4e434p3h05" path="res://Assets/16x32 Idle-Sheet.png" id="1_m1htj"]
+[ext_resource type="Script" uid="uid://drhk467g8d6na" path="res://Scripts/Enemy.gd" id="1_wovta"]
+[ext_resource type="Resource" uid="uid://dqhgq5sc2nqyu" path="res://Resources/Enemies/dagis.tres" id="2_xeo28"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wovta"]
+atlas = ExtResource("1_m1htj")
+region = Rect2(0, 32, 16, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xeo28"]
+atlas = ExtResource("1_m1htj")
+region = Rect2(16, 32, 16, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kpr8r"]
+atlas = ExtResource("1_m1htj")
+region = Rect2(32, 32, 16, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1exfc"]
+atlas = ExtResource("1_m1htj")
+region = Rect2(48, 32, 16, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_mo1ky"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wovta")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xeo28")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kpr8r")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1exfc")
+}],
+"loop": true,
+"name": &"enemy_idle",
+"speed": 5.0
+}]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_6bs3c"]
+size = Vector3(1, 2, 1)
+
+[node name="Enemy" type="Area3D" unique_id=1716839156]
+script = ExtResource("1_wovta")
+enemy_data = ExtResource("2_xeo28")
+
+[node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="." unique_id=917201330]
+transform = Transform3D(1.7, 0, 0, 0, 1.7, 0, 0, 0, 1.7, 0, 0, 0)
+texture_filter = 0
+sprite_frames = SubResource("SpriteFrames_mo1ky")
+animation = &"enemy_idle"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1454229365]
+shape = SubResource("BoxShape3D_6bs3c")

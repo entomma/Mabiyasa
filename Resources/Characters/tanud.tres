@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="CharacterData" format=3 uid="uid://c8u8k3tc6gxo"]
+
+[ext_resource type="Script" uid="uid://c7oxuy1pf0voe" path="res://Scripts/CharacterData.gd" id="1_rgbcg"]
+
+[resource]
+script = ExtResource("1_rgbcg")
+character_id = 6
+character_name = "Aziel"
+english_name = "Watchman"
+job = "Tanud"
+element = "Earth"
+max_hp = 1400
+base_attack = 450
+base_defense = 550
+speed = 80
+hp_per_level = 60.0
+attack_per_level = 12.0
+defense_per_level = 18.0
+talent_name = "Watchman's eyes"
+metadata/_custom_type_script = "uid://c7oxuy1pf0voe"

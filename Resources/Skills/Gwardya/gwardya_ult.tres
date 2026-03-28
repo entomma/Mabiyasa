@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://c2gg2ijp5whyq"]
+
+[ext_resource type="Script" uid="uid://3vxxfvp53pav" path="res://Scripts/SkillData.gd" id="1_ngu1k"]
+
+[resource]
+script = ExtResource("1_ngu1k")
+skill_id = 16
+skill_name = "Balwarte ning Lupa"
+damage_bonus_per_level = 0.0
+heal_bonus_per_level = 0.0
+shield_bonus_per_level = 0.02
+effect_bonus_per_level = 0.0
+heal_flat_per_level = 0
+shield_flat_per_level = 50
+energy_cost = 100
+element = "Earth"
+shield_flat = 200
+shield_def_scaling = 0.3
+effect_type = "Buff"
+effect_duration = 2
+target_type = "Team"
+trigger_card_category = "none"
+trigger_card_type = "none"
+trigger_effect = "none"
+metadata/_custom_type_script = "uid://3vxxfvp53pav"

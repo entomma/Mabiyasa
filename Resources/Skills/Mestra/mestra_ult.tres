@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://daqqt2ux555bx"]
+
+[ext_resource type="Script" uid="uid://3vxxfvp53pav" path="res://Scripts/SkillData.gd" id="1_2ldrc"]
+
+[resource]
+script = ExtResource("1_2ldrc")
+skill_id = 7
+skill_name = "Dalit ning Dunong"
+skill_description = "Unleashes a storm of knowledge dealing Wind damage and buffing team attack for 3 turns"
+skill_type = "Ultimate"
+damage_bonus_per_level = 0.0
+heal_bonus_per_level = 0.0
+effect_bonus_per_level = 0.03
+heal_flat_per_level = 0
+energy_cost = 100
+damage_multiplier = 1.1
+element = "Wind"
+hits = 2
+effect_type = "Buff"
+effect_value = 0.45
+effect_duration = 3
+target_type = "Aoe"
+trigger_card_category = "none"
+trigger_card_type = "none"
+trigger_effect = "none"
+metadata/_custom_type_script = "uid://3vxxfvp53pav"

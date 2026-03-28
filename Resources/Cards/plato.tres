@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="WordCard" format=3 uid="uid://d0lro40083klg"]
+
+[ext_resource type="Script" uid="uid://c45njmt8b0c61" path="res://Scripts/WordCard.gd" id="1_2fhrf"]
+
+[resource]
+script = ExtResource("1_2fhrf")
+card_id = 4
+kapampangan_text = "Plato"
+english_hint = "Plate"
+card_type = "Noun"
+category = "Dinnerware"
+metadata/_custom_type_script = "uid://c45njmt8b0c61"

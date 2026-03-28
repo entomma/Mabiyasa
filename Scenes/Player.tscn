@@ -1,0 +1,71 @@
+[gd_scene format=3 uid="uid://bdfswoqyr3x6v"]
+
+[ext_resource type="Script" uid="uid://uw5d14gbouo" path="res://Scripts/Player.gd" id="1_kyqiw"]
+[ext_resource type="Texture2D" uid="uid://dih4e434p3h05" path="res://Assets/16x32 Idle-Sheet.png" id="1_rpqav"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gntrk"]
+atlas = ExtResource("1_rpqav")
+region = Rect2(0, 0, 16, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dewec"]
+atlas = ExtResource("1_rpqav")
+region = Rect2(16, 0, 16, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5ixxa"]
+atlas = ExtResource("1_rpqav")
+region = Rect2(32, 0, 16, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nn08x"]
+atlas = ExtResource("1_rpqav")
+region = Rect2(48, 0, 16, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_52ee3"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gntrk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dewec")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5ixxa")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nn08x")
+}],
+"loop": true,
+"name": &"idle front",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"walk back",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"walk left",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"walk right",
+"speed": 5.0
+}]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_qbkls"]
+
+[node name="Player" type="CharacterBody3D" unique_id=865057644 groups=["player"]]
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0)
+script = ExtResource("1_kyqiw")
+
+[node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="." unique_id=762640094]
+transform = Transform3D(1.7, 0, 0, 0, 1.7, 0, 0, 0, 1.7, 0, 0, 0)
+texture_filter = 0
+sprite_frames = SubResource("SpriteFrames_52ee3")
+animation = &"idle front"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=701005610]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
+shape = SubResource("CapsuleShape3D_qbkls")

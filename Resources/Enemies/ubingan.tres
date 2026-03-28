@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3 uid="uid://cpvf7um2sm8mv"]
+
+[ext_resource type="Script" uid="uid://b50fh8nq7j0g2" path="res://Scripts/EnemyData.gd" id="1_whj07"]
+
+[resource]
+script = ExtResource("1_whj07")
+enemy_id = 2
+enemy_name = "Ubingan"
+english_name = "Snake"
+max_hp = 12000
+base_attack = 280
+base_defense = 450
+speed = 85
+hp_per_level = 250.0
+attack_per_level = 6.0
+defense_per_level = 10.0
+shield_element = "Earth"
+shield_hp = 5000
+shield_hp_per_level = 150.0
+reward_gold = 25
+reward_exp = 120
+metadata/_custom_type_script = "uid://b50fh8nq7j0g2"

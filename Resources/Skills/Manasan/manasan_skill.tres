@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://bju4oa1cc7j47"]
+
+[ext_resource type="Script" uid="uid://3vxxfvp53pav" path="res://Scripts/SkillData.gd" id="1_wk74v"]
+
+[resource]
+script = ExtResource("1_wk74v")
+skill_id = 2
+skill_name = "Sabangi"
+skill_description = "Strikes with a net hitting all enemies"
+heal_bonus_per_level = 0.0
+effect_bonus_per_level = 0.0
+heal_flat_per_level = 0
+sp_cost = 1
+energy_gain = 30
+damage_multiplier = 0.7
+element = "Water"
+hits = 1
+effect_type = "Damage"
+target_type = "AoE"
+trigger_card_category = "none"
+trigger_card_type = "none"
+trigger_effect = "none"
+metadata/_custom_type_script = "uid://3vxxfvp53pav"

@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://1ss8anxi5aqr"]
+
+[ext_resource type="Script" uid="uid://3vxxfvp53pav" path="res://Scripts/SkillData.gd" id="1_4q3ir"]
+
+[resource]
+script = ExtResource("1_4q3ir")
+skill_id = 5
+skill_name = "Turu"
+skill_description = "Strikes enemy with a book dealing Wind damage"
+skill_type = "Basic"
+damage_bonus_per_level = 0.03
+heal_bonus_per_level = 0.0
+effect_bonus_per_level = 0.0
+sp_gain = 1
+energy_gain = 20
+damage_multiplier = 0.5
+element = "Wind"
+hits = 1
+effect_type = "Damage"
+target_type = "Single"
+trigger_card_category = "none"
+trigger_card_type = "none"
+trigger_effect = "none"
+metadata/_custom_type_script = "uid://3vxxfvp53pav"

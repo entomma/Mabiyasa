@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="WordCard" format=3 uid="uid://dqvy658g2w0iw"]
+
+[ext_resource type="Script" uid="uid://c45njmt8b0c61" path="res://Scripts/WordCard.gd" id="1_n7va0"]
+
+[resource]
+script = ExtResource("1_n7va0")
+card_id = 2
+kapampangan_text = "Asan"
+english_hint = "Fish"
+card_type = "Noun"
+category = "Domestic"
+metadata/_custom_type_script = "uid://c45njmt8b0c61"

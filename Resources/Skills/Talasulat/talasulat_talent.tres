@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://c13o3lmuwj8bp"]
+
+[ext_resource type="Script" uid="uid://3vxxfvp53pav" path="res://Scripts/SkillData.gd" id="1_gwvf0"]
+
+[resource]
+script = ExtResource("1_gwvf0")
+skill_id = 20
+skill_name = "Poetic Flow"
+skill_description = "When any Noun card is played gains 1 extra SP."
+skill_type = "Talent"
+damage_bonus_per_level = 0.0
+heal_bonus_per_level = 0.0
+effect_bonus_per_level = 0.0
+heal_flat_per_level = 0
+element = "Wind"
+effect_type = "Self"
+target_type = "Self"
+trigger_card_category = "none"
+trigger_card_type = "Noun"
+trigger_effect = "GainSP"
+trigger_value = 1.0
+metadata/_custom_type_script = "uid://3vxxfvp53pav"

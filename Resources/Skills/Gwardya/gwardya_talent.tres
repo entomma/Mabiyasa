@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://1xg1tjloerw4"]
+
+[ext_resource type="Script" uid="uid://3vxxfvp53pav" path="res://Scripts/SkillData.gd" id="1_iwbih"]
+
+[resource]
+script = ExtResource("1_iwbih")
+skill_id = 15
+skill_name = "Iron Will"
+skill_description = "Gives shield when earth cards are played"
+skill_type = "Talent"
+damage_bonus_per_level = 0.0
+heal_bonus_per_level = 0.0
+effect_bonus_per_level = 0.0
+heal_flat_per_level = 0
+element = "Earth"
+shield_flat = 50
+shield_def_scaling = 0.2
+effect_type = "Buff"
+target_type = "Team"
+trigger_card_category = "Earth"
+trigger_card_type = "Action"
+trigger_effect = "ShieldTeam"
+trigger_value = 0.2
+metadata/_custom_type_script = "uid://3vxxfvp53pav"

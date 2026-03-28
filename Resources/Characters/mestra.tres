@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="CharacterData" format=3 uid="uid://bb87ogql78x8g"]
+
+[ext_resource type="Script" uid="uid://c7oxuy1pf0voe" path="res://Scripts/CharacterData.gd" id="1_ajc6l"]
+
+[resource]
+script = ExtResource("1_ajc6l")
+character_id = 2
+character_name = "Faith"
+english_name = "Teacher"
+job = "Mestra"
+element = "Wind"
+max_hp = 950
+base_attack = 520
+base_defense = 320
+speed = 98
+hp_per_level = 45.0
+attack_per_level = 18.0
+defense_per_level = 12.0
+talent_name = "Guided Lesson"
+talent_description = "NA"
+metadata/_custom_type_script = "uid://c7oxuy1pf0voe"

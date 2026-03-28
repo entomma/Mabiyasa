@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://cn2hwyxq1hao1"]
+
+[ext_resource type="Script" uid="uid://3vxxfvp53pav" path="res://Scripts/SkillData.gd" id="1_lfokv"]
+
+[resource]
+script = ExtResource("1_lfokv")
+skill_id = 10
+skill_name = "Mangan Tamu!"
+skill_description = "Feeds the team restoring HP to all members"
+skill_type = "Skill"
+damage_bonus_per_level = 0.0
+heal_bonus_per_level = 0.025
+effect_bonus_per_level = 0.0
+sp_cost = 1
+energy_gain = 30
+element = "Fire"
+heal_flat = 120
+heal_hp_scaling = 0.25
+effect_type = "Heal"
+target_type = "Single"
+trigger_card_category = "none"
+trigger_card_type = "none"
+trigger_effect = "none"
+metadata/_custom_type_script = "uid://3vxxfvp53pav"

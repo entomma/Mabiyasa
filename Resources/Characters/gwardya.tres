@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="CharacterData" format=3 uid="uid://erdackgtkf64"]
+
+[ext_resource type="Script" uid="uid://c7oxuy1pf0voe" path="res://Scripts/CharacterData.gd" id="1_4jk7p"]
+
+[resource]
+script = ExtResource("1_4jk7p")
+character_id = 4
+character_name = "Ralf Juxtin Batoon el Ramos"
+english_name = "Guard"
+job = "Gwardya"
+element = "Earth"
+max_hp = 1500
+base_attack = 480
+base_defense = 600
+speed = 85
+hp_per_level = 60.0
+attack_per_level = 12.0
+defense_per_level = 20.0
+talent_name = "Iron Will"
+talent_description = "NA"
+metadata/_custom_type_script = "uid://c7oxuy1pf0voe"

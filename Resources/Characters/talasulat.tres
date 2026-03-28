@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="CharacterData" format=3 uid="uid://di3wvn3qkverc"]
+
+[ext_resource type="Script" uid="uid://c7oxuy1pf0voe" path="res://Scripts/CharacterData.gd" id="1_pwmkk"]
+
+[resource]
+script = ExtResource("1_pwmkk")
+character_id = 5
+character_name = "Angela"
+english_name = "Writer"
+job = "Talasulat"
+element = "Wind"
+max_hp = 900
+base_attack = 720
+base_defense = 280
+speed = 108
+hp_per_level = 35.0
+attack_per_level = 30.0
+defense_per_level = 7.0
+talent_name = "Poetic Flow"
+talent_description = "NA"
+metadata/_custom_type_script = "uid://c7oxuy1pf0voe"

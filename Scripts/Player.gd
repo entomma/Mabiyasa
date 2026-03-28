@@ -1,0 +1,57 @@
+extends CharacterBody3D
+
+const SPEED = 5.0
+
+@onready var anim = $AnimatedSprite3D
+@export var camera: Camera3D
+
+func _ready():
+	
+	if camera:
+		camera.global_position = Vector3(
+			global_position.x,
+			global_position.y + .5,
+			global_position.z + 1.5
+		)
+		camera.rotation_degrees = Vector3(-20, 0, 0)
+
+func _physics_process(delta):
+	var input = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+	
+	var direction = Vector3(input.x, 0, input.y)
+	
+	if direction.length() > 0:
+		direction = direction.normalized()
+	
+	velocity = direction * SPEED
+	move_and_slide()
+	
+	# Camera follows player
+	if camera:
+		var target_pos = Vector3(
+			global_position.x,
+			global_position.y + .5,
+			global_position.z + 1.5
+		)
+		camera.global_position = camera.global_position.lerp(target_pos, .9)
+	
+	# Animation
+	if input == Vector2.ZERO:
+		play_idle()
+	else:
+		play_walk(input)
+
+func play_walk(dir: Vector2):
+	if abs(dir.x) > abs(dir.y):
+		if dir.x > 0:
+			anim.play("walk right")
+		else:
+			anim.play("walk left")
+	else:
+		if dir.y > 0:
+			anim.play("walk back")
+		else:
+			anim.play("idle front")
+
+func play_idle():
+	anim.play("idle front")

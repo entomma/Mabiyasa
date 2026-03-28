@@ -1,0 +1,34 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://scyacl3vf7gs"]
+
+[ext_resource type="Script" uid="uid://3vxxfvp53pav" path="res://Scripts/SkillData.gd" id="1_yro7w"]
+
+[resource]
+script = ExtResource("1_yro7w")
+skill_id = 12
+skill_name = "Kitchen Mastery"
+skill_description = "When a Fire card is played heals the team for 8% of max HP"
+skill_type = null
+skill_level = null
+max_skill_level = null
+damage_bonus_per_level = 0.0
+heal_bonus_per_level = 0.01
+effect_bonus_per_level = 0.0
+heal_flat_per_level = 20
+sp_cost = null
+sp_gain = null
+energy_cost = null
+energy_gain = null
+damage_multiplier = null
+element = "Fire"
+hits = null
+heal_flat = null
+heal_hp_scaling = 0.02
+effect_type = "Heal"
+effect_value = null
+effect_duration = null
+target_type = "Team"
+trigger_card_category = "Fire"
+trigger_card_type = "Action"
+trigger_effect = "HealTeam"
+trigger_value = 0.08
+metadata/_custom_type_script = "uid://3vxxfvp53pav"

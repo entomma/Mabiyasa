@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://bodgxe1rjd3hi"]
+
+[ext_resource type="Script" uid="uid://3vxxfvp53pav" path="res://Scripts/SkillData.gd" id="1_300fe"]
+
+[resource]
+script = ExtResource("1_300fe")
+skill_id = 19
+skill_name = "Sulat"
+skill_description = "Deals Wind DMG equal to 50%—104% of Talasulat's ATK to a single enemy."
+skill_type = "Basic"
+heal_bonus_per_level = 0.0
+effect_bonus_per_level = 0.0
+heal_flat_per_level = 0
+sp_gain = 1
+energy_gain = 20
+element = "Wind"
+hits = 1
+effect_type = "Damage"
+target_type = "Single"
+trigger_card_category = "none"
+trigger_card_type = "none"
+trigger_effect = "none"
+metadata/_custom_type_script = "uid://3vxxfvp53pav"

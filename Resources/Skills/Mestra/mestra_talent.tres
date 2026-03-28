@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://cavyliq16etm2"]
+
+[ext_resource type="Script" uid="uid://3vxxfvp53pav" path="res://Scripts/SkillData.gd" id="1_ij7xe"]
+
+[resource]
+script = ExtResource("1_ij7xe")
+skill_id = 8
+skill_name = "Guided Lesson"
+skill_description = "When an Education card is played increases team crit damage by 25% for 1 turn"
+skill_type = "Talent"
+damage_bonus_per_level = 0.0
+heal_bonus_per_level = 0.0
+effect_bonus_per_level = 0.026
+element = "Wind"
+effect_type = "Buff"
+effect_value = 0.2
+effect_duration = 1
+target_type = "Team"
+trigger_card_category = "Education"
+trigger_card_type = "Action"
+trigger_effect = "CritDamageBoost"
+trigger_value = 0.25
+metadata/_custom_type_script = "uid://3vxxfvp53pav"

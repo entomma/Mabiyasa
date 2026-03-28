@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="WordCard" format=3 uid="uid://xbmfvfk1tgv7"]
+
+[ext_resource type="Script" uid="uid://c45njmt8b0c61" path="res://Scripts/WordCard.gd" id="1_cyf6t"]
+
+[resource]
+script = ExtResource("1_cyf6t")
+card_id = 1
+kapampangan_text = "Madua's"
+english_hint = "To Fish"
+card_type = "Action"
+category = "Motion"
+metadata/_custom_type_script = "uid://c45njmt8b0c61"

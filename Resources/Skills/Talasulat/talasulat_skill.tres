@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://cmk0pmybvefmw"]
+
+[ext_resource type="Script" uid="uid://3vxxfvp53pav" path="res://Scripts/SkillData.gd" id="1_eb2sm"]
+
+[resource]
+script = ExtResource("1_eb2sm")
+skill_id = 17
+skill_name = "Dalit"
+skill_description = "Recites a poem dealing Wind DMG equal to 80%—152% of Talasulat's ATK to a single enemy and reducing their DEF by 20%—38% for 2 turns."
+skill_type = "Skill"
+damage_bonus_per_level = 0.08
+heal_bonus_per_level = 0.0
+heal_flat_per_level = 0
+damage_multiplier = 0.8
+element = "Wind"
+hits = 1
+effect_type = "Debuff"
+effect_value = 0.2
+effect_duration = 2
+target_type = "Single"
+trigger_card_category = "none"
+trigger_card_type = "none"
+trigger_effect = "none"
+metadata/_custom_type_script = "uid://3vxxfvp53pav"

@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://vkcdgqp1delp"]
+
+[ext_resource type="Script" uid="uid://3vxxfvp53pav" path="res://Scripts/SkillData.gd" id="1_lwog0"]
+
+[resource]
+script = ExtResource("1_lwog0")
+skill_id = 6
+skill_name = "Sermon"
+skill_description = "Buffs the whole team increasing next attack damage"
+skill_type = "Skill"
+damage_bonus_per_level = 0.0
+heal_bonus_per_level = 0.0
+heal_flat_per_level = 0
+sp_cost = 1
+energy_gain = 30
+element = "Wind"
+effect_type = "Buff"
+effect_value = 0.2
+effect_duration = 2
+target_type = "Team"
+trigger_card_category = "none"
+trigger_card_type = "none"
+trigger_effect = "none"
+metadata/_custom_type_script = "uid://3vxxfvp53pav"

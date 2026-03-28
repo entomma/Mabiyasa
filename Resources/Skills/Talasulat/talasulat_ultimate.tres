@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://cg5w217htpoms"]
+
+[ext_resource type="Script" uid="uid://3vxxfvp53pav" path="res://Scripts/SkillData.gd" id="1_ss6jj"]
+
+[resource]
+script = ExtResource("1_ss6jj")
+skill_id = 17
+skill_name = "Epiko ning Hanging Amihan"
+skill_description = "Unleashes a powerful verse dealing Wind DMG equal to 150%—240% of Talasulat's ATK to all enemies and reducing their DEF by 30%—48% for 3 turns."
+skill_type = "Ultimate"
+damage_bonus_per_level = 0.1
+heal_bonus_per_level = 0.0
+heal_flat_per_level = 0
+energy_cost = 100
+element = "Wind"
+effect_type = "Debuff"
+effect_value = 0.3
+effect_duration = 2
+target_type = "Aoe"
+trigger_card_category = "none"
+trigger_card_type = "none"
+trigger_effect = "none"
+metadata/_custom_type_script = "uid://3vxxfvp53pav"

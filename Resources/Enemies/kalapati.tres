@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3 uid="uid://dbiat2u830h4a"]
+
+[ext_resource type="Script" uid="uid://b50fh8nq7j0g2" path="res://Scripts/EnemyData.gd" id="1_pfjr1"]
+
+[resource]
+script = ExtResource("1_pfjr1")
+enemy_id = 1
+enemy_name = "Kalapati"
+english_name = "Pigeon"
+max_hp = 8000
+base_attack = 320
+base_defense = 200
+speed = 110
+hp_per_level = 150.0
+attack_per_level = 8.0
+defense_per_level = 4.0
+shield_element = "Wind"
+shield_hp = 3000
+shield_hp_per_level = 80.0
+is_shield_active = true
+reward_gold = 10
+reward_exp = 50
+metadata/_custom_type_script = "uid://b50fh8nq7j0g2"

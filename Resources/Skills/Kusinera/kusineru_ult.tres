@@ -1,0 +1,34 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://cw2n5vlsug4wy"]
+
+[ext_resource type="Script" uid="uid://3vxxfvp53pav" path="res://Scripts/SkillData.gd" id="1_7vy5y"]
+
+[resource]
+script = ExtResource("1_7vy5y")
+skill_id = 11
+skill_name = "Kalding Apuy"
+skill_description = "Unleashes a fiery feast healing team fully and burning all enemies"
+skill_type = "Ultimate"
+skill_level = null
+max_skill_level = null
+damage_bonus_per_level = 0.03
+heal_bonus_per_level = 0.025
+effect_bonus_per_level = 0.0
+heal_flat_per_level = 20
+sp_cost = null
+sp_gain = null
+energy_cost = 100
+energy_gain = null
+damage_multiplier = 1.1
+element = "Fire"
+hits = null
+heal_flat = 200
+heal_hp_scaling = 0.2
+effect_type = null
+effect_value = null
+effect_duration = null
+target_type = "Team"
+trigger_card_category = null
+trigger_card_type = null
+trigger_effect = null
+trigger_value = null
+metadata/_custom_type_script = "uid://3vxxfvp53pav"

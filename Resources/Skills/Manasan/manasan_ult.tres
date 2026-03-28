@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://daklt5qwqp518"]
+
+[ext_resource type="Script" uid="uid://3vxxfvp53pav" path="res://Scripts/SkillData.gd" id="1_3fc57"]
+
+[resource]
+script = ExtResource("1_3fc57")
+skill_id = 3
+skill_name = "Bagyo ning Danum"
+skill_description = "Summons a massive wave crushing all enemies 3 times"
+skill_type = "Ultimate"
+damage_bonus_per_level = 0.13
+heal_bonus_per_level = 0.0
+effect_bonus_per_level = 0.0
+heal_flat_per_level = 0
+energy_cost = 100
+damage_multiplier = 1.5
+element = "Water"
+hits = 3
+effect_type = "Damage"
+target_type = "Aoe"
+trigger_card_category = "none"
+trigger_card_type = "none"
+trigger_effect = "none"
+metadata/_custom_type_script = "uid://3vxxfvp53pav"
