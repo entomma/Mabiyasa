@@ -4,6 +4,9 @@ const SPEED = 5.0
 
 @onready var anim = $AnimatedSprite3D
 @export var camera: Camera3D
+var pause_menu_scene = preload("res://Scenes/PauseMenu.tscn")
+var pause_menu_instance = null
+
 
 func _ready():
 	
@@ -55,3 +58,15 @@ func play_walk(dir: Vector2):
 
 func play_idle():
 	anim.play("idle front")
+func _input(event):
+	if event.is_action_pressed("ui_cancel"):
+		if pause_menu_instance == null:
+			pause_menu_instance = pause_menu_scene.instantiate()
+			pause_menu_instance.process_mode = Node.PROCESS_MODE_ALWAYS
+			get_tree().root.add_child(pause_menu_instance)
+			pause_menu_instance.tree_exiting.connect(_on_pause_menu_closed)
+		# Don't handle escape here if menu is open
+		# PauseMenu handles its own escape
+
+func _on_pause_menu_closed():
+	pause_menu_instance = null

@@ -1,0 +1,161 @@
+[gd_scene format=3 uid="uid://ckd5ccifbxth4"]
+
+[ext_resource type="Script" uid="uid://c6ear2eku2n7u" path="res://Scripts/PartySelect.gd" id="1_cdbme"]
+
+[node name="PartySelect" type="Control" unique_id=1938133594]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_cdbme")
+
+[node name="Background" type="ColorRect" parent="." unique_id=1637571991]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 1112.0
+offset_bottom = 608.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.24780053, 0.24780053, 0.42358288, 1)
+
+[node name="TopBar" type="HBoxContainer" parent="." unique_id=991956212]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = 66.0
+offset_bottom = 64.0
+grow_horizontal = 2
+
+[node name="BackButton" type="Button" parent="TopBar" unique_id=36454757]
+layout_mode = 2
+text = "   X   "
+
+[node name="Title" type="Label" parent="TopBar" unique_id=173319553]
+layout_mode = 2
+text = "Kawani"
+
+[node name="CharacterDisplay" type="HBoxContainer" parent="." unique_id=1182218128]
+custom_minimum_size = Vector2(0, 400)
+layout_mode = 1
+anchors_preset = -1
+offset_left = 100.0
+offset_top = 80.0
+offset_right = 144.0
+offset_bottom = 120.0
+
+[node name="Slot1" type="VBoxContainer" parent="CharacterDisplay" unique_id=403499105]
+layout_mode = 2
+
+[node name="SlotButton1" type="Button" parent="CharacterDisplay/Slot1" unique_id=960823949]
+custom_minimum_size = Vector2(150, 250)
+layout_mode = 2
+text = "+"
+
+[node name="SlotColor1" type="ColorRect" parent="CharacterDisplay/Slot1" unique_id=1683454441]
+custom_minimum_size = Vector2(150, 250)
+layout_mode = 2
+
+[node name="SlotInfo1" type="Label" parent="CharacterDisplay/Slot1" unique_id=1839355104]
+layout_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Slot2" type="VBoxContainer" parent="CharacterDisplay" unique_id=853914399]
+layout_mode = 2
+
+[node name="SlotButton2" type="Button" parent="CharacterDisplay/Slot2" unique_id=828885345]
+custom_minimum_size = Vector2(150, 250)
+layout_mode = 2
+text = "+"
+
+[node name="SlotColor2" type="ColorRect" parent="CharacterDisplay/Slot2" unique_id=1945086000]
+custom_minimum_size = Vector2(150, 250)
+layout_mode = 2
+
+[node name="SlotInfo2" type="Label" parent="CharacterDisplay/Slot2" unique_id=500151948]
+layout_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Slot3" type="VBoxContainer" parent="CharacterDisplay" unique_id=1819816138]
+layout_mode = 2
+
+[node name="SlotButton3" type="Button" parent="CharacterDisplay/Slot3" unique_id=495738229]
+custom_minimum_size = Vector2(150, 250)
+layout_mode = 2
+text = "+"
+
+[node name="SlotColor3" type="ColorRect" parent="CharacterDisplay/Slot3" unique_id=2101208672]
+custom_minimum_size = Vector2(150, 250)
+layout_mode = 2
+
+[node name="SlotInfo3" type="Label" parent="CharacterDisplay/Slot3" unique_id=183623061]
+layout_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Slot4" type="VBoxContainer" parent="CharacterDisplay" unique_id=2088759391]
+layout_mode = 2
+
+[node name="SlotButton4" type="Button" parent="CharacterDisplay/Slot4" unique_id=545584121]
+custom_minimum_size = Vector2(150, 250)
+layout_mode = 2
+text = "+"
+
+[node name="SlotColor4" type="ColorRect" parent="CharacterDisplay/Slot4" unique_id=83064782]
+custom_minimum_size = Vector2(150, 250)
+layout_mode = 2
+
+[node name="SlotInfo4" type="Label" parent="CharacterDisplay/Slot4" unique_id=736857653]
+layout_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AvailablePanel" type="PanelContainer" parent="." unique_id=1705217780]
+custom_minimum_size = Vector2(0, 150)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 739.0
+offset_top = 20.0
+offset_right = 1041.0
+offset_bottom = 545.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="AvailablePanel" unique_id=713819678]
+layout_mode = 2
+
+[node name="AvailableLabel" type="Label" parent="AvailablePanel/VBoxContainer" unique_id=658348017]
+layout_mode = 2
+text = "Makwa King"
+horizontal_alignment = 1
+
+[node name="AvailableList" type="HBoxContainer" parent="AvailablePanel/VBoxContainer" unique_id=62361522]
+layout_mode = 2
+alignment = 1
+
+[node name="BottomBar" type="HBoxContainer" parent="." unique_id=1537901555]
+layout_mode = 0
+offset_left = 446.0
+offset_top = 598.0
+offset_right = 651.0
+offset_bottom = 638.0
+metadata/_edit_group_ = true
+
+[node name="UIDLabel" type="Label" parent="BottomBar" unique_id=1580505824]
+layout_mode = 2
+text = "UID: 00000"
+
+[node name="ConfirmButton" type="Button" parent="BottomBar" unique_id=894554788]
+layout_mode = 2
+text = "Confirm Team"

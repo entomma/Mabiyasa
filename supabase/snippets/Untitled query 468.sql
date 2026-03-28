@@ -1,2 +1,2 @@
-DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
-DROP FUNCTION IF EXISTS give_starter_character();
+INSERT INTO player_characters (uid, character_id, current_level, current_exp)
+VALUES (10010, 3, 1, 0);

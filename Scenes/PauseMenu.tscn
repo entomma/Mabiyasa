@@ -1,0 +1,46 @@
+[gd_scene format=3 uid="uid://cogawfdmo4qwa"]
+
+[ext_resource type="Script" uid="uid://d33m65exq11te" path="res://Scripts/PauseMenu.gd" id="1_lj4oq"]
+
+[node name="PauseMenu" type="Control" unique_id=298127998]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_lj4oq")
+
+[node name="Overlay" type="ColorRect" parent="." unique_id=1613755060]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.14509805)
+
+[node name="MenuPanel" type="PanelContainer" parent="." unique_id=1065295972]
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_right = 128.0
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MenuPanel" unique_id=1044226558]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="MenuPanel/VBoxContainer" unique_id=1266261045]
+layout_mode = 2
+
+[node name="PartyButton" type="Button" parent="MenuPanel/VBoxContainer" unique_id=1810787364]
+layout_mode = 2
+text = "Party Button"
+
+[node name="ResumeButton" type="Button" parent="MenuPanel/VBoxContainer" unique_id=1709291685]
+layout_mode = 2
+text = "Resume Button"
+
+[node name="QuitButton" type="Button" parent="MenuPanel/VBoxContainer" unique_id=521190417]
+layout_mode = 2
+text = "Quit Button"
