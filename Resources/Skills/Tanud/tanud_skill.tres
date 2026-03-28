@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://daobbibmrmmim"]
+
+[ext_resource type="Script" uid="uid://3vxxfvp53pav" path="res://Scripts/SkillData.gd" id="1_o4c5s"]
+
+[resource]
+script = ExtResource("1_o4c5s")
+skill_id = 22
+skill_name = "Tangkilik"
+skill_description = "Shields a single ally absorbing DMG equal to 800—1250 plus 20%—56% of Tanud's DEF"
+skill_type = "Skill"
+damage_bonus_per_level = 0.0
+heal_bonus_per_level = 0.0
+shield_bonus_per_level = 0.03
+effect_bonus_per_level = 0.0
+heal_flat_per_level = 0
+shield_flat_per_level = 400
+sp_cost = 1
+energy_gain = 30
+element = "Earth"
+effect_type = "Shield"
+effect_duration = 1
+target_type = "Single"
+trigger_card_category = "none"
+trigger_card_type = "none"
+trigger_effect = "none"
+metadata/_custom_type_script = "uid://3vxxfvp53pav"

@@ -11,8 +11,9 @@ config_version=5
 [application]
 
 config/name="mabiyasa"
-run/main_scene="uid://bncicv1liw246"
+run/main_scene="uid://ckvuna8aw7i2o"
 config/features=PackedStringArray("4.6", "Forward Plus")
+boot_splash/stretch_mode=0
 config/icon="res://icon.svg"
 
 [autoload]

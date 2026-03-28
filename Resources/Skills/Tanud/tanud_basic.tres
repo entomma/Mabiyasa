@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://d4k62j282r53d"]
+
+[ext_resource type="Script" uid="uid://3vxxfvp53pav" path="res://Scripts/SkillData.gd" id="1_wy60m"]
+
+[resource]
+script = ExtResource("1_wy60m")
+skill_id = 21
+skill_name = "Bantay"
+skill_description = "Deals Earth DMG equal to 50%—104% of Tanud's ATK to a single enemy"
+skill_type = "Basic"
+heal_bonus_per_level = 0.0
+effect_bonus_per_level = 0.0
+heal_flat_per_level = 0
+sp_gain = 1
+energy_gain = 20
+damage_multiplier = 0.5
+element = "Earth"
+hits = 1
+effect_type = "Damage"
+target_type = "Single"
+trigger_card_category = "none"
+trigger_card_type = "none"
+trigger_effect = "none"
+metadata/_custom_type_script = "uid://3vxxfvp53pav"

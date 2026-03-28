@@ -3,6 +3,7 @@ extends Node
 var player_profile: Dictionary = {}
 var player_characters: Array = []
 var player_cards: Array = []
+var owned_character_resources: Array = []
 
 var in_combat: bool = false
 var active_enemy = null
@@ -39,3 +40,27 @@ func end_combat():
 	var player = get_tree().get_first_node_in_group("player")
 	if player:
 		player.set_physics_process(true)
+# Convert DB character records to CharacterData resources
+func load_character_resources() -> void:
+	owned_character_resources.clear()
+	
+	for db_char in player_characters:
+		var char_id = db_char.get("character_id", 0)
+		var char_resource = get_character_by_id(char_id)
+		
+		if char_resource:
+			# Apply saved level from DB
+			char_resource.current_level = db_char.get("current_level", 1)
+			char_resource.current_exp = db_char.get("current_exp", 0)
+			owned_character_resources.append(char_resource)
+	
+	print("Loaded character resources: ", owned_character_resources.size())
+
+func get_character_by_id(id: int) -> CharacterData:
+	var path = "res://Resources/Characters/"
+	for f in DirAccess.get_files_at(path):
+		if f.ends_with(".tres"):
+			var char_data = load(path + f)
+			if char_data is CharacterData and char_data.character_id == id:
+				return char_data
+	return null

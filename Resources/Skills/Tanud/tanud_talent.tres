@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://chxsd7uctkjid"]
+
+[ext_resource type="Script" uid="uid://3vxxfvp53pav" path="res://Scripts/SkillData.gd" id="1_sbikw"]
+
+[resource]
+script = ExtResource("1_sbikw")
+skill_id = 24
+skill_name = "Night Watch"
+skill_description = "When an Earth card is played shields team for 10%—28% of Tanud's DEF"
+skill_type = "Talent"
+damage_bonus_per_level = 0.0
+heal_bonus_per_level = 0.0
+shield_bonus_per_level = 0.01
+effect_bonus_per_level = 0.0
+heal_flat_per_level = 0
+element = "Earth"
+shield_def_scaling = 0.1
+effect_type = "Shield"
+target_type = "Team"
+trigger_card_category = "Earth"
+trigger_card_type = "Action"
+trigger_effect = "ShieldTeam"
+trigger_value = 0.1
+metadata/_custom_type_script = "uid://3vxxfvp53pav"

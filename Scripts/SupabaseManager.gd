@@ -72,7 +72,7 @@ func create_player_profile(username: String) -> Variant:
 		"Content-Type: application/json",
 		"apikey: " + SUPABASE_ANON_KEY,
 		"Authorization: Bearer " + auth_token,
-        "Prefer: return=representation"
+		"Prefer: return=representation"
 	]
 	
 	var body = JSON.stringify({
@@ -80,19 +80,12 @@ func create_player_profile(username: String) -> Variant:
 		"username": username
 	})
 	
-	print("Creating profile...")
-	print("Token: ", auth_token)
-	print("User ID: ", current_user_id)
-	
 	http.request(SUPABASE_URL + "/rest/v1/player_profile", headers, HTTPClient.METHOD_POST, body)
 	var response = await http.request_completed
 	http.queue_free()
 	
-	var response_code = response[1]
 	var response_body = response[3].get_string_from_utf8()
-	
-	print("Response code: ", response_code)
-	print("Response body: ", response_body)
+	print("Profile creation response: ", response_body)
 	
 	if response_body == "":
 		return {"success": true}
@@ -101,7 +94,43 @@ func create_player_profile(username: String) -> Variant:
 	if result == null:
 		return {"success": true}
 	
+	# Give Manasan after profile created
+	await give_starter_characters()
+	
 	return result
+
+# Give starter characters after profile creation
+func give_starter_characters() -> void:
+	# Fetch profile first to get UID
+	await fetch_player_profile()
+	
+	var uid = GameManager.player_profile.get("uid", 0)
+	if uid == 0:
+		print("No UID found!")
+		return
+	
+	var http = HTTPRequest.new()
+	add_child(http)
+	
+	var headers = [
+		"Content-Type: application/json",
+		"apikey: " + SUPABASE_ANON_KEY,
+		"Authorization: Bearer " + auth_token
+	]
+	
+	# Give Manasan (character_id = 1)
+	var body = JSON.stringify({
+		"uid": int(uid),
+		"character_id": 1,
+		"current_level": 1,
+		"current_exp": 0
+	})
+	
+	http.request(SUPABASE_URL + "/rest/v1/player_characters", headers, HTTPClient.METHOD_POST, body)
+	var response = await http.request_completed
+	http.queue_free()
+	print("Manasan given: ", response[3].get_string_from_utf8())
+	
 # Fetch player profile
 func fetch_player_profile() -> void:
 	var http = HTTPRequest.new()
@@ -123,6 +152,106 @@ func fetch_player_profile() -> void:
 	if result != null and result.size() > 0:
 		current_uid = result[0].uid
 		GameManager.player_profile = result[0]
-		print("Profile saved to GameManager: ", GameManager.player_profile)
-	else:
-		print("No profile found for user: ", current_user_id)
+		
+		# Also fetch characters after profile loads
+		await fetch_player_characters()
+		GameManager.load_character_resources()
+		print("Profile and characters loaded!")
+# Fetch player's owned characters
+func fetch_player_characters() -> Array:
+	var http = HTTPRequest.new()
+	add_child(http)
+	
+	var headers = [
+		"apikey: " + SUPABASE_ANON_KEY,
+		"Authorization: Bearer " + auth_token
+	]
+	
+	var uid = GameManager.player_profile.get("uid", 0)
+	http.request(SUPABASE_URL + "/rest/v1/player_characters?uid=eq." + str(int(uid)), headers, HTTPClient.METHOD_GET, "")
+	var response = await http.request_completed
+	http.queue_free()
+	
+	var result = JSON.parse_string(response[3].get_string_from_utf8())
+	print("Player characters from DB: ", result)
+	
+	if result != null and result is Array:
+		GameManager.player_characters = result
+		return result
+	return []
+
+# Give Tanud after tutorial
+func give_tanud() -> void:
+	var http = HTTPRequest.new()
+	add_child(http)
+	
+	var headers = [
+		"Content-Type: application/json",
+		"apikey: " + SUPABASE_ANON_KEY,
+		"Authorization: Bearer " + auth_token
+	]
+	
+	var uid = GameManager.player_profile.get("uid", 0)
+	var body = JSON.stringify({
+		"uid": int(uid),
+		"character_id": 6,  # Tanud's ID
+		"current_level": 1,
+		"current_exp": 0
+	})
+	
+	http.request(SUPABASE_URL + "/rest/v1/player_characters", headers, HTTPClient.METHOD_POST, body)
+	var response = await http.request_completed
+	http.queue_free()
+	print("Tanud given: ", response[3].get_string_from_utf8())
+
+# Save pull currency (pulls)
+func spend_pulls(amount: int) -> bool:
+	var current_pulls = GameManager.player_profile.get("pulls", 0)
+	if current_pulls < amount:
+		print("Not enough pulls!")
+		return false
+	
+	var http = HTTPRequest.new()
+	add_child(http)
+	
+	var headers = [
+		"Content-Type: application/json",
+		"apikey: " + SUPABASE_ANON_KEY,
+		"Authorization: Bearer " + auth_token
+	]
+	
+	var uid = GameManager.player_profile.get("uid", 0)
+	var body = JSON.stringify({
+		"pulls": current_pulls - amount
+	})
+	
+	http.request(SUPABASE_URL + "/rest/v1/player_profile?uid=eq." + str(int(uid)), headers, HTTPClient.METHOD_PATCH, body)
+	var _response = await http.request_completed
+	http.queue_free()
+	
+	GameManager.player_profile["pulls"] = current_pulls - amount
+	return true
+
+# Add pulls after battle win
+func add_pulls(amount: int) -> void:
+	var http = HTTPRequest.new()
+	add_child(http)
+	
+	var headers = [
+		"Content-Type: application/json",
+		"apikey: " + SUPABASE_ANON_KEY,
+		"Authorization: Bearer " + auth_token
+	]
+	
+	var current_pulls = GameManager.player_profile.get("pulls", 0)
+	var uid = GameManager.player_profile.get("uid", 0)
+	var body = JSON.stringify({
+		"pulls": current_pulls + amount
+	})
+	
+	http.request(SUPABASE_URL + "/rest/v1/player_profile?uid=eq." + str(int(uid)), headers, HTTPClient.METHOD_PATCH, body)
+	var response = await http.request_completed
+	http.queue_free()
+	
+	GameManager.player_profile["pulls"] = current_pulls + amount
+	print("Pulls added: ", amount, " Total: ", current_pulls + amount)

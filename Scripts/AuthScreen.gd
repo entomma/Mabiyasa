@@ -71,3 +71,21 @@ func _on_register_pressed():
 			status_label.text = "Failed: " + result.message
 		else:
 			status_label.text = "Failed: " + str(result)
+func _ready():
+	# Allow clicking to focus
+	set_process_unhandled_input(true)
+# Force the control to handle mouse input
+	mouse_filter = Control.MOUSE_FILTER_PASS
+	
+	# Make sure all children can receive input
+	for child in get_children():
+		if child is Control:
+			child.mouse_filter = Control.MOUSE_FILTER_PASS
+			
+			
+func _unhandled_input(event):
+	if event is InputEventMouseButton:
+		# Release focus when clicking outside inputs
+		var focused = get_viewport().gui_get_focus_owner()
+		if focused:
+			focused.release_focus()

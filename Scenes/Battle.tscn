@@ -11,7 +11,7 @@ albedo_color = Color(0.48468196, 0.801673, 0.63487345, 1)
 script = ExtResource("1_wvl2i")
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1245459190]
-transform = Transform3D(1, 0, 0, 0, 0.9848077, 0.17364818, 0, -0.17364818, 0.9848077, 0, 2, 8)
+transform = Transform3D(1, 0, 0, 0, 0.99026805, 0.1391731, 0, -0.1391731, 0.99026805, 0, 3, 8)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=227198224]
 transform = Transform3D(0.8660254, 0.35355338, -0.35355338, 0, 0.70710677, 0.70710677, 0.5, -0.6123724, 0.6123724, 0, 0, 0)

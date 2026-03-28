@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://c71bf8ktkc1y2"]
+
+[ext_resource type="Script" uid="uid://3vxxfvp53pav" path="res://Scripts/SkillData.gd" id="1_3v254"]
+
+[resource]
+script = ExtResource("1_3v254")
+skill_id = 23
+skill_name = "Kutang Pampanga"
+skill_description = "Deals Earth DMG equal to 120%—210% of Tanud's ATK to all enemies and shields team absorbing DMG equal to 2000—2900 plus 30%—66% of Tanud's DEF"
+skill_type = "Ultimate"
+heal_bonus_per_level = 0.0
+shield_bonus_per_level = 0.04
+effect_bonus_per_level = 0.0
+heal_flat_per_level = 0
+shield_flat_per_level = 20
+energy_cost = 100
+damage_multiplier = 1.2
+element = "Earth"
+hits = 1
+shield_flat = 800
+shield_def_scaling = 0.3
+effect_type = "Shield"
+target_type = "AoE"
+trigger_card_category = "none"
+trigger_card_type = "none"
+trigger_effect = "none"
+metadata/_custom_type_script = "uid://3vxxfvp53pav"

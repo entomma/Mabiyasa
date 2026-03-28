@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_6wwri")
 character_id = 1
-character_name = "Gabryel"
+character_name = "David"
 english_name = "Fisher"
 job = "Manasan"
 element = "Water"
