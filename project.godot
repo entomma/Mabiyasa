@@ -27,6 +27,7 @@ window/size/mode=2
 [global_group]
 
 player=""
+camera=""
 
 [input]
 

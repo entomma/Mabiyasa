@@ -1,0 +1,101 @@
+[gd_scene format=3 uid="uid://bp7v2lytbitjs"]
+
+[ext_resource type="Script" uid="uid://c7ydarmawgviy" path="res://Scripts/Battle.gd" id="1_wvl2i"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_wvl2i"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vr6xi"]
+albedo_color = Color(0.48468196, 0.801673, 0.63487345, 1)
+
+[node name="Battle" type="Node3D" unique_id=968084594]
+script = ExtResource("1_wvl2i")
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1245459190]
+transform = Transform3D(1, 0, 0, 0, 0.9848077, 0.17364818, 0, -0.17364818, 0.9848077, 0, 2, 8)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=227198224]
+transform = Transform3D(0.8660254, 0.35355338, -0.35355338, 0, 0.70710677, 0.70710677, 0.5, -0.6123724, 0.6123724, 0, 0, 0)
+
+[node name="Background" type="Node3D" parent="." unique_id=1985196665]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Background" unique_id=2014504972]
+transform = Transform3D(50, 0, 0, 0, 50, 0, 0, 0, 50, -0.0005364418, -0.747818, -0.04616809)
+mesh = SubResource("PlaneMesh_wvl2i")
+surface_material_override/0 = SubResource("StandardMaterial3D_vr6xi")
+
+[node name="CharacterArea" type="Node3D" parent="." unique_id=932834410]
+
+[node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="CharacterArea" unique_id=815178013]
+
+[node name="EnemyArea" type="Node3D" parent="." unique_id=29566007]
+
+[node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="EnemyArea" unique_id=1212458004]
+
+[node name="BattleUI" type="CanvasLayer" parent="." unique_id=1171596633]
+
+[node name="TopBar" type="HBoxContainer" parent="BattleUI" unique_id=1318929391]
+layout_direction = 3
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+
+[node name="TurnOrder" type="VBoxContainer" parent="BattleUI/TopBar" unique_id=1924526594]
+layout_direction = 2
+layout_mode = 2
+
+[node name="EnemyInfo" type="HBoxContainer" parent="BattleUI/TopBar" unique_id=722498753]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="BattleUI/TopBar" unique_id=473399610]
+layout_mode = 2
+text = "II"
+
+[node name="TotalDamage" type="Label" parent="BattleUI/TopBar" unique_id=1432126422]
+layout_mode = 2
+
+[node name="BottomBar" type="HBoxContainer" parent="BattleUI" unique_id=1822050042]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 1.0
+offset_top = -126.0
+offset_right = 1.0
+offset_bottom = 5.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="CharPortraits" type="HBoxContainer" parent="BattleUI/BottomBar" unique_id=518656635]
+layout_direction = 2
+layout_mode = 2
+
+[node name="SkillButtons" type="VBoxContainer" parent="BattleUI/BottomBar" unique_id=1645693251]
+layout_direction = 3
+layout_mode = 2
+
+[node name="BasicButton" type="Button" parent="BattleUI/BottomBar/SkillButtons" unique_id=427334454]
+layout_mode = 2
+text = "basic"
+
+[node name="SkillButton" type="Button" parent="BattleUI/BottomBar/SkillButtons" unique_id=1357042009]
+layout_mode = 2
+text = "skill
+"
+
+[node name="UltButton" type="Button" parent="BattleUI/BottomBar/SkillButtons" unique_id=1832534213]
+layout_mode = 2
+text = "Ult"
+
+[node name="CardPanel" type="Panel" parent="BattleUI" unique_id=2082378022]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GridContainer" type="GridContainer" parent="BattleUI/CardPanel" unique_id=1505334997]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+columns = 4

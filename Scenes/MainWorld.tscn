@@ -20,7 +20,7 @@ albedo_color = Color(0.48468196, 0.801673, 0.63487345, 1)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 camera = NodePath("../Camera3D")
 
-[node name="Camera3D" type="Camera3D" parent="." unique_id=1331654383]
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1331654383 groups=["camera"]]
 transform = Transform3D(1, 0, 0, 0, 0.9063078, 0.42261833, 0, -0.42261833, 0.9063078, 0, 0.8554194, 2.981129)
 fov = 60.0
 near = 0.5
