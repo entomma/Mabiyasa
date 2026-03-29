@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="CharacterData" format=3 uid="uid://duhko0xmjevj1"]
 
 [ext_resource type="Script" uid="uid://c7oxuy1pf0voe" path="res://Scripts/CharacterData.gd" id="1_5tkxf"]
+[ext_resource type="Texture2D" uid="uid://b46aidscx0xo4" path="res://Assets/Illustration8a.png" id="2_l7txy"]
 
 [resource]
 script = ExtResource("1_5tkxf")
@@ -8,6 +9,7 @@ character_id = 3
 character_name = "Ridz"
 english_name = "Cook"
 job = "Kusinera"
+splash_art = ExtResource("2_l7txy")
 element = "Fire"
 max_hp = 1050
 base_attack = 580

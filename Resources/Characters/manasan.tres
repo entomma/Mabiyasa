@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="CharacterData" format=3 uid="uid://cwu18y4a8pobj"]
 
 [ext_resource type="Script" uid="uid://c7oxuy1pf0voe" path="res://Scripts/CharacterData.gd" id="1_6wwri"]
+[ext_resource type="Texture2D" uid="uid://yr6epnsibn0f" path="res://Assets/afw.png" id="2_f0pn4"]
 
 [resource]
 script = ExtResource("1_6wwri")
@@ -8,6 +9,7 @@ character_id = 1
 character_name = "David"
 english_name = "Fisher"
 job = "Manasan"
+splash_art = ExtResource("2_f0pn4")
 element = "Water"
 max_hp = 1200
 base_attack = 650

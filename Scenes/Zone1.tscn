@@ -1,0 +1,53 @@
+[gd_scene format=3 uid="uid://bncicv1liw246"]
+
+[ext_resource type="PackedScene" uid="uid://bdfswoqyr3x6v" path="res://Scenes/Player.tscn" id="1_ro5b7"]
+[ext_resource type="PackedScene" uid="uid://d027g76unt2h0" path="res://Scenes/Enemy.tscn" id="2_b4i3f"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_7pr73"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7pr73"]
+albedo_color = Color(0.48468196, 0.801673, 0.63487345, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_7pr73"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_n3iha"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_j7nbv"]
+
+[node name="Node3D" type="Node3D" unique_id=569714589]
+
+[node name="Player" parent="." unique_id=865057644 node_paths=PackedStringArray("camera") instance=ExtResource("1_ro5b7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+camera = NodePath("../Camera3D")
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1331654383 groups=["camera"]]
+transform = Transform3D(1, 0, 0, 0, 0.9063078, 0.42261833, 0, -0.42261833, 0.9063078, 0, 0.8554194, 2.981129)
+fov = 60.0
+near = 0.5
+far = 500.0
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=737832359]
+transform = Transform3D(0.8660254, 0.35355338, -0.35355338, 0, 0.70710677, 0.70710677, 0.5, -0.6123724, 0.6123724, 0, 0, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=851416853]
+transform = Transform3D(50, 0, 0, 0, 50, 0, 0, 0, 50, -0.0005364418, -0.747818, -0.04616809)
+mesh = SubResource("PlaneMesh_7pr73")
+surface_material_override/0 = SubResource("StandardMaterial3D_7pr73")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="." unique_id=1513043631]
+transform = Transform3D(0.9947175, 0.09312033, 0.043194886, -0.08630754, 0.9864998, -0.1391731, -0.055571593, 0.13470988, 0.9893255, 4, 0, 4)
+mesh = SubResource("BoxMesh_7pr73")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="." unique_id=140061960]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 3)
+mesh = SubResource("BoxMesh_n3iha")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="." unique_id=679486231]
+transform = Transform3D(0.3, 0, 0, 0, 2, 0, 0, 0, 0.3, 5, 0, 0)
+mesh = SubResource("CylinderMesh_j7nbv")
+
+[node name="DirectionalLight3D2" type="DirectionalLight3D" parent="." unique_id=818303966]
+visible = false
+
+[node name="Enemy" parent="." unique_id=1716839156 instance=ExtResource("2_b4i3f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.4055333, 0, 0.90397453)

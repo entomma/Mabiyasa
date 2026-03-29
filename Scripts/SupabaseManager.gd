@@ -232,6 +232,38 @@ func spend_pulls(amount: int) -> bool:
 	GameManager.player_profile["pulls"] = current_pulls - amount
 	return true
 
+func save_checkpoint(checkpoint_id: String, scene_name: String, pos: Vector3) -> void:
+	var http = HTTPRequest.new()
+	add_child(http)
+	
+	var headers = [
+		"Content-Type: application/json",
+		"apikey: " + SUPABASE_ANON_KEY,
+		"Authorization: Bearer " + auth_token
+	]
+	
+	var uid = GameManager.player_profile.get("uid", 0)
+	var body = JSON.stringify({
+		"last_checkpoint": checkpoint_id,
+		"current_scene": scene_name,
+		"last_pos_x": pos.x,
+		"last_pos_y": pos.y,
+		"last_pos_z": pos.z
+	})
+	
+	http.request(SUPABASE_URL + "/rest/v1/player_profile?uid=eq." + str(int(uid)), headers, HTTPClient.METHOD_PATCH, body)
+	var response = await http.request_completed
+	http.queue_free()
+	
+	# Update local profile too
+	GameManager.player_profile["last_checkpoint"] = checkpoint_id
+	GameManager.player_profile["current_scene"] = scene_name
+	GameManager.player_profile["last_pos_x"] = pos.x
+	GameManager.player_profile["last_pos_y"] = pos.y
+	GameManager.player_profile["last_pos_z"] = pos.z
+	print("Checkpoint saved: ", checkpoint_id, " in ", scene_name)
+
+
 # Add pulls after battle win
 func add_pulls(amount: int) -> void:
 	var http = HTTPRequest.new()

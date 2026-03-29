@@ -1,0 +1,28 @@
+[gd_scene format=3 uid="uid://d0huytdrs2n7k"]
+
+[ext_resource type="PackedScene" uid="uid://bdfswoqyr3x6v" path="res://Scenes/Player.tscn" id="1_p5vlc"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_a7b7h"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_o64gx"]
+albedo_color = Color(0.48468196, 0.801673, 0.63487345, 1)
+
+[node name="HubTown" type="Node3D" unique_id=907359194]
+
+[node name="Player" parent="." unique_id=865057644 node_paths=PackedStringArray("camera") instance=ExtResource("1_p5vlc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+camera = NodePath("../Camera3D")
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=665889540 groups=["camera"]]
+transform = Transform3D(1, 0, 0, 0, 0.9063078, 0.42261833, 0, -0.42261833, 0.9063078, 0, 0.8554194, 2.981129)
+fov = 60.0
+near = 0.5
+far = 500.0
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1827229412]
+transform = Transform3D(0.8660254, 0.35355338, -0.35355338, 0, 0.70710677, 0.70710677, 0.5, -0.6123724, 0.6123724, 0, 0, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1628235405]
+transform = Transform3D(50, 0, 0, 0, 50, 0, 0, 0, 50, -0.0005364418, -0.747818, -0.04616809)
+mesh = SubResource("PlaneMesh_a7b7h")
+surface_material_override/0 = SubResource("StandardMaterial3D_o64gx")

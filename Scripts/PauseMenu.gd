@@ -20,6 +20,13 @@ func _on_resume_pressed():
 	queue_free()
 
 func _on_party_pressed():
+	var player = get_tree().get_first_node_in_group("player")
+	if player:
+		# Get current scene name
+		var scene_path = get_tree().current_scene.scene_file_path
+		var scene_name = scene_path.get_file().replace(".tscn", "")
+		GameManager.set_saved_position(player.global_position)
+		SupabaseManager.save_checkpoint("pause_save", scene_name, player.global_position)
 	get_tree().paused = false
 	get_tree().change_scene_to_file("res://Scenes/PartySelect.tscn")
 

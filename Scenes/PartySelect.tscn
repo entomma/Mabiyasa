@@ -4,158 +4,343 @@
 
 [node name="PartySelect" type="Control" unique_id=1938133594]
 layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_cdbme")
 
-[node name="Background" type="ColorRect" parent="." unique_id=1637571991]
+[node name="Background" type="ColorRect" parent="." unique_id=1689974120]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_right = 1112.0
-offset_bottom = 608.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.24780053, 0.24780053, 0.42358288, 1)
+color = Color(0.24780053, 0.3133042, 0.42358288, 1)
 
-[node name="TopBar" type="HBoxContainer" parent="." unique_id=991956212]
-custom_minimum_size = Vector2(0, 60)
+[node name="TopBar" type="HBoxContainer" parent="." unique_id=2088495641]
+custom_minimum_size = Vector2(0, 70)
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
-offset_left = 2.0
-offset_top = 2.0
-offset_right = 66.0
-offset_bottom = 64.0
+offset_bottom = 70.0
 grow_horizontal = 2
+alignment = 1
 
-[node name="BackButton" type="Button" parent="TopBar" unique_id=36454757]
+[node name="TeamInfo" type="VBoxContainer" parent="TopBar" unique_id=2127857]
 layout_mode = 2
-text = "   X   "
 
-[node name="Title" type="Label" parent="TopBar" unique_id=173319553]
+[node name="TeamLabel" type="Label" parent="TopBar/TeamInfo" unique_id=1162653787]
 layout_mode = 2
-text = "Kawani"
+text = "| Kawani 1"
 
-[node name="CharacterDisplay" type="HBoxContainer" parent="." unique_id=1182218128]
-custom_minimum_size = Vector2(0, 400)
+[node name="TeamName" type="Label" parent="TopBar/TeamInfo" unique_id=979968854]
+layout_mode = 2
+
+[node name="TeamTabs" type="HBoxContainer" parent="TopBar" unique_id=1433811545]
+layout_mode = 2
+
+[node name="Tab1" type="Button" parent="TopBar/TeamTabs" unique_id=390864353]
+custom_minimum_size = Vector2(60, 40)
+layout_mode = 2
+text = "01"
+
+[node name="Tab2" type="Button" parent="TopBar/TeamTabs" unique_id=532033215]
+custom_minimum_size = Vector2(60, 40)
+layout_mode = 2
+text = "02"
+
+[node name="Tab3" type="Button" parent="TopBar/TeamTabs" unique_id=771983644]
+custom_minimum_size = Vector2(60, 40)
+layout_mode = 2
+text = "03"
+
+[node name="Tab4" type="Button" parent="TopBar/TeamTabs" unique_id=275340753]
+custom_minimum_size = Vector2(60, 40)
+layout_mode = 2
+text = "04"
+
+[node name="Tab5" type="Button" parent="TopBar/TeamTabs" unique_id=1299918745]
+custom_minimum_size = Vector2(60, 40)
+layout_mode = 2
+text = "05"
+
+[node name="Tab6" type="Button" parent="TopBar/TeamTabs" unique_id=1506086463]
+custom_minimum_size = Vector2(60, 40)
+layout_mode = 2
+text = "06"
+
+[node name="CloseButton" type="Button" parent="TopBar" unique_id=1515284753]
+layout_mode = 2
+text = "X"
+
+[node name="CharacterDisplay" type="HBoxContainer" parent="." unique_id=1532457737]
 layout_mode = 1
 anchors_preset = -1
-offset_left = 100.0
-offset_top = 80.0
-offset_right = 144.0
-offset_bottom = 120.0
+anchor_top = 0.1
+anchor_right = 1.0
+anchor_bottom = 0.85
+offset_top = 3.199997
+offset_bottom = 40.0
+alignment = 1
 
-[node name="Slot1" type="VBoxContainer" parent="CharacterDisplay" unique_id=403499105]
+[node name="LeftArrow" type="Button" parent="CharacterDisplay" unique_id=14757037]
+custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
+text = "<"
 
-[node name="SlotButton1" type="Button" parent="CharacterDisplay/Slot1" unique_id=960823949]
-custom_minimum_size = Vector2(150, 250)
+[node name="SlotsContainer" type="HBoxContainer" parent="CharacterDisplay" unique_id=174331924]
 layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="Slot1" type="Control" parent="CharacterDisplay/SlotsContainer" unique_id=1871255109]
+custom_minimum_size = Vector2(250, 500)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SlotTexture1" type="TextureRect" parent="CharacterDisplay/SlotsContainer/Slot1" unique_id=1326356945]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="PlusIcon1" type="Label" parent="CharacterDisplay/SlotsContainer/Slot1" unique_id=578882034]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
 text = "+"
-
-[node name="SlotColor1" type="ColorRect" parent="CharacterDisplay/Slot1" unique_id=1683454441]
-custom_minimum_size = Vector2(150, 250)
-layout_mode = 2
-
-[node name="SlotInfo1" type="Label" parent="CharacterDisplay/Slot1" unique_id=1839355104]
-layout_mode = 2
 horizontal_alignment = 1
-vertical_alignment = 1
 
-[node name="Slot2" type="VBoxContainer" parent="CharacterDisplay" unique_id=853914399]
-layout_mode = 2
-
-[node name="SlotButton2" type="Button" parent="CharacterDisplay/Slot2" unique_id=828885345]
-custom_minimum_size = Vector2(150, 250)
-layout_mode = 2
-text = "+"
-
-[node name="SlotColor2" type="ColorRect" parent="CharacterDisplay/Slot2" unique_id=1945086000]
-custom_minimum_size = Vector2(150, 250)
-layout_mode = 2
-
-[node name="SlotInfo2" type="Label" parent="CharacterDisplay/Slot2" unique_id=500151948]
-layout_mode = 2
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Slot3" type="VBoxContainer" parent="CharacterDisplay" unique_id=1819816138]
-layout_mode = 2
-
-[node name="SlotButton3" type="Button" parent="CharacterDisplay/Slot3" unique_id=495738229]
-custom_minimum_size = Vector2(150, 250)
-layout_mode = 2
-text = "+"
-
-[node name="SlotColor3" type="ColorRect" parent="CharacterDisplay/Slot3" unique_id=2101208672]
-custom_minimum_size = Vector2(150, 250)
-layout_mode = 2
-
-[node name="SlotInfo3" type="Label" parent="CharacterDisplay/Slot3" unique_id=183623061]
-layout_mode = 2
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Slot4" type="VBoxContainer" parent="CharacterDisplay" unique_id=2088759391]
-layout_mode = 2
-
-[node name="SlotButton4" type="Button" parent="CharacterDisplay/Slot4" unique_id=545584121]
-custom_minimum_size = Vector2(150, 250)
-layout_mode = 2
-text = "+"
-
-[node name="SlotColor4" type="ColorRect" parent="CharacterDisplay/Slot4" unique_id=83064782]
-custom_minimum_size = Vector2(150, 250)
-layout_mode = 2
-
-[node name="SlotInfo4" type="Label" parent="CharacterDisplay/Slot4" unique_id=736857653]
-layout_mode = 2
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="AvailablePanel" type="PanelContainer" parent="." unique_id=1705217780]
-custom_minimum_size = Vector2(0, 150)
+[node name="SlotInfo1" type="VBoxContainer" parent="CharacterDisplay/SlotsContainer/Slot1" unique_id=983862542]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 1.0
+anchor_top = 0.91
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -4.0
+offset_top = -15.02002
+offset_right = 1.0
+offset_bottom = -12.0
+metadata/_edit_group_ = true
+
+[node name="SlotName1" type="Label" parent="CharacterDisplay/SlotsContainer/Slot1/SlotInfo1" unique_id=1414836882]
+layout_mode = 2
+size_flags_horizontal = 4
+horizontal_alignment = 1
+
+[node name="SlotPath1" type="Label" parent="CharacterDisplay/SlotsContainer/Slot1/SlotInfo1" unique_id=1241134903]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="Slot2" type="Control" parent="CharacterDisplay/SlotsContainer" unique_id=1416327997]
+custom_minimum_size = Vector2(250, 500)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SlotTexture2" type="TextureRect" parent="CharacterDisplay/SlotsContainer/Slot2" unique_id=1695772427]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="PlusIcon2" type="Label" parent="CharacterDisplay/SlotsContainer/Slot2" unique_id=1160641624]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "+"
+horizontal_alignment = 1
+
+[node name="SlotInfo2" type="VBoxContainer" parent="CharacterDisplay/SlotsContainer/Slot2" unique_id=1720947656]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.919
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 1.0
+offset_top = -19.718018
+offset_right = 4.0
+offset_bottom = -12.0
+metadata/_edit_group_ = true
+
+[node name="SlotName2" type="Label" parent="CharacterDisplay/SlotsContainer/Slot2/SlotInfo2" unique_id=1187417211]
+layout_mode = 2
+size_flags_horizontal = 4
+horizontal_alignment = 1
+
+[node name="SlotPath2" type="Label" parent="CharacterDisplay/SlotsContainer/Slot2/SlotInfo2" unique_id=723092745]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="Slot3" type="Control" parent="CharacterDisplay/SlotsContainer" unique_id=1451063480]
+custom_minimum_size = Vector2(250, 500)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SlotTexture3" type="TextureRect" parent="CharacterDisplay/SlotsContainer/Slot3" unique_id=46089558]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="PlusIcon3" type="Label" parent="CharacterDisplay/SlotsContainer/Slot3" unique_id=929194444]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "+"
+horizontal_alignment = 1
+
+[node name="SlotInfo3" type="VBoxContainer" parent="CharacterDisplay/SlotsContainer/Slot3" unique_id=2010136160]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.92300004
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -2.0
+offset_top = -21.80603
+offset_right = 2.0
+offset_bottom = -12.0
+
+[node name="SlotName3" type="Label" parent="CharacterDisplay/SlotsContainer/Slot3/SlotInfo3" unique_id=1782988680]
+layout_mode = 2
+size_flags_horizontal = 4
+horizontal_alignment = 1
+
+[node name="SlotPath3" type="Label" parent="CharacterDisplay/SlotsContainer/Slot3/SlotInfo3" unique_id=684467425]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="Slot4" type="Control" parent="CharacterDisplay/SlotsContainer" unique_id=1477984503]
+custom_minimum_size = Vector2(250, 500)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SlotTexture4" type="TextureRect" parent="CharacterDisplay/SlotsContainer/Slot4" unique_id=1652670102]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="PlusIcon4" type="Label" parent="CharacterDisplay/SlotsContainer/Slot4" unique_id=348371873]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "+"
+horizontal_alignment = 1
+
+[node name="SlotInfo4" type="VBoxContainer" parent="CharacterDisplay/SlotsContainer/Slot4" unique_id=892437209]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.92300004
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -5.0
+offset_top = -21.80603
+offset_bottom = -12.0
+
+[node name="SlotName4" type="Label" parent="CharacterDisplay/SlotsContainer/Slot4/SlotInfo4" unique_id=43693354]
+layout_mode = 2
+size_flags_horizontal = 4
+horizontal_alignment = 1
+
+[node name="SlotPath4" type="Label" parent="CharacterDisplay/SlotsContainer/Slot4/SlotInfo4" unique_id=1063927252]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="RightArrow" type="Button" parent="CharacterDisplay" unique_id=1938820629]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+text = ">"
+
+[node name="CharacterSelectPanel" type="PanelContainer" parent="." unique_id=19205702]
+visible = false
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.6
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="CharacterSelectPanel" unique_id=223163653]
+layout_mode = 2
+
+[node name="AvailableList" type="HBoxContainer" parent="CharacterSelectPanel/ScrollContainer" unique_id=1108808602]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+
+[node name="BottomBar" type="HBoxContainer" parent="." unique_id=1117527810]
+layout_mode = 1
+anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 739.0
-offset_top = 20.0
-offset_right = 1041.0
-offset_bottom = 545.0
-grow_horizontal = 0
+offset_top = -23.0
+grow_horizontal = 2
 grow_vertical = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="AvailablePanel" unique_id=713819678]
-layout_mode = 2
-
-[node name="AvailableLabel" type="Label" parent="AvailablePanel/VBoxContainer" unique_id=658348017]
-layout_mode = 2
-text = "Makwa King"
-horizontal_alignment = 1
-
-[node name="AvailableList" type="HBoxContainer" parent="AvailablePanel/VBoxContainer" unique_id=62361522]
-layout_mode = 2
-alignment = 1
-
-[node name="BottomBar" type="HBoxContainer" parent="." unique_id=1537901555]
-layout_mode = 0
-offset_left = 446.0
-offset_top = 598.0
-offset_right = 651.0
-offset_bottom = 638.0
-metadata/_edit_group_ = true
-
-[node name="UIDLabel" type="Label" parent="BottomBar" unique_id=1580505824]
+[node name="UIDLabel" type="Label" parent="BottomBar" unique_id=252910047]
 layout_mode = 2
 text = "UID: 00000"
 
-[node name="ConfirmButton" type="Button" parent="BottomBar" unique_id=894554788]
+[node name="QuickSetupButton" type="Button" parent="BottomBar" unique_id=1646742730]
 layout_mode = 2
-text = "Confirm Team"
+text = "Quick Setup"
+
+[node name="ConfirmButton" type="Button" parent="BottomBar" unique_id=406424434]
+layout_mode = 2
+text = "Confirm TEam"

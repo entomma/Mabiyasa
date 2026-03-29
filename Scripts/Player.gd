@@ -9,12 +9,18 @@ var pause_menu_instance = null
 
 
 func _ready():
+	add_to_group("player")
+	print("Has saved position: ", GameManager.has_saved_position)
+	print("Saved position: ", GameManager.saved_player_position)
+	if GameManager.has_saved_position:
+		global_position = GameManager.saved_player_position
+		print("Position restored to: ", global_position)
 	
 	if camera:
 		camera.global_position = Vector3(
 			global_position.x,
-			global_position.y + .5,
-			global_position.z + 1.5
+			global_position.y + 4,
+			global_position.z + 5
 		)
 		camera.rotation_degrees = Vector3(-20, 0, 0)
 

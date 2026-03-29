@@ -4,7 +4,14 @@ var player_profile: Dictionary = {}
 var player_characters: Array = []
 var player_cards: Array = []
 var owned_character_resources: Array = []
-
+var _saved_player_position: Vector3 = Vector3.ZERO
+var saved_player_position: Vector3:
+	get:
+		return _saved_player_position
+	set(value):
+		print("Position being set to: ", value, " from: ", get_stack())
+		_saved_player_position = value
+var has_saved_position: bool = false
 var in_combat: bool = false
 var active_enemy = null
 var active_enemy_data = null
@@ -31,6 +38,13 @@ func start_combat(enemy, enemy_data):
 	
 	# Start transition to battle
 	transition.start_transition("res://Scenes/Battle.tscn")
+
+# Make sure these persist
+func set_party(party: Array) -> void:
+	player_party = party
+	print("Party saved to GameManager: ", player_party.size(), " characters")
+	for char in player_party:
+		print(" - ", char.character_name)
 
 func end_combat():
 	in_combat = false
