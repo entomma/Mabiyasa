@@ -57,20 +57,46 @@ func _ready():
 		tex.visible = false
 	
 	load_characters()
-	
-	# Load existing party from GameManager if it exists
-	if GameManager.player_party.size() > 0:
-		print("Loading existing party: ", GameManager.player_party.size())
-		for i in range(min(GameManager.player_party.size(), 4)):
-			selected_party[i] = GameManager.player_party[i]
-	else:
-		# Auto add Manasan only if no existing party
-		for char_data in all_characters:
-			if char_data.character_id == 1:
-				selected_party[0] = char_data
-				break
-	
+	restore_party()
 	update_slots()
+
+func get_char_from_list(char_id: int) -> CharacterData:
+	for char in all_characters:
+		if char.character_id == char_id:
+			return char.duplicate()
+	return null
+
+func restore_party():
+	var party_ids = GameManager.player_profile.get("saved_party", [])
+	
+	var ids_array = []
+	if party_ids is Array:
+		ids_array = party_ids
+	elif party_ids is String:
+		var cleaned = party_ids.replace("{", "").replace("}", "").strip_edges()
+		if cleaned != "":
+			for id_str in cleaned.split(","):
+				ids_array.append(int(float(id_str.strip_edges())))
+	
+	print("Restoring party from IDs: ", ids_array)
+	
+	if ids_array.size() > 0:
+		var has_any = false
+		for i in range(min(ids_array.size(), 4)):
+			var char_id = int(ids_array[i])
+			if char_id != 0:
+				var char = get_char_from_list(char_id)
+				if char:
+					selected_party[i] = char
+					has_any = true
+					print("Restored slot ", i, ": ", char.character_name)
+		if has_any:
+			return
+	
+	print("No saved party - adding Manasan as default")
+	var manasan = get_char_from_list(1)
+	if manasan:
+		selected_party[0] = manasan
 
 func get_slot_control(index: int) -> Control:
 	match index:
@@ -137,33 +163,44 @@ func populate_available_list():
 		available_list.add_child(container)
 
 func _on_slot_clicked(event: InputEvent, index: int):
-	if event is InputEventMouseButton and event.pressed:
-		if index == 0:
-			print("Manasan is always in slot 1!")
-			return
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		active_slot = index
 		char_select_panel.visible = true
-		print("Select character for slot " + str(index + 1))
-		# Highlight active slot
+		print("Slot clicked: ", index, " active_slot set to: ", active_slot)
 		for i in range(4):
 			var slot = get_slot_control(i)
 			if slot:
 				slot.modulate = Color(1.5, 1.5, 0.5) if i == active_slot else Color(1, 1, 1)
 
 func _on_available_char_pressed(char_data: CharacterData):
-	if selected_party.has(char_data):
-		for i in range(1, 4):
-			if selected_party[i] == char_data:
-				selected_party[i] = null
-				break
-	elif active_slot != -1:
-		selected_party[active_slot] = char_data
-		active_slot = -1
-		char_select_panel.visible = false
-		for i in range(4):
-			var slot = get_slot_control(i)
-			if slot:
-				slot.modulate = Color(1, 1, 1)
+	print("Active slot when adding: ", active_slot)
+	
+	var found_at = -1
+	for i in range(4):
+		if selected_party[i] != null and selected_party[i].character_id == char_data.character_id:
+			found_at = i
+			break
+	
+	if active_slot != -1:
+		if found_at != -1 and found_at == active_slot:
+			selected_party[active_slot] = null
+			print(char_data.character_name + " removed from slot " + str(active_slot + 1))
+		elif found_at != -1 and found_at != active_slot:
+			var temp = selected_party[active_slot]
+			selected_party[active_slot] = char_data
+			selected_party[found_at] = temp
+			print(char_data.character_name + " swapped to slot " + str(active_slot + 1))
+		else:
+			selected_party[active_slot] = char_data
+			print(char_data.character_name + " added to slot " + str(active_slot + 1))
+	
+	active_slot = -1
+	char_select_panel.visible = false
+	for i in range(4):
+		var slot = get_slot_control(i)
+		if slot:
+			slot.modulate = Color(1, 1, 1)
+	
 	update_slots()
 
 func update_slots():
@@ -175,7 +212,6 @@ func update_slots():
 			if char_data.splash_art:
 				slot_textures[i].texture = char_data.splash_art
 			else:
-				# Use colored background as placeholder
 				slot_textures[i].visible = false
 				get_slot_control(i).modulate = ELEMENT_COLORS.get(char_data.element, Color.GRAY)
 			slot_names[i].text = char_data.character_name
@@ -193,16 +229,39 @@ func _on_confirm_pressed():
 		if char != null:
 			party.append(char)
 	
-	print("Party size before save: ", party.size())
-	for c in party:
-		print("Saving: ", c.character_name)
-	
 	if party.size() == 0:
 		print("Select at least 1 character!")
 		return
 	
 	GameManager.set_party(party)
-	print("GameManager party after save: ", GameManager.player_party.size())
+	
+	var party_ids = []
+	for char in selected_party:
+		if char != null:
+			party_ids.append(char.character_id)
+		else:
+			party_ids.append(0)
+	
+	print("Saving party IDs with slots: ", party_ids)
+	
+	var http = HTTPRequest.new()
+	add_child(http)
+	var headers = [
+		"Content-Type: application/json",
+		"apikey: " + SupabaseManager.SUPABASE_ANON_KEY,
+		"Authorization: Bearer " + SupabaseManager.auth_token
+	]
+	var uid = GameManager.player_profile.get("uid", 0)
+	var body = JSON.stringify({"saved_party": party_ids})
+	
+	http.request(SupabaseManager.SUPABASE_URL + "/rest/v1/player_profile?uid=eq." + str(int(uid)), headers, HTTPClient.METHOD_PATCH, body)
+	var response = await http.request_completed
+	http.queue_free()
+	print("Save party response code: ", response[1])
+	
+	# CRITICAL FIX: Update local cache immediately after successful save
+	GameManager.player_profile["saved_party"] = party_ids
+	
 	get_tree().change_scene_to_file("res://Scenes/HubTown.tscn")
 
 func _on_close_pressed():

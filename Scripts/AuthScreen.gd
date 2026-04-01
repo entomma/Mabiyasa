@@ -26,19 +26,22 @@ func _on_login_pressed():
 	if result.has("access_token"):
 		status_label.text = "Login successful!"
 		
-		# Load last scene or default to HubTown
-		var last_scene = GameManager.player_profile.get("current_scene", "")
+		# Wait a frame to make sure everything is loaded
+		await get_tree().process_frame
+		
+		print("Party size after login: ", GameManager.player_party.size())
+		print("Last scene: ", GameManager.player_profile.get("current_scene", ""))
 		
 		if GameManager.player_party.size() == 0:
-			# No party saved → go to party select first
+			# No saved party → go to party select
 			get_tree().change_scene_to_file("res://Scenes/PartySelect.tscn")
-		elif last_scene != "":
-			# Load last scene
-			print("Loading last scene: ", last_scene)
-			get_tree().change_scene_to_file("res://Scenes/" + last_scene + ".tscn")
 		else:
-			# Default to HubTown
-			get_tree().change_scene_to_file("res://Scenes/HubTown.tscn")
+			# Load last scene or default to HubTown
+			var last_scene = GameManager.player_profile.get("current_scene", "HubTown")
+			if last_scene == "" or last_scene == null:
+				last_scene = "HubTown"
+			print("Going to: ", last_scene)
+			get_tree().change_scene_to_file("res://Scenes/" + last_scene + ".tscn")
 	else:
 		status_label.text = "Login failed! Check your credentials."
 		

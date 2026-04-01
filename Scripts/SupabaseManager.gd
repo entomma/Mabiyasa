@@ -101,7 +101,6 @@ func create_player_profile(username: String) -> Variant:
 
 # Give starter characters after profile creation
 func give_starter_characters() -> void:
-	# Fetch profile first to get UID
 	await fetch_player_profile()
 	
 	var uid = GameManager.player_profile.get("uid", 0)
@@ -109,29 +108,44 @@ func give_starter_characters() -> void:
 		print("No UID found!")
 		return
 	
+	# Give Manasan character
 	var http = HTTPRequest.new()
 	add_child(http)
-	
 	var headers = [
 		"Content-Type: application/json",
 		"apikey: " + SUPABASE_ANON_KEY,
 		"Authorization: Bearer " + auth_token
 	]
-	
-	# Give Manasan (character_id = 1)
 	var body = JSON.stringify({
 		"uid": int(uid),
 		"character_id": 1,
 		"current_level": 1,
 		"current_exp": 0
 	})
-	
 	http.request(SUPABASE_URL + "/rest/v1/player_characters", headers, HTTPClient.METHOD_POST, body)
 	var response = await http.request_completed
 	http.queue_free()
 	print("Manasan given: ", response[3].get_string_from_utf8())
 	
-# Fetch player profile
+	# Save Manasan as default party
+	var http2 = HTTPRequest.new()
+	add_child(http2)
+	var headers2 = [
+		"Content-Type: application/json",
+		"apikey: " + SUPABASE_ANON_KEY,
+		"Authorization: Bearer " + auth_token
+	]
+	var body2 = JSON.stringify({
+		"saved_party": [1]
+	})
+	http2.request(SUPABASE_URL + "/rest/v1/player_profile?uid=eq." + str(int(uid)), headers2, HTTPClient.METHOD_PATCH, body2)
+	var response2 = await http2.request_completed
+	http2.queue_free()
+	print("Default party saved: ", response2[3].get_string_from_utf8())
+	
+	# Reload profile to get updated saved_party
+	await fetch_player_profile()
+	
 func fetch_player_profile() -> void:
 	var http = HTTPRequest.new()
 	add_child(http)
@@ -153,11 +167,60 @@ func fetch_player_profile() -> void:
 		current_uid = result[0].uid
 		GameManager.player_profile = result[0]
 		
-		# Also fetch characters after profile loads
 		await fetch_player_characters()
 		GameManager.load_character_resources()
-		print("Profile and characters loaded!")
-# Fetch player's owned characters
+		load_player_state()  # ← ADD THIS
+		print("Profile, characters and state loaded!")
+
+func load_player_state() -> void:
+	var profile = GameManager.player_profile
+	
+	# Restore position
+	var pos_x = float(profile.get("last_pos_x", 0.0))
+	var pos_y = float(profile.get("last_pos_y", 0.0))
+	var pos_z = float(profile.get("last_pos_z", 0.0))
+	var pos = Vector3(pos_x, pos_y, pos_z)
+	
+	if pos != Vector3.ZERO:
+		GameManager.saved_player_position = pos
+		GameManager.has_saved_position = true
+		print("Position loaded: ", pos)
+	
+	var party_ids = profile.get("saved_party", [])
+	print("saved_party from DB: ", party_ids)
+	
+	# Handle string format from Postgres e.g. "{1,0,3,0}"
+	var ids_array = []
+	if party_ids is Array:
+		ids_array = party_ids
+	elif party_ids is String:
+		var cleaned = party_ids.replace("{", "").replace("}", "").strip_edges()
+		if cleaned != "":
+			for id_str in cleaned.split(","):
+				ids_array.append(int(id_str.strip_edges()))
+	
+	print("Parsed party IDs: ", ids_array)
+	
+	if ids_array.size() > 0:
+		var party = []
+		var slot_party = [null, null, null, null]
+		
+		for i in range(min(ids_array.size(), 4)):
+			var char_id = int(ids_array[i])
+			if char_id != 0:  # 0 = empty slot
+				var char_resource = GameManager.get_character_by_id(char_id)  # Already duplicated
+				if char_resource:
+					slot_party[i] = char_resource
+					party.append(char_resource)
+					print("Loaded slot ", i, ": ", char_resource.character_name)
+		
+		if party.size() > 0:
+			GameManager.player_party = party
+			GameManager.saved_party_slots = slot_party
+			print("Party loaded: ", party.size(), " characters")
+	else:
+		print("No saved party found!")
+
 func fetch_player_characters() -> Array:
 	var http = HTTPRequest.new()
 	add_child(http)
