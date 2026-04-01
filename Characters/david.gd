@@ -25,7 +25,7 @@ func setup(data: CharacterData, side: String = "player"):
 	
 	# DON'T override sprite_frames if already set in the scene
 	# Only set splash art if NO frames exist at all
-	if sprite.sprite_frames == null or sprite.sprite_frames.get_animation_list().is_empty():
+	if sprite.sprite_frames == null or sprite.sprite_frames.get_animation_names().is_empty():
 		if data.splash_art:
 			var frames = SpriteFrames.new()
 			frames.add_animation("idle")
