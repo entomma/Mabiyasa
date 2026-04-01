@@ -1,7 +1,11 @@
 [gd_resource type="Resource" script_class="CharacterData" format=3 uid="uid://duhko0xmjevj1"]
 
 [ext_resource type="Script" uid="uid://c7oxuy1pf0voe" path="res://Scripts/CharacterData.gd" id="1_5tkxf"]
+[ext_resource type="Resource" uid="uid://l10wnnc75mj1" path="res://Resources/Skills/Kusinera/kusinera_basic.tres" id="1_rwj00"]
 [ext_resource type="Texture2D" uid="uid://b46aidscx0xo4" path="res://Assets/Illustration8a.png" id="2_l7txy"]
+[ext_resource type="Resource" uid="uid://cn2hwyxq1hao1" path="res://Resources/Skills/Kusinera/kusinera_skill.tres" id="3_sga8i"]
+[ext_resource type="Resource" uid="uid://scyacl3vf7gs" path="res://Resources/Skills/Kusinera/kusinera_talent.tres" id="5_cg74k"]
+[ext_resource type="Resource" uid="uid://cw2n5vlsug4wy" path="res://Resources/Skills/Kusinera/kusineru_ult.tres" id="6_ptd5q"]
 
 [resource]
 script = ExtResource("1_5tkxf")
@@ -20,4 +24,8 @@ attack_per_level = 15.0
 defense_per_level = 12.0
 talent_name = "Kitchen Mastery"
 talent_description = "NA"
+basic_attack = ExtResource("1_rwj00")
+skill = ExtResource("3_sga8i")
+ultimate = ExtResource("6_ptd5q")
+talent = ExtResource("5_cg74k")
 metadata/_custom_type_script = "uid://c7oxuy1pf0voe"

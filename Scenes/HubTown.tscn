@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://d0huytdrs2n7k"]
 
 [ext_resource type="PackedScene" uid="uid://bdfswoqyr3x6v" path="res://Scenes/Player.tscn" id="1_p5vlc"]
+[ext_resource type="PackedScene" uid="uid://d027g76unt2h0" path="res://Scenes/Enemy.tscn" id="2_a7b7h"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_a7b7h"]
 
@@ -26,3 +27,6 @@ transform = Transform3D(0.8660254, 0.35355338, -0.35355338, 0, 0.70710677, 0.707
 transform = Transform3D(50, 0, 0, 0, 50, 0, 0, 0, 50, -0.0005364418, -0.747818, -0.04616809)
 mesh = SubResource("PlaneMesh_a7b7h")
 surface_material_override/0 = SubResource("StandardMaterial3D_o64gx")
+
+[node name="Enemy" parent="." unique_id=1716839156 instance=ExtResource("2_a7b7h")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.107193, 0, -1.5565186)

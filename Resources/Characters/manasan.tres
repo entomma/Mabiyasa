@@ -1,7 +1,11 @@
 [gd_resource type="Resource" script_class="CharacterData" format=3 uid="uid://cwu18y4a8pobj"]
 
 [ext_resource type="Script" uid="uid://c7oxuy1pf0voe" path="res://Scripts/CharacterData.gd" id="1_6wwri"]
+[ext_resource type="Resource" uid="uid://1bc3hht5i0ou" path="res://Resources/Skills/Manasan/manasan_basic.tres" id="1_us32g"]
 [ext_resource type="Texture2D" uid="uid://yr6epnsibn0f" path="res://Assets/afw.png" id="2_f0pn4"]
+[ext_resource type="Resource" uid="uid://bju4oa1cc7j47" path="res://Resources/Skills/Manasan/manasan_skill.tres" id="3_qk0qt"]
+[ext_resource type="Resource" uid="uid://ddrk23tbq603p" path="res://Resources/Skills/Manasan/manasan_talent.tres" id="5_bsyhf"]
+[ext_resource type="Resource" uid="uid://daklt5qwqp518" path="res://Resources/Skills/Manasan/manasan_ult.tres" id="6_vfnrp"]
 
 [resource]
 script = ExtResource("1_6wwri")
@@ -10,6 +14,7 @@ character_name = "David"
 english_name = "Fisher"
 job = "Manasan"
 splash_art = ExtResource("2_f0pn4")
+sprite = ExtResource("2_f0pn4")
 element = "Water"
 max_hp = 1200
 base_attack = 650
@@ -20,4 +25,8 @@ attack_per_level = 28.0
 defense_per_level = 8.0
 talent_name = "Fishing Instinct"
 talent_description = "NA"
+basic_attack = ExtResource("1_us32g")
+skill = ExtResource("3_qk0qt")
+ultimate = ExtResource("6_vfnrp")
+talent = ExtResource("5_bsyhf")
 metadata/_custom_type_script = "uid://c7oxuy1pf0voe"

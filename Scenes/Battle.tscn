@@ -31,71 +31,259 @@ surface_material_override/0 = SubResource("StandardMaterial3D_vr6xi")
 
 [node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="EnemyArea" unique_id=1212458004]
 
-[node name="BattleUI" type="CanvasLayer" parent="." unique_id=1171596633]
+[node name="BattleUI" type="CanvasLayer" parent="." unique_id=718896688]
 
-[node name="TopBar" type="HBoxContainer" parent="BattleUI" unique_id=1318929391]
-layout_direction = 3
-anchors_preset = 10
+[node name="TurnOrder" type="VBoxContainer" parent="BattleUI" unique_id=2110049413]
+anchors_preset = -1
+offset_left = 4.0
+offset_top = 83.0
+offset_right = 224.0
+offset_bottom = 483.0
+
+[node name="TopRight" type="HBoxContainer" parent="BattleUI" unique_id=281507103]
+anchors_preset = -1
+offset_left = -400.0
+offset_bottom = 60.0
+grow_horizontal = 0
+
+[node name="EnemyInfoButton" type="Button" parent="BattleUI/TopRight" unique_id=74107088]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+text = "enemy info  v"
+
+[node name="PauseButton" type="Button" parent="BattleUI/TopRight" unique_id=1907161949]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+text = "  II  "
+
+[node name="TotalDamage" type="VBoxContainer" parent="BattleUI" unique_id=2142164215]
+anchors_preset = 1
+anchor_left = 1.0
 anchor_right = 1.0
-grow_horizontal = 2
+offset_left = -90.0
+offset_bottom = 91.0
+grow_horizontal = 0
 
-[node name="TurnOrder" type="VBoxContainer" parent="BattleUI/TopBar" unique_id=1924526594]
-layout_direction = 2
+[node name="TotalDamageLabel" type="Label" parent="BattleUI/TotalDamage" unique_id=1827020006]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "total damage"
+
+[node name="TotalDamageNumber" type="Label" parent="BattleUI/TotalDamage" unique_id=1461802879]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 48
+text = "0"
+horizontal_alignment = 2
+
+[node name="BottomLeft" type="HBoxContainer" parent="BattleUI" unique_id=815358337]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -58.0
+offset_right = 40.0
+grow_vertical = 0
+pivot_offset = Vector2(-150, 700)
+
+[node name="CharInfoButton" type="Button" parent="BattleUI/BottomLeft" unique_id=1440910584]
+custom_minimum_size = Vector2(80, 100)
+layout_mode = 2
+text = "char\\ninfo"
+
+[node name="CharPortraits" type="HBoxContainer" parent="BattleUI/BottomLeft" unique_id=1298386236]
 layout_mode = 2
 
-[node name="EnemyInfo" type="HBoxContainer" parent="BattleUI/TopBar" unique_id=722498753]
+[node name="Portrait1" type="VBoxContainer" parent="BattleUI/BottomLeft/CharPortraits" unique_id=1852541657]
+custom_minimum_size = Vector2(100, 120)
 layout_mode = 2
 
-[node name="Button" type="Button" parent="BattleUI/TopBar" unique_id=473399610]
+[node name="PortraitImg1" type="TextureRect" parent="BattleUI/BottomLeft/CharPortraits/Portrait1" unique_id=856818110]
+custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
-text = "II"
+stretch_mode = 5
 
-[node name="TotalDamage" type="Label" parent="BattleUI/TopBar" unique_id=1432126422]
+[node name="UltLabel1" type="Label" parent="BattleUI/BottomLeft/CharPortraits/Portrait1" unique_id=968851142]
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "ult 100%"
+
+[node name="HPBar1" type="ProgressBar" parent="BattleUI/BottomLeft/CharPortraits/Portrait1" unique_id=1700922030]
+layout_mode = 2
+value = 100.0
+
+[node name="Portrait2" type="VBoxContainer" parent="BattleUI/BottomLeft/CharPortraits" unique_id=1060666713]
+custom_minimum_size = Vector2(100, 120)
 layout_mode = 2
 
-[node name="BottomBar" type="HBoxContainer" parent="BattleUI" unique_id=1822050042]
-anchors_preset = 12
+[node name="PortraitImg2" type="TextureRect" parent="BattleUI/BottomLeft/CharPortraits/Portrait2" unique_id=217659422]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+stretch_mode = 5
+
+[node name="UltLabel2" type="Label" parent="BattleUI/BottomLeft/CharPortraits/Portrait2" unique_id=1623224972]
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "ult 100%"
+
+[node name="HPBar2" type="ProgressBar" parent="BattleUI/BottomLeft/CharPortraits/Portrait2" unique_id=929034228]
+layout_mode = 2
+value = 100.0
+
+[node name="Portrait3" type="VBoxContainer" parent="BattleUI/BottomLeft/CharPortraits" unique_id=118118727]
+custom_minimum_size = Vector2(100, 120)
+layout_mode = 2
+
+[node name="PortraitImg3" type="TextureRect" parent="BattleUI/BottomLeft/CharPortraits/Portrait3" unique_id=1856404083]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+stretch_mode = 5
+
+[node name="UltLabel3" type="Label" parent="BattleUI/BottomLeft/CharPortraits/Portrait3" unique_id=1158771054]
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "ult 100%"
+
+[node name="HPBar3" type="ProgressBar" parent="BattleUI/BottomLeft/CharPortraits/Portrait3" unique_id=1414679951]
+layout_mode = 2
+value = 100.0
+
+[node name="Portrait4" type="VBoxContainer" parent="BattleUI/BottomLeft/CharPortraits" unique_id=1618114871]
+custom_minimum_size = Vector2(100, 120)
+layout_mode = 2
+
+[node name="PortraitImg4" type="TextureRect" parent="BattleUI/BottomLeft/CharPortraits/Portrait4" unique_id=1051125569]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+stretch_mode = 5
+
+[node name="UltLabel4" type="Label" parent="BattleUI/BottomLeft/CharPortraits/Portrait4" unique_id=605040030]
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "ult 100%"
+
+[node name="HPBar4" type="ProgressBar" parent="BattleUI/BottomLeft/CharPortraits/Portrait4" unique_id=737377712]
+layout_mode = 2
+value = 100.0
+
+[node name="BottomRight" type="Control" parent="BattleUI" unique_id=4640367]
+layout_mode = 3
+anchors_preset = 3
+anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 1.0
-offset_top = -126.0
-offset_right = 1.0
-offset_bottom = 5.0
-grow_horizontal = 2
+offset_left = -40.0
+offset_top = -40.0
+grow_horizontal = 0
 grow_vertical = 0
+pivot_offset = Vector2(-350, -300)
 
-[node name="CharPortraits" type="HBoxContainer" parent="BattleUI/BottomBar" unique_id=518656635]
-layout_direction = 2
-layout_mode = 2
+[node name="SPStars" type="HBoxContainer" parent="BattleUI/BottomRight" unique_id=686070030]
+layout_mode = 0
+offset_left = -320.0
+offset_top = -80.0
+offset_right = -280.0
+offset_bottom = -40.0
 
-[node name="SkillButtons" type="VBoxContainer" parent="BattleUI/BottomBar" unique_id=1645693251]
-layout_direction = 3
-layout_mode = 2
+[node name="BasicButton" type="Button" parent="BattleUI/BottomRight" unique_id=1089746063]
+custom_minimum_size = Vector2(180, 180)
+layout_mode = 0
+offset_left = -200.0
+offset_top = -200.0
+offset_right = -20.0
+offset_bottom = -20.0
 
-[node name="BasicButton" type="Button" parent="BattleUI/BottomBar/SkillButtons" unique_id=427334454]
-layout_mode = 2
-text = "basic"
+[node name="SkillButton" type="Button" parent="BattleUI/BottomRight" unique_id=2048379260]
+custom_minimum_size = Vector2(130, 130)
+layout_mode = 0
+offset_left = -320.0
+offset_top = -160.0
+offset_right = -190.0
+offset_bottom = -30.0
 
-[node name="SkillButton" type="Button" parent="BattleUI/BottomBar/SkillButtons" unique_id=1357042009]
-layout_mode = 2
-text = "skill
-"
-
-[node name="UltButton" type="Button" parent="BattleUI/BottomBar/SkillButtons" unique_id=1832534213]
-layout_mode = 2
-text = "Ult"
-
-[node name="CardPanel" type="Panel" parent="BattleUI" unique_id=2082378022]
+[node name="CardPanel" type="Control" parent="BattleUI" unique_id=1758053195]
 visible = false
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="GridContainer" type="GridContainer" parent="BattleUI/CardPanel" unique_id=1505334997]
-layout_mode = 0
+[node name="Background" type="ColorRect" parent="BattleUI/CardPanel" unique_id=106126440]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0.61960787)
+
+[node name="CardGrid" type="GridContainer" parent="BattleUI/CardPanel" unique_id=242609063]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.05
+anchor_top = 0.05
+anchor_right = 0.8
+anchor_bottom = 0.85
 offset_right = 40.0
 offset_bottom = 40.0
 columns = 4
+
+[node name="AffixPanel" type="VBoxContainer" parent="BattleUI/CardPanel" unique_id=1805764374]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.82
+anchor_top = 0.2
+anchor_right = 1.0
+anchor_bottom = 0.8
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="AffixTitle" type="Label" parent="BattleUI/CardPanel/AffixPanel" unique_id=1568356165]
+layout_mode = 2
+text = "Word Tools"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PrefixBtn" type="Button" parent="BattleUI/CardPanel/AffixPanel" unique_id=1916016335]
+custom_minimum_size = Vector2(150, 60)
+layout_mode = 2
+text = "Prefixes"
+
+[node name="SuffixBtn" type="Button" parent="BattleUI/CardPanel/AffixPanel" unique_id=946098944]
+custom_minimum_size = Vector2(150, 60)
+layout_mode = 2
+text = "Suffixes"
+
+[node name="ConnectorBtn" type="Button" parent="BattleUI/CardPanel/AffixPanel" unique_id=1419459401]
+custom_minimum_size = Vector2(150, 60)
+layout_mode = 2
+text = "Connectors"
+
+[node name="OtherBtn" type="Button" parent="BattleUI/CardPanel/AffixPanel" unique_id=737086915]
+custom_minimum_size = Vector2(150, 60)
+layout_mode = 2
+text = "Other"
+
+[node name="SentenceBar" type="PanelContainer" parent="BattleUI/CardPanel" unique_id=1003023686]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.85
+anchor_right = 0.82
+anchor_bottom = 1.0
+offset_top = -8.0
+offset_right = 87.19995
+offset_bottom = 17.0
+grow_horizontal = 2
+grow_vertical = 0
+pivot_offset = Vector2(-80, 0)
+
+[node name="SentenceContainer" type="HBoxContainer" parent="BattleUI/CardPanel/SentenceBar" unique_id=451881915]
+layout_mode = 2
+
+[node name="SubmitButton" type="Button" parent="BattleUI/CardPanel/SentenceBar" unique_id=437799997]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Attack"
