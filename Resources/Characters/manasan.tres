@@ -14,7 +14,6 @@ character_name = "David"
 english_name = "Fisher"
 job = "Manasan"
 splash_art = ExtResource("2_f0pn4")
-sprite = ExtResource("2_f0pn4")
 element = "Water"
 max_hp = 1200
 base_attack = 650

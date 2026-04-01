@@ -650,16 +650,19 @@ func setup_battle_sprites():
 		spawn_enemy()
 
 func spawn_character(data: CharacterData, index: int, side: String):
-	var scene_path = "res://Characters/" + data.character_name + ".tscn"
+	# Try loading by character name (lowercase)
+	var scene_name = data.character_name.to_lower()
+	var scene_path = "res://Characters/" + scene_name + ".tscn"
 	var scene = load(scene_path)
 	
 	if scene == null:
-		push_error("Failed to load character scene: " + scene_path)
+		print("No scene found for: ", scene_name, " - using placeholder")
 		create_placeholder(data, index, side)
 		return
 	
 	var instance = scene.instantiate()
-	instance.setup(data, side)
+	if instance.has_method("setup"):
+		instance.setup(data, side)
 	
 	if side == "player":
 		instance.position = Vector3(-4 + (index * 2.5), 0, 0)
@@ -667,33 +670,62 @@ func spawn_character(data: CharacterData, index: int, side: String):
 		instance.position = Vector3(4, 0, 0)
 	
 	instance.name = side + "_" + data.character_name
-	$Background.add_child(instance)  # CHANGED: $BattleArea -> $Background
-
+	$Background.add_child(instance)
+	
 func spawn_enemy():
-	var scene_path = "res://Characters/" + GameManager.active_enemy_data.enemy_name + ".tscn"
-	var scene = load(scene_path)
-	
-	if scene == null:
-		push_error("Failed to load enemy scene: " + scene_path)
+	# Enemies use placeholders for now
+	create_enemy_placeholder()
+
+func create_enemy_placeholder():
+	if not GameManager.active_enemy_data:
 		return
+	var sprite = AnimatedSprite3D.new()
+	sprite.name = "Enemy_Placeholder"
+	sprite.position = Vector3(3, 0, 0)
 	
-	var instance = scene.instantiate()
-	instance.setup(GameManager.active_enemy_data, "enemy")
-	instance.position = Vector3(4, 0, 0)
-	instance.name = "Enemy_" + GameManager.active_enemy_data.enemy_name
-	$Background.add_child(instance)  # CHANGED: $BattleArea -> $Background
+	# Create colored placeholder
+	var img = Image.create(64, 64, false, Image.FORMAT_RGBA8)
+	img.fill(Color(0.8, 0.2, 0.2))
+	var tex = ImageTexture.create_from_image(img)
+	
+	var frames = SpriteFrames.new()
+	frames.add_animation("idle")
+	frames.add_frame("idle", tex)
+	sprite.sprite_frames = frames
+	sprite.animation = "idle"
+	$Background.add_child(sprite)
 
 func create_placeholder(data: CharacterData, index: int, side: String):
-	var sprite = Sprite3D.new()
+	var sprite = AnimatedSprite3D.new()
 	sprite.name = "Placeholder_" + data.character_name
 	
-	var img = Image.create(100, 100, false, Image.FORMAT_RGBA8)
-	img.fill(Color(randf(), randf(), randf()))
-	sprite.texture = ImageTexture.create_from_image(img)
+	# Use splash art if available
+	if data.splash_art:
+		var frames = SpriteFrames.new()
+		frames.add_animation("idle")
+		frames.add_frame("idle", data.splash_art)
+		sprite.sprite_frames = frames
+		sprite.animation = "idle"
+		sprite.pixel_size = 0.01
+	else:
+		var img = Image.create(64, 64, false, Image.FORMAT_RGBA8)
+		# Different color per element
+		match data.element:
+			"Water": img.fill(Color(0.2, 0.4, 0.9))
+			"Fire": img.fill(Color(0.9, 0.3, 0.1))
+			"Earth": img.fill(Color(0.6, 0.4, 0.2))
+			"Wind": img.fill(Color(0.2, 0.8, 0.4))
+			_: img.fill(Color(0.5, 0.5, 0.5))
+		var tex = ImageTexture.create_from_image(img)
+		var frames = SpriteFrames.new()
+		frames.add_animation("idle")
+		frames.add_frame("idle", tex)
+		sprite.sprite_frames = frames
+		sprite.animation = "idle"
 	
 	if side == "player":
 		sprite.position = Vector3(-4 + (index * 2.5), 0, 0)
 	else:
 		sprite.position = Vector3(4, 0, 0)
 	
-	$Background.add_child(sprite)  # CHANGED: $BattleArea -> $Background
+	$Background.add_child(sprite)
