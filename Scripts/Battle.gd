@@ -73,6 +73,11 @@ func _ready():
 	setup_battle_sprites()
 	draw_hand()
 	start_battle()
+	
+	# FIX: Ensure camera is positioned correctly to see the battle
+	if camera:
+		camera.position = Vector3(0, 3, 8)
+		camera.look_at(Vector3(0, 0, 0), Vector3.UP)
 
 func setup_card_panel_background():
 	# Make card panel semi-transparent dark instead of pitch black
@@ -634,11 +639,13 @@ func update_turn_order_ui():
 		if i == 0:
 			lbl.add_theme_color_override("font_color", Color.YELLOW)
 		turn_order_ui.add_child(lbl)
-		
+
 func setup_battle_sprites():
-	# Clear old sprites from Background
+	# FIX: Only remove character sprites, preserve the background mesh
 	for child in $Background.get_children():
-		child.queue_free()
+		# Only delete nodes that are character sprites, not the mesh
+		if child.name.begins_with("player_") or child.name.begins_with("enemy_") or child.name.begins_with("Placeholder_") or child.name.begins_with("Enemy_"):
+			child.queue_free()
 	
 	# Spawn player characters
 	for i in range(GameManager.player_party.size()):
@@ -664,6 +671,9 @@ func spawn_character(data: CharacterData, index: int, side: String):
 	if instance.has_method("setup"):
 		instance.setup(data, side)
 	
+	# FIX: Make characters bigger
+	instance.scale = Vector3(2.5, 2.5, 2.5)
+	
 	if side == "player":
 		instance.position = Vector3(-4 + (index * 2.5), 0, 0)
 	else:
@@ -671,7 +681,7 @@ func spawn_character(data: CharacterData, index: int, side: String):
 	
 	instance.name = side + "_" + data.character_name
 	$Background.add_child(instance)
-	
+
 func spawn_enemy():
 	# Enemies use placeholders for now
 	create_enemy_placeholder()
@@ -693,6 +703,10 @@ func create_enemy_placeholder():
 	frames.add_frame("idle", tex)
 	sprite.sprite_frames = frames
 	sprite.animation = "idle"
+	
+	# FIX: Make enemy bigger
+	sprite.scale = Vector3(3, 3, 1)
+	
 	$Background.add_child(sprite)
 
 func create_placeholder(data: CharacterData, index: int, side: String):
@@ -727,5 +741,8 @@ func create_placeholder(data: CharacterData, index: int, side: String):
 		sprite.position = Vector3(-4 + (index * 2.5), 0, 0)
 	else:
 		sprite.position = Vector3(4, 0, 0)
+	
+	# FIX: Make placeholder bigger
+	sprite.scale = Vector3(3, 3, 1)
 	
 	$Background.add_child(sprite)
