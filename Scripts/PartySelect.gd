@@ -45,7 +45,6 @@ var loadouts: Dictionary = {}
 @onready var uid_label = $BottomBar/UIDLabel
 @onready var close_btn = $TopBar/CloseButton
 
-# FIXED: TeamTabs is under TopBar!
 @onready var loadout_buttons = [
 	$TopBar/TeamTabs/Tab1,
 	$TopBar/TeamTabs/Tab2,
@@ -59,13 +58,10 @@ func _ready():
 	confirm_btn.pressed.connect(_on_confirm_pressed)
 	close_btn.pressed.connect(_on_close_pressed)
 	
-	# Connect loadout buttons with null check
 	for i in range(MAX_LOADOUTS):
 		var btn = loadout_buttons[i]
 		if btn:
 			btn.pressed.connect(_on_loadout_pressed.bind(i + 1))
-		else:
-			push_error("Loadout button " + str(i + 1) + " not found!")
 	
 	for i in range(4):
 		var idx = i
@@ -102,7 +98,9 @@ func initialize_loadouts():
 func _on_loadout_pressed(loadout_num: int):
 	print("Switching to loadout: ", loadout_num)
 	
-	save_to_loadout(current_loadout)
+	# Auto-save current before switching
+	await auto_save_loadout(current_loadout)
+	
 	current_loadout = loadout_num
 	
 	var loadout_key = str(current_loadout)
@@ -123,6 +121,47 @@ func _on_loadout_pressed(loadout_num: int):
 	
 	update_slots()
 	update_loadout_buttons()
+
+func auto_save_loadout(loadout_num: int) -> void:
+	# Save to memory immediately
+	save_to_loadout(loadout_num)
+	
+	# Build party IDs for database
+	var party_ids = []
+	for c in selected_party:
+		if c != null:
+			party_ids.append(c.character_id)
+		else:
+			party_ids.append(0)
+	
+	print("Auto-saving loadout ", loadout_num, ": ", party_ids)
+	
+	# Save to database (fire and forget - don't wait)
+	var http = HTTPRequest.new()
+	add_child(http)
+	var headers = [
+		"Content-Type: application/json",
+		"apikey: " + SupabaseManager.SUPABASE_ANON_KEY,
+		"Authorization: Bearer " + SupabaseManager.auth_token
+	]
+	var uid = GameManager.player_profile.get("uid", 0)
+	var body = JSON.stringify({
+		"party_loadouts": loadouts,
+		"current_loadout": current_loadout,
+		"saved_party": party_ids
+	})
+	
+	http.request_completed.connect(func(_result, _response_code, _headers, _body):
+		http.queue_free()
+		print("Auto-save complete for loadout ", loadout_num)
+	)
+	
+	http.request(SupabaseManager.SUPABASE_URL + "/rest/v1/player_profile?uid=eq." + str(int(uid)), headers, HTTPClient.METHOD_PATCH, body)
+	
+	# Update local cache immediately
+	GameManager.player_profile["party_loadouts"] = loadouts
+	GameManager.player_profile["current_loadout"] = current_loadout
+	GameManager.player_profile["saved_party"] = party_ids
 
 func save_to_loadout(loadout_num: int):
 	var loadout_key = str(loadout_num)
@@ -280,12 +319,15 @@ func _on_available_char_pressed(char_data: CharacterData):
 	if active_slot != -1:
 		if found_at != -1 and found_at == active_slot:
 			selected_party[active_slot] = null
+			print(char_data.character_name + " removed from slot " + str(active_slot + 1))
 		elif found_at != -1 and found_at != active_slot:
 			var temp = selected_party[active_slot]
 			selected_party[active_slot] = char_data
 			selected_party[found_at] = temp
+			print(char_data.character_name + " swapped to slot " + str(active_slot + 1))
 		else:
 			selected_party[active_slot] = char_data
+			print(char_data.character_name + " added to slot " + str(active_slot + 1))
 	
 	active_slot = -1
 	char_select_panel.visible = false
@@ -296,6 +338,9 @@ func _on_available_char_pressed(char_data: CharacterData):
 	
 	update_slots()
 	update_loadout_buttons()
+	
+	# AUTO-SAVE after any change!
+	await auto_save_loadout(current_loadout)
 
 func update_slots():
 	for i in range(4):
@@ -318,6 +363,7 @@ func update_slots():
 			get_slot_control(i).modulate = Color(1, 1, 1)
 
 func _on_confirm_pressed():
+	# Final save and set as active party
 	save_to_loadout(current_loadout)
 	
 	var party = []
@@ -338,29 +384,8 @@ func _on_confirm_pressed():
 		else:
 			party_ids.append(0)
 	
-	print("Saving loadout ", current_loadout, ": ", party_ids)
-	
-	var http = HTTPRequest.new()
-	add_child(http)
-	var headers = [
-		"Content-Type: application/json",
-		"apikey: " + SupabaseManager.SUPABASE_ANON_KEY,
-		"Authorization: Bearer " + SupabaseManager.auth_token
-	]
-	var uid = GameManager.player_profile.get("uid", 0)
-	var body = JSON.stringify({
-		"party_loadouts": loadouts,
-		"current_loadout": current_loadout,
-		"saved_party": party_ids
-	})
-	
-	http.request(SupabaseManager.SUPABASE_URL + "/rest/v1/player_profile?uid=eq." + str(int(uid)), headers, HTTPClient.METHOD_PATCH, body)
-	var response = await http.request_completed
-	http.queue_free()
-	
-	GameManager.player_profile["party_loadouts"] = loadouts
-	GameManager.player_profile["current_loadout"] = current_loadout
-	GameManager.player_profile["saved_party"] = party_ids
+	# One final save to ensure everything is synced
+	await auto_save_loadout(current_loadout)
 	
 	get_tree().change_scene_to_file("res://Scenes/HubTown.tscn")
 
