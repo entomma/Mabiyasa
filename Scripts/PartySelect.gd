@@ -83,105 +83,98 @@ func _ready():
 func initialize_loadouts():
 	var saved_loadouts = GameManager.player_profile.get("party_loadouts", {})
 	if saved_loadouts is Dictionary:
-		loadouts = saved_loadouts
+		loadouts = saved_loadouts.duplicate()
 	else:
 		loadouts = {}
 	
 	for i in range(1, MAX_LOADOUTS + 1):
-		if not loadouts.has(str(i)):
-			loadouts[str(i)] = [null, null, null, null]
+		var key = str(i)
+		if not loadouts.has(key):
+			loadouts[key] = [null, null, null, null]
+		else:
+			var existing = loadouts[key]
+			if existing is Array:
+				loadouts[key] = existing.duplicate()
+			else:
+				loadouts[key] = [null, null, null, null]
 	
 	current_loadout = GameManager.player_profile.get("current_loadout", 1)
 	if current_loadout < 1 or current_loadout > MAX_LOADOUTS:
 		current_loadout = 1
 
 func _on_loadout_pressed(loadout_num: int):
-	print("Switching to loadout: ", loadout_num)
+	print("Switching from loadout ", current_loadout, " to ", loadout_num)
 	
-	# Auto-save current before switching
-	await auto_save_loadout(current_loadout)
+	# Save current to memory (store IDs only)
+	save_to_loadout(current_loadout)
 	
+	# Switch to new loadout
 	current_loadout = loadout_num
+	
+	# CRITICAL: Create fresh array for new loadout
+	selected_party = [null, null, null, null]
 	
 	var loadout_key = str(current_loadout)
 	if loadouts.has(loadout_key):
-		var saved_party = loadouts[loadout_key]
-		selected_party = [null, null, null, null]
-		for i in range(min(saved_party.size(), 4)):
-			var char_id = saved_party[i]
+		var saved_ids = loadouts[loadout_key]
+		print("Loading loadout ", loadout_num, " with IDs: ", saved_ids)
+		
+		for i in range(min(saved_ids.size(), 4)):
+			var char_id = saved_ids[i]
 			if char_id != null and char_id != 0:
 				var c = get_char_from_list(int(char_id))
 				if c:
 					selected_party[i] = c
 	
-	if selected_party[0] == null:
+	# FIXED: Check if David (ID 1) is ALREADY in the party before adding default
+	var david_already_present = false
+	for i in range(4):
+		if selected_party[i] != null and selected_party[i].character_id == 1:
+			david_already_present = true
+			break
+	
+	# Only add default Manasan if slot 0 is empty AND David isn't already in the party
+	if selected_party[0] == null and not david_already_present:
 		var manasan = get_char_from_list(1)
 		if manasan:
 			selected_party[0] = manasan
+			print("Added default Manasan to slot 0")
 	
+	print("Loadout ", loadout_num, " loaded: ", selected_party)
 	update_slots()
 	update_loadout_buttons()
 
-func auto_save_loadout(loadout_num: int) -> void:
-	# Save to memory immediately
-	save_to_loadout(loadout_num)
-	
-	# Build party IDs for database
-	var party_ids = []
-	for c in selected_party:
-		if c != null:
-			party_ids.append(c.character_id)
-		else:
-			party_ids.append(0)
-	
-	print("Auto-saving loadout ", loadout_num, ": ", party_ids)
-	
-	# Save to database (fire and forget - don't wait)
-	var http = HTTPRequest.new()
-	add_child(http)
-	var headers = [
-		"Content-Type: application/json",
-		"apikey: " + SupabaseManager.SUPABASE_ANON_KEY,
-		"Authorization: Bearer " + SupabaseManager.auth_token
-	]
-	var uid = GameManager.player_profile.get("uid", 0)
-	var body = JSON.stringify({
-		"party_loadouts": loadouts,
-		"current_loadout": current_loadout,
-		"saved_party": party_ids
-	})
-	
-	http.request_completed.connect(func(_result, _response_code, _headers, _body):
-		http.queue_free()
-		print("Auto-save complete for loadout ", loadout_num)
-	)
-	
-	http.request(SupabaseManager.SUPABASE_URL + "/rest/v1/player_profile?uid=eq." + str(int(uid)), headers, HTTPClient.METHOD_PATCH, body)
-	
-	# Update local cache immediately
-	GameManager.player_profile["party_loadouts"] = loadouts
-	GameManager.player_profile["current_loadout"] = current_loadout
-	GameManager.player_profile["saved_party"] = party_ids
-
 func save_to_loadout(loadout_num: int):
+	# Store only ID numbers, NOT object references!
 	var loadout_key = str(loadout_num)
 	var party_ids = []
-	for c in selected_party:
-		if c != null:
-			party_ids.append(c.character_id)
+	for i in range(4):
+		if selected_party[i] != null:
+			party_ids.append(selected_party[i].character_id)
 		else:
 			party_ids.append(null)
+	
 	loadouts[loadout_key] = party_ids
+	print("Saved loadout ", loadout_num, " with IDs: ", party_ids)
 
 func update_loadout_buttons():
 	for i in range(MAX_LOADOUTS):
 		var btn = loadout_buttons[i]
 		if not btn:
 			continue
-			
-		if i + 1 == current_loadout:
-			btn.modulate = Color(1.3, 1.3, 1.0)
+		
+		var is_current = (i + 1 == current_loadout)
+		var is_deployed = (i + 1 == GameManager.player_profile.get("current_loadout", 1))
+		
+		if is_current and is_deployed:
+			btn.modulate = Color(0.8, 1.2, 0.8)
+			btn.add_theme_color_override("font_color", Color(0.2, 0.9, 0.2))
+		elif is_current:
+			btn.modulate = Color(1.3, 1.3, 0.5)
 			btn.add_theme_color_override("font_color", Color.WHITE)
+		elif is_deployed:
+			btn.modulate = Color(1, 1, 1)
+			btn.add_theme_color_override("font_color", Color(0.4, 0.8, 0.4))
 		else:
 			btn.modulate = Color(1, 1, 1)
 			var loadout_key = str(i + 1)
@@ -218,7 +211,10 @@ func restore_party():
 				for id_str in cleaned.split(","):
 					party_ids.append(int(float(id_str.strip_edges())))
 	
-	print("Restoring party from loadout ", current_loadout, ": ", party_ids)
+	print("Restoring party from loadout ", current_loadout, " with IDs: ", party_ids)
+	
+	# CRITICAL: Always create fresh array
+	selected_party = [null, null, null, null]
 	
 	if party_ids.size() > 0:
 		var has_any = false
@@ -229,9 +225,24 @@ func restore_party():
 				if c:
 					selected_party[i] = c
 					has_any = true
+		
 		if has_any:
+			# FIXED: Check if David is already present before adding default
+			var david_present = false
+			for i in range(4):
+				if selected_party[i] != null and selected_party[i].character_id == 1:
+					david_present = true
+					break
+			
+			# Only add default if slot 0 is empty AND David isn't already there
+			if selected_party[0] == null and not david_present:
+				var manasan = get_char_from_list(1)
+				if manasan:
+					selected_party[0] = manasan
+					print("Added default Manasan to slot 0 (restore_party)")
 			return
 	
+	# Fallback - only if completely empty
 	var manasan = get_char_from_list(1)
 	if manasan:
 		selected_party[0] = manasan
@@ -318,15 +329,18 @@ func _on_available_char_pressed(char_data: CharacterData):
 	
 	if active_slot != -1:
 		if found_at != -1 and found_at == active_slot:
+			# Remove from current slot
 			selected_party[active_slot] = null
 			print(char_data.character_name + " removed from slot " + str(active_slot + 1))
 		elif found_at != -1 and found_at != active_slot:
+			# SWAP: Use selected_party array only, NOT char_data!
 			var temp = selected_party[active_slot]
-			selected_party[active_slot] = char_data
+			selected_party[active_slot] = selected_party[found_at]
 			selected_party[found_at] = temp
-			print(char_data.character_name + " swapped to slot " + str(active_slot + 1))
+			print(char_data.character_name + " swapped: now in slot " + str(active_slot + 1) + ", moved from slot " + str(found_at + 1))
 		else:
-			selected_party[active_slot] = char_data
+			# Add new - create fresh duplicate
+			selected_party[active_slot] = char_data.duplicate()
 			print(char_data.character_name + " added to slot " + str(active_slot + 1))
 	
 	active_slot = -1
@@ -338,9 +352,8 @@ func _on_available_char_pressed(char_data: CharacterData):
 	
 	update_slots()
 	update_loadout_buttons()
-	
-	# AUTO-SAVE after any change!
-	await auto_save_loadout(current_loadout)
+	save_to_loadout(current_loadout)
+	GameManager.player_profile["party_loadouts"] = loadouts.duplicate()
 
 func update_slots():
 	for i in range(4):
@@ -363,7 +376,6 @@ func update_slots():
 			get_slot_control(i).modulate = Color(1, 1, 1)
 
 func _on_confirm_pressed():
-	# Final save and set as active party
 	save_to_loadout(current_loadout)
 	
 	var party = []
@@ -376,6 +388,7 @@ func _on_confirm_pressed():
 		return
 	
 	GameManager.set_party(party)
+	GameManager.player_profile["current_loadout"] = current_loadout
 	
 	var party_ids = []
 	for c in selected_party:
@@ -384,12 +397,36 @@ func _on_confirm_pressed():
 		else:
 			party_ids.append(0)
 	
-	# One final save to ensure everything is synced
-	await auto_save_loadout(current_loadout)
+	var http = HTTPRequest.new()
+	add_child(http)
+	var headers = [
+		"Content-Type: application/json",
+		"apikey: " + SupabaseManager.SUPABASE_ANON_KEY,
+		"Authorization: Bearer " + SupabaseManager.auth_token
+	]
+	var uid = GameManager.player_profile.get("uid", 0)
+	var body = JSON.stringify({
+		"party_loadouts": loadouts,
+		"current_loadout": current_loadout,
+		"saved_party": party_ids
+	})
 	
+	http.request_completed.connect(func(_result, _response_code, _headers, _body):
+		http.queue_free()
+		print("Confirm save complete - deployed loadout ", current_loadout)
+	)
+	
+	http.request(SupabaseManager.SUPABASE_URL + "/rest/v1/player_profile?uid=eq." + str(int(uid)), headers, HTTPClient.METHOD_PATCH, body)
+	
+	GameManager.player_profile["party_loadouts"] = loadouts.duplicate()
+	GameManager.player_profile["current_loadout"] = current_loadout
+	GameManager.player_profile["saved_party"] = party_ids
+	
+	print("Deployed loadout ", current_loadout, " as active party")
 	get_tree().change_scene_to_file("res://Scenes/HubTown.tscn")
 
 func _on_close_pressed():
+	print("Closed without deploying - no changes saved to DB")
 	get_tree().change_scene_to_file("res://Scenes/HubTown.tscn")
 
 func _input(event):
