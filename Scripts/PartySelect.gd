@@ -7,9 +7,13 @@ const ELEMENT_COLORS = {
 	"Earth": Color(0.6, 0.4, 0.2)
 }
 
+const MAX_LOADOUTS = 6
+
 var all_characters: Array = []
 var selected_party: Array = [null, null, null, null]
 var active_slot: int = -1
+var current_loadout: int = 1
+var loadouts: Dictionary = {}
 
 @onready var slot_textures = [
 	$CharacterDisplay/SlotsContainer/Slot1/SlotTexture1,
@@ -41,9 +45,27 @@ var active_slot: int = -1
 @onready var uid_label = $BottomBar/UIDLabel
 @onready var close_btn = $TopBar/CloseButton
 
+# FIXED: TeamTabs is under TopBar!
+@onready var loadout_buttons = [
+	$TopBar/TeamTabs/Tab1,
+	$TopBar/TeamTabs/Tab2,
+	$TopBar/TeamTabs/Tab3,
+	$TopBar/TeamTabs/Tab4,
+	$TopBar/TeamTabs/Tab5,
+	$TopBar/TeamTabs/Tab6
+]
+
 func _ready():
 	confirm_btn.pressed.connect(_on_confirm_pressed)
 	close_btn.pressed.connect(_on_close_pressed)
+	
+	# Connect loadout buttons with null check
+	for i in range(MAX_LOADOUTS):
+		var btn = loadout_buttons[i]
+		if btn:
+			btn.pressed.connect(_on_loadout_pressed.bind(i + 1))
+		else:
+			push_error("Loadout button " + str(i + 1) + " not found!")
 	
 	for i in range(4):
 		var idx = i
@@ -56,44 +78,121 @@ func _ready():
 	for tex in slot_textures:
 		tex.visible = false
 	
+	initialize_loadouts()
 	load_characters()
 	restore_party()
 	update_slots()
+	update_loadout_buttons()
+
+func initialize_loadouts():
+	var saved_loadouts = GameManager.player_profile.get("party_loadouts", {})
+	if saved_loadouts is Dictionary:
+		loadouts = saved_loadouts
+	else:
+		loadouts = {}
+	
+	for i in range(1, MAX_LOADOUTS + 1):
+		if not loadouts.has(str(i)):
+			loadouts[str(i)] = [null, null, null, null]
+	
+	current_loadout = GameManager.player_profile.get("current_loadout", 1)
+	if current_loadout < 1 or current_loadout > MAX_LOADOUTS:
+		current_loadout = 1
+
+func _on_loadout_pressed(loadout_num: int):
+	print("Switching to loadout: ", loadout_num)
+	
+	save_to_loadout(current_loadout)
+	current_loadout = loadout_num
+	
+	var loadout_key = str(current_loadout)
+	if loadouts.has(loadout_key):
+		var saved_party = loadouts[loadout_key]
+		selected_party = [null, null, null, null]
+		for i in range(min(saved_party.size(), 4)):
+			var char_id = saved_party[i]
+			if char_id != null and char_id != 0:
+				var c = get_char_from_list(int(char_id))
+				if c:
+					selected_party[i] = c
+	
+	if selected_party[0] == null:
+		var manasan = get_char_from_list(1)
+		if manasan:
+			selected_party[0] = manasan
+	
+	update_slots()
+	update_loadout_buttons()
+
+func save_to_loadout(loadout_num: int):
+	var loadout_key = str(loadout_num)
+	var party_ids = []
+	for c in selected_party:
+		if c != null:
+			party_ids.append(c.character_id)
+		else:
+			party_ids.append(null)
+	loadouts[loadout_key] = party_ids
+
+func update_loadout_buttons():
+	for i in range(MAX_LOADOUTS):
+		var btn = loadout_buttons[i]
+		if not btn:
+			continue
+			
+		if i + 1 == current_loadout:
+			btn.modulate = Color(1.3, 1.3, 1.0)
+			btn.add_theme_color_override("font_color", Color.WHITE)
+		else:
+			btn.modulate = Color(1, 1, 1)
+			var loadout_key = str(i + 1)
+			var has_chars = false
+			if loadouts.has(loadout_key):
+				for char_id in loadouts[loadout_key]:
+					if char_id != null and char_id != 0:
+						has_chars = true
+						break
+			if has_chars:
+				btn.add_theme_color_override("font_color", Color(0.7, 0.9, 1.0))
+			else:
+				btn.add_theme_color_override("font_color", Color(0.5, 0.5, 0.5))
 
 func get_char_from_list(char_id: int) -> CharacterData:
-	for char in all_characters:
-		if char.character_id == char_id:
-			return char.duplicate()
+	for c in all_characters:
+		if c.character_id == char_id:
+			return c.duplicate()
 	return null
 
 func restore_party():
-	var party_ids = GameManager.player_profile.get("saved_party", [])
+	var loadout_key = str(current_loadout)
+	var party_ids = []
 	
-	var ids_array = []
-	if party_ids is Array:
-		ids_array = party_ids
-	elif party_ids is String:
-		var cleaned = party_ids.replace("{", "").replace("}", "").strip_edges()
-		if cleaned != "":
-			for id_str in cleaned.split(","):
-				ids_array.append(int(float(id_str.strip_edges())))
+	if loadouts.has(loadout_key):
+		party_ids = loadouts[loadout_key]
+	else:
+		var legacy_party = GameManager.player_profile.get("saved_party", [])
+		if legacy_party is Array:
+			party_ids = legacy_party
+		elif legacy_party is String:
+			var cleaned = legacy_party.replace("{", "").replace("}", "").strip_edges()
+			if cleaned != "":
+				for id_str in cleaned.split(","):
+					party_ids.append(int(float(id_str.strip_edges())))
 	
-	print("Restoring party from IDs: ", ids_array)
+	print("Restoring party from loadout ", current_loadout, ": ", party_ids)
 	
-	if ids_array.size() > 0:
+	if party_ids.size() > 0:
 		var has_any = false
-		for i in range(min(ids_array.size(), 4)):
-			var char_id = int(ids_array[i])
-			if char_id != 0:
-				var char = get_char_from_list(char_id)
-				if char:
-					selected_party[i] = char
+		for i in range(min(party_ids.size(), 4)):
+			var char_id = party_ids[i]
+			if char_id != null and char_id != 0:
+				var c = get_char_from_list(int(char_id))
+				if c:
+					selected_party[i] = c
 					has_any = true
-					print("Restored slot ", i, ": ", char.character_name)
 		if has_any:
 			return
 	
-	print("No saved party - adding Manasan as default")
 	var manasan = get_char_from_list(1)
 	if manasan:
 		selected_party[0] = manasan
@@ -166,15 +265,12 @@ func _on_slot_clicked(event: InputEvent, index: int):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		active_slot = index
 		char_select_panel.visible = true
-		print("Slot clicked: ", index, " active_slot set to: ", active_slot)
 		for i in range(4):
 			var slot = get_slot_control(i)
 			if slot:
 				slot.modulate = Color(1.5, 1.5, 0.5) if i == active_slot else Color(1, 1, 1)
 
 func _on_available_char_pressed(char_data: CharacterData):
-	print("Active slot when adding: ", active_slot)
-	
 	var found_at = -1
 	for i in range(4):
 		if selected_party[i] != null and selected_party[i].character_id == char_data.character_id:
@@ -184,15 +280,12 @@ func _on_available_char_pressed(char_data: CharacterData):
 	if active_slot != -1:
 		if found_at != -1 and found_at == active_slot:
 			selected_party[active_slot] = null
-			print(char_data.character_name + " removed from slot " + str(active_slot + 1))
 		elif found_at != -1 and found_at != active_slot:
 			var temp = selected_party[active_slot]
 			selected_party[active_slot] = char_data
 			selected_party[found_at] = temp
-			print(char_data.character_name + " swapped to slot " + str(active_slot + 1))
 		else:
 			selected_party[active_slot] = char_data
-			print(char_data.character_name + " added to slot " + str(active_slot + 1))
 	
 	active_slot = -1
 	char_select_panel.visible = false
@@ -202,6 +295,7 @@ func _on_available_char_pressed(char_data: CharacterData):
 			slot.modulate = Color(1, 1, 1)
 	
 	update_slots()
+	update_loadout_buttons()
 
 func update_slots():
 	for i in range(4):
@@ -224,10 +318,12 @@ func update_slots():
 			get_slot_control(i).modulate = Color(1, 1, 1)
 
 func _on_confirm_pressed():
+	save_to_loadout(current_loadout)
+	
 	var party = []
-	for char in selected_party:
-		if char != null:
-			party.append(char)
+	for c in selected_party:
+		if c != null:
+			party.append(c)
 	
 	if party.size() == 0:
 		print("Select at least 1 character!")
@@ -236,13 +332,13 @@ func _on_confirm_pressed():
 	GameManager.set_party(party)
 	
 	var party_ids = []
-	for char in selected_party:
-		if char != null:
-			party_ids.append(char.character_id)
+	for c in selected_party:
+		if c != null:
+			party_ids.append(c.character_id)
 		else:
 			party_ids.append(0)
 	
-	print("Saving party IDs with slots: ", party_ids)
+	print("Saving loadout ", current_loadout, ": ", party_ids)
 	
 	var http = HTTPRequest.new()
 	add_child(http)
@@ -252,14 +348,18 @@ func _on_confirm_pressed():
 		"Authorization: Bearer " + SupabaseManager.auth_token
 	]
 	var uid = GameManager.player_profile.get("uid", 0)
-	var body = JSON.stringify({"saved_party": party_ids})
+	var body = JSON.stringify({
+		"party_loadouts": loadouts,
+		"current_loadout": current_loadout,
+		"saved_party": party_ids
+	})
 	
 	http.request(SupabaseManager.SUPABASE_URL + "/rest/v1/player_profile?uid=eq." + str(int(uid)), headers, HTTPClient.METHOD_PATCH, body)
 	var response = await http.request_completed
 	http.queue_free()
-	print("Save party response code: ", response[1])
 	
-	# CRITICAL FIX: Update local cache immediately after successful save
+	GameManager.player_profile["party_loadouts"] = loadouts
+	GameManager.player_profile["current_loadout"] = current_loadout
 	GameManager.player_profile["saved_party"] = party_ids
 	
 	get_tree().change_scene_to_file("res://Scenes/HubTown.tscn")
