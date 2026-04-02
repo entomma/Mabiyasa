@@ -82,10 +82,12 @@ func _ready():
 
 func initialize_loadouts():
 	var saved_loadouts = GameManager.player_profile.get("party_loadouts", {})
+	loadouts = {}
+	
 	if saved_loadouts is Dictionary:
-		loadouts = saved_loadouts.duplicate()
-	else:
-		loadouts = {}
+		# Postgres may return integer keys — normalize to strings
+		for key in saved_loadouts:
+			loadouts[str(key)] = saved_loadouts[key]
 	
 	for i in range(1, MAX_LOADOUTS + 1):
 		var key = str(i)
@@ -99,6 +101,8 @@ func initialize_loadouts():
 				loadouts[key] = [null, null, null, null]
 	
 	current_loadout = GameManager.player_profile.get("current_loadout", 1)
+	if typeof(current_loadout) != TYPE_INT:
+		current_loadout = int(current_loadout)
 	if current_loadout < 1 or current_loadout > MAX_LOADOUTS:
 		current_loadout = 1
 

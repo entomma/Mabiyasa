@@ -1364,6 +1364,27 @@ func enemy_turn(entry: Dictionary):
 		_show_floating_text(str(raw_dmg), Color(1.0,0.3,0.3), _ally_screen_pos(target_idx))
 
 	_update_portrait_hp(target_idx)
+
+	# ── CHECK IF CHARACTER DIED ────────────────────────────────────────
+	if character_hp[target_idx] <= 0:
+		print(cd.character_name, " has fallen!")
+		# Fade out portrait
+		if target_idx < portrait_containers.size() and is_instance_valid(portrait_containers[target_idx]):
+			var t = create_tween()
+			t.tween_property(portrait_containers[target_idx], "modulate:a", 0.3, 0.4)
+		# Remove from party and tracking arrays
+		GameManager.player_party.remove_at(target_idx)
+		character_hp.remove_at(target_idx)
+		character_shields.remove_at(target_idx)
+		# Remove from turn queue too
+		turn_queue = turn_queue.filter(func(t):
+			if t.type == "player": return GameManager.player_party.has(t.data)
+			return true
+		)
+		check_battle_end()
+		if enemies.size() == 0 or GameManager.player_party.size() == 0:
+			return
+
 	current_turn_index += 1
 	process_next_turn()
 
@@ -1374,7 +1395,7 @@ func check_battle_end():
 	if enemies.size() == 0:
 		print("Victory!")
 		await get_tree().create_timer(2.0).timeout
-		SupabaseManager.add_pulls(1)
+		await SupabaseManager.add_pulls(1)  # ← add await
 		GameManager.end_combat()
 		get_tree().change_scene_to_file(origin_scene)
 	elif GameManager.player_party.size() == 0:

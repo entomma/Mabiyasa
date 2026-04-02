@@ -350,3 +350,4 @@ func add_pulls(amount: int) -> void:
 	
 	GameManager.player_profile["pulls"] = current_pulls + amount
 	print("Pulls added: ", amount, " Total: ", current_pulls + amount)
+	print("Pulls save response code: ", response[1])
