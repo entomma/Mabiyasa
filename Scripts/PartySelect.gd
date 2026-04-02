@@ -147,6 +147,9 @@ func _on_loadout_pressed(loadout_num: int):
 	print("Loadout ", loadout_num, " loaded: ", selected_party)
 	update_slots()
 	update_loadout_buttons()
+	
+	# ─── AUTO-SAVE: Persist loadout switch to database ───
+	save_loadout_to_database()
 
 func save_to_loadout(loadout_num: int):
 	# Store only ID numbers, NOT object references!
@@ -160,6 +163,28 @@ func save_to_loadout(loadout_num: int):
 	
 	loadouts[loadout_key] = party_ids
 	print("Saved loadout ", loadout_num, " with IDs: ", party_ids)
+
+func save_loadout_to_database() -> void:
+	"""Auto-save loadout state to Supabase immediately after modification"""
+	var http = HTTPRequest.new()
+	add_child(http)
+	var headers = [
+		"Content-Type: application/json",
+		"apikey: " + SupabaseManager.SUPABASE_ANON_KEY,
+		"Authorization: Bearer " + SupabaseManager.auth_token
+	]
+	var uid = GameManager.player_profile.get("uid", 0)
+	var body = JSON.stringify({
+		"party_loadouts": loadouts,
+		"current_loadout": current_loadout
+	})
+	
+	http.request_completed.connect(func(_result, _response_code, _headers, _body):
+		http.queue_free()
+		print("✓ Loadout auto-saved to database")
+	)
+	
+	http.request(SupabaseManager.SUPABASE_URL + "/rest/v1/player_profile?uid=eq." + str(int(uid)), headers, HTTPClient.METHOD_PATCH, body)
 
 func update_loadout_buttons():
 	for i in range(MAX_LOADOUTS):
@@ -358,6 +383,9 @@ func _on_available_char_pressed(char_data: CharacterData):
 	update_loadout_buttons()
 	save_to_loadout(current_loadout)
 	GameManager.player_profile["party_loadouts"] = loadouts.duplicate()
+	
+	# ─── AUTO-SAVE: Persist character changes to database ───
+	save_loadout_to_database()
 
 func update_slots():
 	for i in range(4):
