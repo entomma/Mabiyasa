@@ -1,13 +1,19 @@
 [gd_resource type="Resource" script_class="CharacterData" format=3 uid="uid://erdackgtkf64"]
 
 [ext_resource type="Script" uid="uid://c7oxuy1pf0voe" path="res://Scripts/CharacterData.gd" id="1_4jk7p"]
+[ext_resource type="Resource" uid="uid://bbb4wvec3awaq" path="res://Resources/Skills/Gwardya/gwardya_basic.tres" id="1_48jnf"]
+[ext_resource type="Texture2D" uid="uid://ddjuhke60ysro" path="res://Assets/com.png" id="2_6pefj"]
+[ext_resource type="Resource" uid="uid://4u5n4vqelpxd" path="res://Resources/Skills/Gwardya/gwardya_skill.tres" id="3_naybv"]
+[ext_resource type="Resource" uid="uid://1xg1tjloerw4" path="res://Resources/Skills/Gwardya/gwardya_talent.tres" id="5_tshdf"]
+[ext_resource type="Resource" uid="uid://c2gg2ijp5whyq" path="res://Resources/Skills/Gwardya/gwardya_ult.tres" id="6_uwwal"]
 
 [resource]
 script = ExtResource("1_4jk7p")
 character_id = 4
-character_name = "Ralf Juxtin Batoon el Ramos"
+character_name = "Ralf"
 english_name = "Guard"
 job = "Gwardya"
+splash_art = ExtResource("2_6pefj")
 element = "Earth"
 max_hp = 1500
 base_attack = 480
@@ -18,4 +24,8 @@ attack_per_level = 12.0
 defense_per_level = 20.0
 talent_name = "Iron Will"
 talent_description = "NA"
+basic_attack = ExtResource("1_48jnf")
+skill = ExtResource("3_naybv")
+ultimate = ExtResource("6_uwwal")
+talent = ExtResource("5_tshdf")
 metadata/_custom_type_script = "uid://c7oxuy1pf0voe"

@@ -6,6 +6,7 @@
 script = ExtResource("1_ngu1k")
 skill_id = 16
 skill_name = "Balwarte ning Lupa"
+skill_type = "Ultimate"
 damage_bonus_per_level = 0.0
 heal_bonus_per_level = 0.0
 shield_bonus_per_level = 0.02

@@ -1,4 +1,2 @@
--- Run this in Supabase SQL editor
-ALTER TABLE player_profile 
-ADD COLUMN party_loadouts JSONB DEFAULT '{}'::jsonb,
-ADD COLUMN current_loadout INTEGER DEFAULT 1;
+INSERT INTO player_characters (uid, character_id, current_level, current_exp)
+VALUES (10014, 4, 1, 0);
