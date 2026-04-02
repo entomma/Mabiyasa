@@ -422,13 +422,6 @@ func _on_confirm_pressed():
 	GameManager.set_party(party)
 	GameManager.player_profile["current_loadout"] = current_loadout
 	
-	var party_ids = []
-	for c in selected_party:
-		if c != null:
-			party_ids.append(c.character_id)
-		else:
-			party_ids.append(0)
-	
 	var http = HTTPRequest.new()
 	add_child(http)
 	var headers = [
@@ -439,8 +432,7 @@ func _on_confirm_pressed():
 	var uid = GameManager.player_profile.get("uid", 0)
 	var body = JSON.stringify({
 		"party_loadouts": loadouts,
-		"current_loadout": current_loadout,
-		"saved_party": party_ids
+		"current_loadout": current_loadout
 	})
 	
 	http.request_completed.connect(func(_result, _response_code, _headers, _body):
@@ -452,15 +444,17 @@ func _on_confirm_pressed():
 	
 	GameManager.player_profile["party_loadouts"] = loadouts.duplicate()
 	GameManager.player_profile["current_loadout"] = current_loadout
-	GameManager.player_profile["saved_party"] = party_ids
 	
 	print("Deployed loadout ", current_loadout, " as active party")
 	get_tree().change_scene_to_file("res://Scenes/HubTown.tscn")
 
 func _on_close_pressed():
-	print("Closed without deploying - no changes saved to DB")
+	# Save current loadout state before closing
+	save_to_loadout(current_loadout)
+	save_loadout_to_database()
+	
+	print("Closed - current loadout saved to DB")
 	get_tree().change_scene_to_file("res://Scenes/HubTown.tscn")
-
 func _input(event):
 	if event.is_action_pressed("ui_cancel"):
 		if char_select_panel.visible:

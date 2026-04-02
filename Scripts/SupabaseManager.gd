@@ -64,20 +64,27 @@ func login(email: String, password: String) -> Dictionary:
 	return result
 
 # Create player profile after register
-func create_player_profile(username: String) -> Variant:
+func create_player_profile(username: String) -> Dictionary:
 	var http = HTTPRequest.new()
 	add_child(http)
 	
 	var headers = [
 		"Content-Type: application/json",
 		"apikey: " + SUPABASE_ANON_KEY,
-		"Authorization: Bearer " + auth_token,
-		"Prefer: return=representation"
+		"Authorization: Bearer " + auth_token
 	]
 	
 	var body = JSON.stringify({
-		"account_id": current_user_id,
-		"username": username
+		"username": username,
+		"party_loadouts": {
+			"1": [1, null, null, null],
+			"2": [1, null, null, null],
+			"3": [1, null, null, null],
+			"4": [1, null, null, null],
+			"5": [1, null, null, null],
+			"6": [1, null, null, null]
+		},
+		"current_loadout": 1
 	})
 	
 	http.request(SUPABASE_URL + "/rest/v1/player_profile", headers, HTTPClient.METHOD_POST, body)
@@ -85,19 +92,8 @@ func create_player_profile(username: String) -> Variant:
 	http.queue_free()
 	
 	var response_body = response[3].get_string_from_utf8()
-	print("Profile creation response: ", response_body)
-	
-	if response_body == "":
-		return {"success": true}
-	
-	var result = JSON.parse_string(response_body)
-	if result == null:
-		return {"success": true}
-	
-	# Give Manasan after profile created
-	await give_starter_characters()
-	
-	return result
+	print("Profile created: ", response_body)
+	return JSON.parse_string(response_body)
 
 # Give starter characters after profile creation
 func give_starter_characters() -> void:
@@ -186,34 +182,35 @@ func load_player_state() -> void:
 		GameManager.has_saved_position = true
 		print("Position loaded: ", pos)
 	
-	# ─── LOAD CURRENT LOADOUT AS PARTY ───
-	var current_loadout = profile.get("current_loadout", 1)
+	# ─── LOAD PARTY FROM CURRENT LOADOUT ───
+	var current_loadout_raw = profile.get("current_loadout", 1)
+	
+	# FIX: Convert to integer properly
+	var current_loadout = 1
+	if typeof(current_loadout_raw) == TYPE_FLOAT:
+		current_loadout = int(current_loadout_raw)
+	elif typeof(current_loadout_raw) == TYPE_INT:
+		current_loadout = current_loadout_raw
+	elif typeof(current_loadout_raw) == TYPE_STRING:
+		current_loadout = int(current_loadout_raw)
+	else:
+		current_loadout = 1
+	
 	var party_loadouts = profile.get("party_loadouts", {})
 	
 	var party_ids = []
 	
-	# First, try to load from the current loadout
 	if party_loadouts is Dictionary:
-		var loadout_key = str(current_loadout)
+		# FIX: Use integer key, not string
+		var loadout_key = str(current_loadout)  # This will be "2" instead of "2.0"
 		if party_loadouts.has(loadout_key):
 			var loadout_data = party_loadouts[loadout_key]
 			if loadout_data is Array:
 				party_ids = loadout_data
 				print("Loading party from current loadout ", current_loadout, ": ", party_ids)
-	
-	# If no loadout found, fall back to saved_party (legacy/deployed party)
-	if party_ids.is_empty():
-		var saved_party = profile.get("saved_party", [])
-		print("saved_party from DB: ", saved_party)
-		
-		# Handle string format from Postgres e.g. "{1,0,3,0}"
-		if saved_party is Array:
-			party_ids = saved_party
-		elif saved_party is String:
-			var cleaned = saved_party.replace("{", "").replace("}", "").strip_edges()
-			if cleaned != "":
-				for id_str in cleaned.split(","):
-					party_ids.append(int(id_str.strip_edges()))
+		else:
+			print("Loadout key not found: ", loadout_key)
+			print("Available keys: ", party_loadouts.keys())
 	
 	print("Parsed party IDs: ", party_ids)
 	
@@ -223,8 +220,14 @@ func load_player_state() -> void:
 		
 		for i in range(min(party_ids.size(), 4)):
 			var char_id = party_ids[i]
-			if char_id != null and char_id != 0:  # 0 = empty slot
-				var char_resource = GameManager.get_character_by_id(int(char_id))
+			if char_id != null and char_id != 0:
+				# Handle float IDs (1.0 -> 1)
+				if typeof(char_id) == TYPE_FLOAT:
+					char_id = int(char_id)
+				elif typeof(char_id) == TYPE_STRING:
+					char_id = int(char_id)
+				
+				var char_resource = GameManager.get_character_by_id(char_id)
 				if char_resource:
 					slot_party[i] = char_resource
 					party.append(char_resource)
@@ -234,8 +237,10 @@ func load_player_state() -> void:
 			GameManager.player_party = party
 			GameManager.saved_party_slots = slot_party
 			print("Party loaded: ", party.size(), " characters")
+		else:
+			print("No valid characters found in loadout")
 	else:
-		print("No saved party found!")
+		print("No party found in current loadout ", current_loadout)
 
 func fetch_player_characters() -> Array:
 	var http = HTTPRequest.new()
