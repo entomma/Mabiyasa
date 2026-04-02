@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="WordCard" format=3 uid="uid://bwsij5g0s122o"]
+
+[ext_resource type="Script" uid="uid://c45njmt8b0c61" path="res://Scripts/WordCard.gd" id="1_f2l2e"]
+
+[resource]
+script = ExtResource("1_f2l2e")
+card_id = 13
+kapampangan_text = "Ya"
+english_hint = "He/She"
+card_type = "Pronoun"
+category = "General"
+metadata/_custom_type_script = "uid://c45njmt8b0c61"

@@ -5,6 +5,7 @@ extends Node3D
 # ─────────────────────────────────────────────
 @onready var card_panel         = $BattleUI/CardPanel
 @onready var card_grid          = $BattleUI/CardPanel/CardGrid
+
 @onready var sentence_bar       = $BattleUI/CardPanel/SentenceBar
 @onready var sentence_container = $BattleUI/CardPanel/SentenceBar/SentenceContainer
 @onready var submit_btn         = $BattleUI/CardPanel/SentenceBar/SubmitButton
@@ -33,6 +34,7 @@ var enemy_ui_nodes:      Array = []   # { root, hp_bar, shield_bar, hp_label, wo
 # ─────────────────────────────────────────────
 #  Battle state
 # ─────────────────────────────────────────────
+var _is_processing_turn: bool = false
 var turn_queue:       Array                = []
 var current_turn_index: int               = 0
 var current_character: CharacterData      = null
@@ -81,7 +83,8 @@ const CARD_COLORS = {
 	"Action"   : Color(0.85, 0.35, 0.28),
 	"Noun"     : Color(0.20, 0.50, 0.85),
 	"Number"   : Color(0.20, 0.75, 0.40),
-	"Adjective": Color(0.75, 0.50, 0.85)
+	"Adjective": Color(0.75, 0.50, 0.85),
+	"Pronoun"  : Color(0.90, 0.60, 0.10)   # orange
 }
 const PENALTY_NO_AFFIX      = 0.10
 const PENALTY_UNMASTERED    = 0.20
@@ -742,15 +745,19 @@ func draw_hand():
 	for f in DirAccess.get_files_at("res://Resources/Cards/"):
 		if f.ends_with(".tres"): all_cards.append(load("res://Resources/Cards/" + f))
 
-	var verbs = all_cards.filter(func(c): return c.card_type == "Action")
-	var nouns = all_cards.filter(func(c): return c.card_type == "Noun")
-	verbs.shuffle()
-	nouns.shuffle()
+	var verbs     = all_cards.filter(func(c): return c.card_type == "Action")
+	var nouns     = all_cards.filter(func(c): return c.card_type == "Noun")
+	var pronouns  = all_cards.filter(func(c): return c.card_type == "Pronoun")
+	verbs.shuffle(); nouns.shuffle(); pronouns.shuffle()
 
-	var has_verb = hand.any(func(c): return c.card_type == "Action")
-	var has_noun = hand.any(func(c): return c.card_type == "Noun")
-	if not has_verb and verbs.size() > 0: hand.append(verbs[0])
-	if not has_noun and nouns.size() > 0: hand.append(nouns[0])
+	var has_verb    = hand.any(func(c): return c.card_type == "Action")
+	var has_noun    = hand.any(func(c): return c.card_type == "Noun")
+	var has_pronoun = hand.any(func(c): return c.card_type == "Pronoun")
+
+	# Guarantee 1 verb, 1 noun, 1 pronoun
+	if not has_verb    and verbs.size()    > 0: hand.append(verbs[0])
+	if not has_noun    and nouns.size()    > 0: hand.append(nouns[0])
+	if not has_pronoun and pronouns.size() > 0: hand.append(pronouns[0])
 
 	all_cards.shuffle()
 	for card in all_cards:
@@ -792,6 +799,8 @@ func process_next_turn():
 		await enemy_turn(current.data)
 
 func show_skill_buttons():
+	_is_processing_turn = false  # ← ADD THIS LINE at top
+	submit_btn.disabled = false  # ← ADD THIS LINE
 	skill_buttons.visible = true
 	card_panel.visible    = false
 	sentence_bar.visible  = false
@@ -948,13 +957,16 @@ func update_sentence_display():
 #  Submit
 # ─────────────────────────────────────────────
 func _on_submit_pressed():
+	# LOCK: prevent spam
+	if _is_processing_turn: return
 	if sentence.size() == 0 or (enemies.size() == 0 and not current_skill.targets_ally()): return
+	_is_processing_turn = true
+	submit_btn.disabled = true
 
 	var quality     = analyse_sentence_quality()
 	var raw_damage  = calculate_damage(quality)
 	var turn_damage = 0
 
-	# ── Damage skills ──────────────────────────────────────────────────
 	if current_skill.is_damage_skill():
 		if current_skill.is_aoe():
 			for i in range(enemies.size()):
@@ -962,32 +974,31 @@ func _on_submit_pressed():
 		else:
 			turn_damage = await deal_damage(raw_damage, targeted_enemy_index)
 
-	# ── Non-damage skills (heals, shields, buffs) ──────────────────────
 	resolve_skill_effects()
 
-	# ── SP: deduct or gain ─────────────────────────────────────────────
-	match current_skill.skill_type:
-		"Basic":
+	# SP and energy — normalize skill_type to handle lowercase
+	var stype = current_skill.skill_type.to_lower() if current_skill.skill_type else ""
+	match stype:
+		"basic":
 			current_sp = min(current_sp + current_skill.sp_gain, max_sp)
 			_give_energy_action(current_character, ENERGY_FROM_BASIC)
-		"Skill":
+			print("Basic used — energy given: ", ENERGY_FROM_BASIC)
+		"skill":
 			current_sp = max(0, current_sp - current_skill.sp_cost)
 			_give_energy_action(current_character, ENERGY_FROM_SKILL)
-		"Ultimate":
+			print("Skill used — energy given: ", ENERGY_FROM_SKILL)
+		"ultimate":
 			current_character.consume_energy()
 			_update_energy_display(_index_of_current_char())
 
 	_update_sp_display()
 
-	# ── Mastery ────────────────────────────────────────────────────────
 	if quality.grammar_ok:
 		for card in sentence: _update_card_mastery_in_db(card)
 
-	# ── Show turn damage (this turn only, auto-hides after 2.5s) ───────
 	if turn_damage > 0:
 		_show_turn_damage(turn_damage)
 
-	# ── Feedback popup ─────────────────────────────────────────────────
 	await get_tree().create_timer(0.5).timeout
 	show_feedback_popup(turn_damage, quality)
 
@@ -999,6 +1010,11 @@ func _on_submit_pressed():
 	await get_tree().create_timer(1.5).timeout
 	card_panel.visible = false
 	_pan_camera_to_default()
+
+	# UNLOCK before next turn
+	_is_processing_turn = false
+	submit_btn.disabled = false
+
 	process_next_turn()
 
 # ─────────────────────────────────────────────
@@ -1006,48 +1022,128 @@ func _on_submit_pressed():
 # ─────────────────────────────────────────────
 func analyse_sentence_quality() -> Dictionary:
 	var r = {
-		"grammar_ok": false, "has_affix": false, "all_mastered": true,
-		"grammar_penalty": 0.0, "affix_penalty": 0.0, "mastery_penalty": 0.0,
-		"total_multiplier": 1.0, "feedback_lines": []
+		"grammar_ok": false,
+		"focus_type": "",
+		"word_order_ok": false,
+		"has_affix": false,
+		"all_mastered": true,
+		"grammar_penalty": 0.0,
+		"affix_penalty": 0.0,
+		"mastery_penalty": 0.0,
+		"total_multiplier": 1.0,
+		"feedback_lines": [],
+		"example_sentence": ""
 	}
-	var has_action      = false
-	var has_noun        = false
-	var first_is_action = sentence.size() > 0 and sentence[0].card_type == "Action"
+
+	# Categorise cards in sentence
+	var cards_by_type = {"Action": [], "Noun": [], "Pronoun": [], "Adjective": [], "Number": []}
 	for card in sentence:
-		if card.card_type == "Action": has_action = true
-		if card.card_type == "Noun":   has_noun   = true
+		var t = card.card_type
+		if cards_by_type.has(t):
+			cards_by_type[t].append(card)
+
+	var has_action  = cards_by_type["Action"].size() > 0
+	var has_noun    = cards_by_type["Noun"].size() > 0
+	var has_pronoun = cards_by_type["Pronoun"].size() > 0
+
+	# ── Word order check: first card must be an Action ──────────────────
+	r.word_order_ok = sentence.size() > 0 and sentence[0].card_type == "Action"
+
+	# ── Minimum requirements per skill type ────────────────────────────
+	var min_cards = 2
+	if current_skill.skill_type == "Skill":    min_cards = 3
+	elif current_skill.skill_type == "Ultimate": min_cards = 4
+
+	# ── Focus validation ────────────────────────────────────────────────
+	# Actor Focus:  Verb + Pronoun + Noun  (subject = who acts)
+	# Object Focus: Verb + Noun + Pronoun  (subject = what is acted on)
+	var is_actor_focus  = false
+	var is_object_focus = false
+
+	if r.word_order_ok and sentence.size() >= 2:
+		# Actor Focus: [Action, Pronoun, ...Noun...]
+		if sentence.size() >= 3:
+			is_actor_focus = (
+				sentence[0].card_type == "Action" and
+				sentence[1].card_type == "Pronoun" and
+				has_noun
+			)
+			# Object Focus: [Action, Noun, ...Pronoun...]
+			is_object_focus = (
+				sentence[0].card_type == "Action" and
+				sentence[1].card_type == "Noun" and
+				has_pronoun
+			)
+		elif sentence.size() == 2:
+			# Basic minimum: just Verb + Noun OR Verb + Pronoun
+			is_actor_focus  = (sentence[0].card_type == "Action" and has_noun)
+			is_object_focus = (sentence[0].card_type == "Action" and has_noun)
+
+	r.grammar_ok = (is_actor_focus or is_object_focus) and sentence.size() >= min_cards
+	if is_actor_focus:  r.focus_type = "Actor"
+	elif is_object_focus: r.focus_type = "Object"
+
+	# ── Build example sentence for feedback ────────────────────────────
+	var verb_text    = cards_by_type["Action"][0].kapampangan_text if has_action else "Verb"
+	var noun_text    = cards_by_type["Noun"][0].kapampangan_text   if has_noun   else "Noun"
+	var pronoun_text = cards_by_type["Pronoun"][0].kapampangan_text if has_pronoun else "Aku"
 
 	match current_skill.skill_type:
-		"Basic":    r.grammar_ok = has_action and has_noun
-		"Skill":    r.grammar_ok = has_action and has_noun and first_is_action and sentence.size() >= 3
-		"Ultimate": r.grammar_ok = has_action and has_noun and first_is_action and sentence.size() >= 4
-		_:          r.grammar_ok = has_action and has_noun
+		"Basic":
+			r.example_sentence = verb_text + " " + noun_text
+		"Skill":
+			r.example_sentence = verb_text + " " + pronoun_text + " " + noun_text + \
+				"\n(Actor) or: " + verb_text + " " + noun_text + " " + pronoun_text + " (Object)"
+		"Ultimate":
+			r.example_sentence = verb_text + " " + pronoun_text + " " + noun_text + " [+1 more card]"
 
-	if not r.grammar_ok:
+	# ── Grammar feedback ────────────────────────────────────────────────
+	if not r.word_order_ok:
 		r.grammar_penalty = PENALTY_WRONG_GRAMMAR
-		r.feedback_lines.append({"text":"Wrong grammar  −20% DMG","color":Color(1.0,0.35,0.35)})
+		r.feedback_lines.append({"text": "✗ Verb must come FIRST!", "color": Color(1.0, 0.35, 0.35)})
+		r.feedback_lines.append({"text": "→ " + r.example_sentence, "color": Color(0.9, 0.9, 0.5)})
+	elif not r.grammar_ok:
+		r.grammar_penalty = PENALTY_WRONG_GRAMMAR
+		if sentence.size() < min_cards:
+			r.feedback_lines.append({"text": "✗ Need " + str(min_cards) + " cards minimum!", "color": Color(1.0, 0.35, 0.35)})
+		elif not has_noun and current_skill.skill_type != "Basic":
+			r.feedback_lines.append({"text": "✗ Missing a Noun!", "color": Color(1.0, 0.35, 0.35)})
+		elif not has_pronoun and min_cards >= 3:
+			r.feedback_lines.append({"text": "✗ Missing a Pronoun (Aku/Ika/Ya)!", "color": Color(1.0, 0.35, 0.35)})
+		else:
+			r.feedback_lines.append({"text": "✗ Wrong sentence structure!", "color": Color(1.0, 0.35, 0.35)})
+		r.feedback_lines.append({"text": "→ Try: " + r.example_sentence, "color": Color(0.9, 0.9, 0.5)})
 	else:
-		r.feedback_lines.append({"text":"Correct grammar!","color":Color(0.35,1.0,0.5)})
+		match r.focus_type:
+			"Actor":
+				r.feedback_lines.append({"text": "✓ Actor Focus! (Verb + Pronoun + Noun)", "color": Color(0.35, 1.0, 0.5)})
+			"Object":
+				r.feedback_lines.append({"text": "✓ Object Focus! (Verb + Noun + Pronoun)", "color": Color(0.35, 1.0, 0.5)})
 
+	# ── Affix check ─────────────────────────────────────────────────────
 	for card in sentence:
-		if card.category in ["Affix","Prefix","Suffix","Connector"]: r.has_affix = true; break
+		if card.category in ["Affix", "Prefix", "Suffix", "Connector"]:
+			r.has_affix = true
+			break
 	if not r.has_affix:
 		r.affix_penalty = PENALTY_NO_AFFIX
-		r.feedback_lines.append({"text":"No affixes  −10% DMG","color":Color(1.0,0.65,0.2)})
+		r.feedback_lines.append({"text": "No affixes  −10% DMG", "color": Color(1.0, 0.65, 0.2)})
 	else:
-		r.feedback_lines.append({"text":"Affixes used!","color":Color(0.35,1.0,0.5)})
+		r.feedback_lines.append({"text": "✓ Affixes used!", "color": Color(0.35, 1.0, 0.5)})
 
+	# ── Mastery check ───────────────────────────────────────────────────
 	for card in sentence:
-		if not _is_card_mastered(card): r.all_mastered = false; break
+		if not _is_card_mastered(card):
+			r.all_mastered = false
+			break
 	if not r.all_mastered:
 		r.mastery_penalty = PENALTY_UNMASTERED
-		r.feedback_lines.append({"text":"Unmastered cards  −20% DMG","color":Color(1.0,0.35,0.35)})
+		r.feedback_lines.append({"text": "Unmastered cards  −20% DMG", "color": Color(1.0, 0.35, 0.35)})
 	else:
-		r.feedback_lines.append({"text":"All cards mastered!","color":Color(1.0,0.85,0.2)})
+		r.feedback_lines.append({"text": "✓ All cards mastered!", "color": Color(1.0, 0.85, 0.2)})
 
 	r.total_multiplier = max(0.40, 1.0 - r.grammar_penalty - r.affix_penalty - r.mastery_penalty)
 	return r
-
 # ─────────────────────────────────────────────
 #  Damage calculation
 # ─────────────────────────────────────────────
