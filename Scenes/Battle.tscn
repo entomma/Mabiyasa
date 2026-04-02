@@ -34,14 +34,12 @@ surface_material_override/0 = SubResource("StandardMaterial3D_vr6xi")
 [node name="BattleUI" type="CanvasLayer" parent="." unique_id=718896688]
 
 [node name="TurnOrder" type="VBoxContainer" parent="BattleUI" unique_id=2110049413]
-anchors_preset = -1
 offset_left = 4.0
 offset_top = 83.0
 offset_right = 224.0
 offset_bottom = 483.0
 
 [node name="TopRight" type="HBoxContainer" parent="BattleUI" unique_id=281507103]
-anchors_preset = -1
 offset_left = -400.0
 offset_bottom = 60.0
 grow_horizontal = 0

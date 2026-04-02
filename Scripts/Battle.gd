@@ -24,6 +24,11 @@ extends Node3D
 var ult_buttons: Array = []
 var portrait_containers: Array = []
 
+# HP Bar references
+var enemy_hp_bars: Array = []
+var enemy_shield_bars: Array = []
+var player_hp_bars: Array = []
+
 # Battle state
 var turn_queue: Array = []
 var current_turn_index: int = 0
@@ -70,6 +75,8 @@ func _ready():
 	setup_enemies()
 	build_turn_queue()
 	setup_character_portraits()
+	setup_player_hp()
+	setup_hp_bars()
 	setup_battle_sprites()
 	draw_hand()
 	start_battle()
@@ -182,6 +189,182 @@ func setup_character_portraits():
 	
 	print("Created ", ult_buttons.size(), " ult buttons for ", GameManager.player_party.size(), " party members")
 
+# NEW: Setup player HP tracking
+func setup_player_hp():
+	print("\n=== DEBUG: Player HP Setup ===")
+	for char in GameManager.player_party:
+		if not char.has_meta("battle_hp"):
+			var max_hp = char.max_hp if "max_hp" in char else 100
+			char.set_meta("battle_hp", max_hp)
+			print(char.character_name, " - Max HP: ", max_hp)
+	print("===========================\n")
+
+# NEW: Load all available enemies from res://Resources/Enemies/
+func get_available_enemies() -> Array:
+	var available = []
+	var dir = DirAccess.open("res://Resources/Enemies/")
+	if dir:
+		dir.list_dir_begin()
+		var file_name = dir.get_next()
+		while file_name != "":
+			if file_name.ends_with(".tres"):
+				var enemy_data = load("res://Resources/Enemies/" + file_name)
+				if enemy_data:
+					available.append(enemy_data)
+			file_name = dir.get_next()
+	print("Available enemies loaded: ", available.size())
+	return available
+
+# NEW: Randomize enemy count (1-4) and select random enemies
+func setup_enemies():
+	var available_enemies = get_available_enemies()
+	if available_enemies.is_empty():
+		push_error("No enemies found in res://Resources/Enemies/")
+		return
+	
+	var enemy_count = randi_range(1, 4)
+	print("\n=== Spawning ", enemy_count, " enemies ===")
+	
+	enemies.clear()
+	for i in range(enemy_count):
+		var random_enemy_data = available_enemies[randi() % available_enemies.size()]
+		var enemy_instance = {
+			"data": random_enemy_data,
+			"current_hp": random_enemy_data.get_actual_hp(),
+			"current_shield_hp": random_enemy_data.get_actual_shield_hp(),
+			"is_shield_active": random_enemy_data.is_shield_active
+		}
+		enemies.append(enemy_instance)
+		print("Enemy %d: %s (HP: %d)" % [i + 1, random_enemy_data.enemy_name, enemy_instance.current_hp])
+
+func setup_hp_bars():
+	# Setup player HP bars in portraits
+	for i in range(portrait_containers.size()):
+		var portrait_container = portrait_containers[i]
+		var char_data = GameManager.player_party[i]
+		
+		# Get actual max HP - use max_hp property directly
+		var max_hp = char_data.max_hp if "max_hp" in char_data else 100
+		
+		# Create HP bar
+		var hp_bar = ProgressBar.new()
+		hp_bar.name = "HPBar"
+		hp_bar.custom_minimum_size = Vector2(80, 8)
+		hp_bar.min_value = 0
+		hp_bar.max_value = float(max_hp)
+		hp_bar.value = float(max_hp)
+		
+		# Style HP bar - red
+		var style = StyleBoxFlat.new()
+		style.bg_color = Color(0.2, 0.2, 0.2)  # Dark background
+		hp_bar.add_theme_stylebox_override("background", style)
+		
+		var fill_style = StyleBoxFlat.new()
+		fill_style.bg_color = Color(0.9, 0.2, 0.2)  # Red for HP
+		hp_bar.add_theme_stylebox_override("fill", fill_style)
+		
+		portrait_container.add_child(hp_bar)
+		player_hp_bars.append(hp_bar)
+	
+	# Setup enemy HP bars (for all enemies)
+	setup_enemy_hp_bars()
+
+# UPDATED: Setup enemy HP bars for ALL enemies
+func setup_enemy_hp_bars():
+	if enemies.size() == 0:
+		return
+	
+	# Create a container for all enemy HP bars
+	var enemy_bars_root = VBoxContainer.new()
+	enemy_bars_root.name = "AllEnemyHPBars"
+	enemy_bars_root.anchor_top = 0.1
+	enemy_bars_root.anchor_left = 0.05
+	
+	for i in range(enemies.size()):
+		var target = enemies[i]
+		
+		# Create Shield Bar (blue, on top)
+		var shield_bar = ProgressBar.new()
+		shield_bar.name = "EnemyShieldBar_" + str(i)
+		shield_bar.custom_minimum_size = Vector2(150, 12)
+		shield_bar.min_value = 0
+		shield_bar.max_value = target.data.get_actual_shield_hp() if target.data.has_method("get_actual_shield_hp") else 50
+		shield_bar.value = target.current_shield_hp if target.is_shield_active else 0
+		
+		# Style shield bar - blue
+		var shield_bg = StyleBoxFlat.new()
+		shield_bg.bg_color = Color(0.1, 0.1, 0.2)
+		shield_bar.add_theme_stylebox_override("background", shield_bg)
+		
+		var shield_fill = StyleBoxFlat.new()
+		shield_fill.bg_color = Color(0.3, 0.5, 1.0)  # Light blue
+		shield_bar.add_theme_stylebox_override("fill", shield_fill)
+		
+		enemy_shield_bars.append(shield_bar)
+		
+		# Create HP Bar (red, below shield)
+		var hp_bar = ProgressBar.new()
+		hp_bar.name = "EnemyHPBar_" + str(i)
+		hp_bar.custom_minimum_size = Vector2(150, 12)
+		hp_bar.min_value = 0
+		hp_bar.max_value = target.data.get_actual_hp() if target.data.has_method("get_actual_hp") else 100
+		hp_bar.value = target.current_hp
+		
+		# Style HP bar - red
+		var hp_bg = StyleBoxFlat.new()
+		hp_bg.bg_color = Color(0.2, 0.1, 0.1)
+		hp_bar.add_theme_stylebox_override("background", hp_bg)
+		
+		var hp_fill = StyleBoxFlat.new()
+		hp_fill.bg_color = Color(0.9, 0.2, 0.2)  # Red
+		hp_bar.add_theme_stylebox_override("fill", hp_fill)
+		
+		enemy_hp_bars.append(hp_bar)
+		
+		# Create container for this enemy's bars with name label
+		var enemy_container = VBoxContainer.new()
+		enemy_container.name = "Enemy_" + str(i)
+		
+		# Enemy name label
+		var name_label = Label.new()
+		name_label.text = target.data.enemy_name
+		name_label.add_theme_color_override("font_color", Color.WHITE)
+		name_label.add_theme_font_size_override("font_size", 12)
+		enemy_container.add_child(name_label)
+		
+		enemy_container.add_child(shield_bar)
+		enemy_container.add_child(hp_bar)
+		
+		enemy_bars_root.add_child(enemy_container)
+	
+	get_node("BattleUI").add_child(enemy_bars_root)
+
+# UPDATED: Update HP bars - now handles all enemies
+func update_hp_bars():
+	# Update player HP bars
+	for i in range(player_hp_bars.size()):
+		if i < GameManager.player_party.size():
+			var char_data = GameManager.player_party[i]
+			var hp_bar = player_hp_bars[i]
+			var max_hp = float(char_data.max_hp) if "max_hp" in char_data else 100.0
+			var current_hp = float(char_data.get_meta("battle_hp")) if char_data.has_meta("battle_hp") else max_hp
+			hp_bar.max_value = max_hp
+			hp_bar.value = current_hp
+	
+	# Update ALL enemy HP bars
+	for i in range(enemies.size()):
+		if i < enemy_hp_bars.size():
+			var target = enemies[i]
+			var max_hp = float(target.data.get_actual_hp()) if target.data.has_method("get_actual_hp") else 100.0
+			enemy_hp_bars[i].max_value = max_hp
+			enemy_hp_bars[i].value = float(target.current_hp)
+		
+		if i < enemy_shield_bars.size():
+			var target = enemies[i]
+			var max_shield = float(target.data.get_actual_shield_hp()) if target.data.has_method("get_actual_shield_hp") else 50.0
+			enemy_shield_bars[i].max_value = max_shield
+			enemy_shield_bars[i].value = float(target.current_shield_hp) if target.is_shield_active else 0.0
+
 func _on_ult_pressed(char_index: int):
 	# Set the character who owns this ult button
 	current_character = GameManager.player_party[char_index]
@@ -220,18 +403,6 @@ func make_circular_button(btn: Button, color: Color):
 	hover_style.corner_radius_bottom_left = 999
 	hover_style.corner_radius_bottom_right = 999
 	btn.add_theme_stylebox_override("hover", hover_style)
-
-func setup_enemies():
-	if GameManager.active_enemy_data:
-		var enemy_instance = {
-			"data": GameManager.active_enemy_data,
-			"current_hp": GameManager.active_enemy_data.get_actual_hp(),
-			"current_shield_hp": GameManager.active_enemy_data.get_actual_shield_hp(),
-			"is_shield_active": GameManager.active_enemy_data.is_shield_active
-		}
-		enemies.append(enemy_instance)
-		print("Enemy setup: ", GameManager.active_enemy_data.enemy_name)
-		print("Enemy HP: ", enemy_instance.current_hp)
 
 func build_turn_queue():
 	turn_queue.clear()
@@ -595,11 +766,14 @@ func deal_damage(damage: int):
 	
 	print("Enemy HP: ", target.current_hp, "/", target.data.get_actual_hp())
 	
+	update_hp_bars()
+	
 	if target.current_hp <= 0:
 		print("Enemy defeated!")
 		enemies.erase(target)
 		check_battle_end()
 
+# UPDATED: Enemy turn now applies damage to player
 func enemy_turn(enemy_instance: Dictionary):
 	print("Enemy attacks!")
 	await get_tree().create_timer(1.5).timeout
@@ -609,13 +783,23 @@ func enemy_turn(enemy_instance: Dictionary):
 		var target = GameManager.player_party[target_index]
 		var damage = enemy_instance.data.base_attack
 		print("Enemy deals ", damage, " to ", target.character_name)
+		
+		# Apply damage to player HP
+		var current_hp = target.get_meta("battle_hp") if target.has_meta("battle_hp") else target.max_hp
+		current_hp -= damage
+		target.set_meta("battle_hp", max(0, current_hp))
+		update_hp_bars()
 	
 	current_turn_index += 1
 	process_next_turn()
 
 func check_battle_end():
 	if enemies.size() == 0:
-		print("Victory!")
+		print("Victory! All enemies defeated!")
+		# Remove all enemy HP bars
+		var bars_node = get_node_or_null("BattleUI/AllEnemyHPBars")
+		if bars_node:
+			bars_node.queue_free()
 		await get_tree().create_timer(2.0).timeout
 		SupabaseManager.add_pulls(1)
 		get_tree().change_scene_to_file("res://Scenes/Zone1.tscn")
@@ -652,9 +836,9 @@ func setup_battle_sprites():
 		var char_data = GameManager.player_party[i]
 		spawn_character(char_data, i, "player")
 	
-	# Spawn enemy
-	if GameManager.active_enemy_data:
-		spawn_enemy()
+	# Spawn all randomized enemies
+	for i in range(enemies.size()):
+		spawn_enemy(i)
 
 func spawn_character(data: CharacterData, index: int, side: String):
 	# Try loading by character name (lowercase)
@@ -682,18 +866,22 @@ func spawn_character(data: CharacterData, index: int, side: String):
 	instance.name = side + "_" + data.character_name
 	$Background.add_child(instance)
 
-func spawn_enemy():
-	# Enemies use placeholders for now
-	create_enemy_placeholder()
+# NEW: Spawn enemy with index
+func spawn_enemy(index: int):
+	create_enemy_placeholder(index)
 
-func create_enemy_placeholder():
-	if not GameManager.active_enemy_data:
+# NEW: Create placeholder for specific enemy
+func create_enemy_placeholder(index: int):
+	if index >= enemies.size():
 		return
-	var sprite = AnimatedSprite3D.new()
-	sprite.name = "Enemy_Placeholder"
-	sprite.position = Vector3(3, 0, 0)
 	
-	# Create colored placeholder
+	var enemy_data = enemies[index].data
+	var sprite = AnimatedSprite3D.new()
+	sprite.name = "Enemy_Placeholder_" + str(index)
+	
+	# Spread enemies horizontally
+	sprite.position = Vector3(2 + (index * 1.5), 0, 0)
+	
 	var img = Image.create(64, 64, false, Image.FORMAT_RGBA8)
 	img.fill(Color(0.8, 0.2, 0.2))
 	var tex = ImageTexture.create_from_image(img)
@@ -703,8 +891,6 @@ func create_enemy_placeholder():
 	frames.add_frame("idle", tex)
 	sprite.sprite_frames = frames
 	sprite.animation = "idle"
-	
-	# FIX: Make enemy bigger
 	sprite.scale = Vector3(3, 3, 1)
 	
 	$Background.add_child(sprite)
