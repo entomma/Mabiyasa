@@ -186,29 +186,45 @@ func load_player_state() -> void:
 		GameManager.has_saved_position = true
 		print("Position loaded: ", pos)
 	
-	var party_ids = profile.get("saved_party", [])
-	print("saved_party from DB: ", party_ids)
+	# ─── LOAD CURRENT LOADOUT AS PARTY ───
+	var current_loadout = profile.get("current_loadout", 1)
+	var party_loadouts = profile.get("party_loadouts", {})
 	
-	# Handle string format from Postgres e.g. "{1,0,3,0}"
-	var ids_array = []
-	if party_ids is Array:
-		ids_array = party_ids
-	elif party_ids is String:
-		var cleaned = party_ids.replace("{", "").replace("}", "").strip_edges()
-		if cleaned != "":
-			for id_str in cleaned.split(","):
-				ids_array.append(int(id_str.strip_edges()))
+	var party_ids = []
 	
-	print("Parsed party IDs: ", ids_array)
+	# First, try to load from the current loadout
+	if party_loadouts is Dictionary:
+		var loadout_key = str(current_loadout)
+		if party_loadouts.has(loadout_key):
+			var loadout_data = party_loadouts[loadout_key]
+			if loadout_data is Array:
+				party_ids = loadout_data
+				print("Loading party from current loadout ", current_loadout, ": ", party_ids)
 	
-	if ids_array.size() > 0:
+	# If no loadout found, fall back to saved_party (legacy/deployed party)
+	if party_ids.is_empty():
+		var saved_party = profile.get("saved_party", [])
+		print("saved_party from DB: ", saved_party)
+		
+		# Handle string format from Postgres e.g. "{1,0,3,0}"
+		if saved_party is Array:
+			party_ids = saved_party
+		elif saved_party is String:
+			var cleaned = saved_party.replace("{", "").replace("}", "").strip_edges()
+			if cleaned != "":
+				for id_str in cleaned.split(","):
+					party_ids.append(int(id_str.strip_edges()))
+	
+	print("Parsed party IDs: ", party_ids)
+	
+	if party_ids.size() > 0:
 		var party = []
 		var slot_party = [null, null, null, null]
 		
-		for i in range(min(ids_array.size(), 4)):
-			var char_id = int(ids_array[i])
-			if char_id != 0:  # 0 = empty slot
-				var char_resource = GameManager.get_character_by_id(char_id)  # Already duplicated
+		for i in range(min(party_ids.size(), 4)):
+			var char_id = party_ids[i]
+			if char_id != null and char_id != 0:  # 0 = empty slot
+				var char_resource = GameManager.get_character_by_id(int(char_id))
 				if char_resource:
 					slot_party[i] = char_resource
 					party.append(char_resource)
