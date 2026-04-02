@@ -1,0 +1,1 @@
+# Current content of Battle.gd is being fetched to update accordingly.
