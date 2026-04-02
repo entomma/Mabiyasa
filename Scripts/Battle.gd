@@ -5,16 +5,14 @@ extends Node3D
 # ─────────────────────────────────────────────
 @onready var card_panel         = $BattleUI/CardPanel
 @onready var card_grid          = $BattleUI/CardPanel/CardGrid
-@onready var affix_panel        = $BattleUI/CardPanel/AffixPanel
+@onready var sentence_bar       = $BattleUI/CardPanel/SentenceBar
+@onready var sentence_container = $BattleUI/CardPanel/SentenceBar/SentenceContainer
+@onready var submit_btn         = $BattleUI/CardPanel/SentenceBar/SubmitButton
 @onready var prefix_btn         = $BattleUI/CardPanel/AffixPanel/PrefixBtn
 @onready var suffix_btn         = $BattleUI/CardPanel/AffixPanel/SuffixBtn
 @onready var connector_btn      = $BattleUI/CardPanel/AffixPanel/ConnectorBtn
 @onready var other_btn          = $BattleUI/CardPanel/AffixPanel/OtherBtn
-@onready var sentence_bar       = $BattleUI/CardPanel/SentenceBar
-@onready var sentence_container = $BattleUI/CardPanel/SentenceBar/SentenceContainer
-@onready var submit_btn         = $BattleUI/CardPanel/SentenceBar/SubmitButton
 @onready var turn_order_ui      = $BattleUI/TurnOrder
-@onready var total_damage_label = $BattleUI/TotalDamage/TotalDamageNumber
 @onready var char_portraits     = $BattleUI/BottomLeft/CharPortraits
 @onready var skill_buttons      = $BattleUI/BottomRight
 @onready var basic_btn          = $BattleUI/BottomRight/BasicButton
@@ -25,41 +23,56 @@ extends Node3D
 # ─────────────────────────────────────────────
 #  Dynamic storage
 # ─────────────────────────────────────────────
-var ult_buttons: Array         = []
+var ult_buttons:         Array = []
 var portrait_containers: Array = []
-var enemy_ui_nodes: Array      = []   # { root, hp_bar, shield_bar, hp_label, world_x }
+var portrait_hp_bars:    Array = []   # ProgressBar refs per character
+var portrait_hp_labels:  Array = []   # Label refs per character
+var portrait_shields:    Array = []   # ColorRect shield overlay per character
+var enemy_ui_nodes:      Array = []   # { root, hp_bar, shield_bar, hp_label, world_x }
 
 # ─────────────────────────────────────────────
 #  Battle state
 # ─────────────────────────────────────────────
-var turn_queue: Array                = []
-var current_turn_index: int          = 0
-var current_character: CharacterData = null
-var current_skill: SkillData         = null
-var hand: Array                      = []
-var sentence: Array                  = []
-var total_damage_dealt: int          = 0
-var current_sp: int                  = 3
-var max_sp: int                      = 5
-var enemies: Array                   = []
-var is_player_turn: bool             = true
-var current_affix_filter: String     = ""
+var turn_queue:       Array                = []
+var current_turn_index: int               = 0
+var current_character: CharacterData      = null
+var current_skill:     SkillData          = null
+var hand:              Array              = []
+var sentence:          Array              = []
+var total_damage_dealt: int               = 0
+var current_sp:        int                = 3
+var max_sp:            int                = 5
+var enemies:           Array              = []
+var is_player_turn:    bool               = true
+var current_affix_filter: String          = ""
+
+# Character HP tracking (parallel to GameManager.player_party)
+var character_hp:     Array = []   # float per character index
+var character_shields: Array = []  # float shield value per character index
 
 # Targeting
-var targeted_enemy_index: int        = 0
+var targeted_enemy_index: int   = 0
+var targeted_ally_index:  int   = 0
+var is_targeting_ally:    bool  = false
 
-# Skill selection: "basic" | "skill"
-var selected_skill_slot: String      = "basic"
+# Skill selection
+var selected_skill_slot: String = "basic"
 
-# Buffs / debuffs
-var active_buffs: Dictionary         = {}
-var active_debuffs: Dictionary       = {}
+# Buffs / debuffs  { target_ref: { stat: value, turns_left: int } }
+var active_buffs:   Dictionary = {}
+var active_debuffs: Dictionary = {}
 
 # Origin scene
-var origin_scene: String             = "res://Scenes/Zone1.tscn"
+var origin_scene: String = "res://Scenes/Zone1.tscn"
 
-# Mastered card IDs
-var mastered_card_ids: Array         = []
+# Mastered cards
+var mastered_card_ids: Array = []
+
+# Camera state
+var camera_default_pos:    Vector3 = Vector3(0, 3, 8)
+var camera_default_target: Vector3 = Vector3(0, 0, 0)
+var camera_ally_pos:       Vector3 = Vector3(-5, 2, 4)
+var camera_ally_target:    Vector3 = Vector3(-4, 0, 0)
 
 # ─────────────────────────────────────────────
 #  Constants
@@ -75,20 +88,26 @@ const PENALTY_UNMASTERED    = 0.20
 const PENALTY_WRONG_GRAMMAR = 0.20
 const DEF_SCALAR            = 0.30
 const SPEED_JITTER          = 0.15
-const ENCOUNTER_WEIGHTS     = [15, 40, 35, 10]   # 1/2/3/4 enemies
+const ENCOUNTER_WEIGHTS     = [15, 40, 35, 10]
+
+# Energy constants (base values before regen_rate applied)
+const ENERGY_FROM_BASIC      = 20.0
+const ENERGY_FROM_SKILL      = 30.0
+const ENERGY_FROM_KILL       = 10.0
+const ENERGY_FROM_HIT_TAKEN  = 10.0   # not affected by regen_rate
 
 # ─────────────────────────────────────────────
 #  _ready
 # ─────────────────────────────────────────────
 func _ready():
 	var transition = get_tree().get_first_node_in_group("transition")
-	if transition:
-		transition.fade_in()
+	if transition: transition.fade_in()
 
 	if GameManager.has_meta("last_scene"):
 		origin_scene = GameManager.get_meta("last_scene")
 
 	_load_mastered_cards()
+	_init_character_hp()
 
 	basic_btn.pressed.connect(_on_basic_btn_pressed)
 	skill_btn.pressed.connect(_on_skill_btn_pressed)
@@ -104,6 +123,10 @@ func _ready():
 	card_panel.visible    = false
 	skill_buttons.visible = false
 
+	# Hide old cumulative damage panel — replaced by per-turn display
+	var old_dmg_panel = get_node_or_null("BattleUI/TotalDamage")
+	if old_dmg_panel: old_dmg_panel.visible = false
+
 	_setup_card_panel_bg()
 	_spawn_enemies_for_zone()
 	_build_turn_queue()
@@ -113,20 +136,41 @@ func _ready():
 	start_battle()
 
 	if camera:
-		camera.position = Vector3(0, 3, 8)
-		camera.look_at(Vector3(0, 0, 0), Vector3.UP)
+		camera.position = camera_default_pos
+		camera.look_at(camera_default_target, Vector3.UP)
+
+func _init_character_hp():
+	character_hp.clear()
+	character_shields.clear()
+	for char in GameManager.player_party:
+		character_hp.append(float(char.get_actual_hp()))
+		character_shields.append(0.0)
 
 # ─────────────────────────────────────────────
 #  Input
 # ─────────────────────────────────────────────
 func _input(event: InputEvent):
-	if card_panel.visible or not is_player_turn:
-		return
 	if not (event is InputEventKey and event.pressed and not event.echo):
+		return
+	if not is_player_turn:
+		return
+
+	# ── Ally targeting mode ────────────────────────────────────────────
+	if is_targeting_ally:
+		match event.keycode:
+			KEY_A: _navigate_ally(-1)
+			KEY_D: _navigate_ally(1)
+			KEY_ENTER, KEY_SPACE:
+				_confirm_ally_target()
+		return
+
+	# ── Card panel open — block targeting keys ─────────────────────────
+	if card_panel.visible:
 		return
 
 	match event.keycode:
 		KEY_Q:
+			# Q = basic. If basic already selected → activate. Else switch to basic.
 			if selected_skill_slot == "basic":
 				_activate_selected_skill()
 			else:
@@ -134,6 +178,7 @@ func _input(event: InputEvent):
 				_refresh_skill_highlights()
 
 		KEY_E:
+			# E = skill. If skill already selected → activate. Else switch to skill.
 			if selected_skill_slot == "skill":
 				_activate_selected_skill()
 			else:
@@ -145,24 +190,76 @@ func _input(event: InputEvent):
 		KEY_3: _trigger_ult(2)
 		KEY_4: _trigger_ult(3)
 
-		KEY_A: _navigate_target(-1)
-		KEY_D: _navigate_target(1)
+		KEY_A: _navigate_enemy(-1)
+		KEY_D: _navigate_enemy(1)
 
 # ─────────────────────────────────────────────
-#  Targeting
+#  Enemy targeting
 # ─────────────────────────────────────────────
-func _navigate_target(dir: int):
+func _navigate_enemy(dir: int):
+	# A = dir -1 = move left on screen = lower index (index 0 is leftmost)
+	# D = dir +1 = move right on screen = higher index
 	targeted_enemy_index = clamp(targeted_enemy_index + dir, 0, enemies.size() - 1)
-	_refresh_target_highlight()
+	_refresh_enemy_highlight()
 
-func _refresh_target_highlight():
+func _refresh_enemy_highlight():
 	for i in range(enemy_ui_nodes.size()):
 		var ui = enemy_ui_nodes[i]
 		if not ui or not is_instance_valid(ui.root): continue
 		ui.root.modulate = Color(1.3, 1.3, 0.6) if i == targeted_enemy_index else Color(1,1,1)
 
+func _set_enemy_target(idx: int):
+	targeted_enemy_index = clamp(idx, 0, enemies.size() - 1)
+	_refresh_enemy_highlight()
+
 # ─────────────────────────────────────────────
-#  Skill selection
+#  Ally targeting
+# ─────────────────────────────────────────────
+func _begin_ally_targeting():
+	is_targeting_ally   = true
+	targeted_ally_index = _index_of_current_char()
+	_refresh_ally_highlight()
+	_pan_camera_to_allies()
+
+func _navigate_ally(dir: int):
+	targeted_ally_index = clamp(targeted_ally_index + dir, 0, GameManager.player_party.size() - 1)
+	_refresh_ally_highlight()
+
+func _confirm_ally_target():
+	is_targeting_ally = false
+	_refresh_ally_highlight()
+	_pan_camera_to_default()
+	show_card_panel()
+
+func _refresh_ally_highlight():
+	for i in range(portrait_containers.size()):
+		portrait_containers[i].modulate = \
+			Color(1.3, 1.3, 0.6) if i == targeted_ally_index else Color(1,1,1)
+
+func _index_of_current_char() -> int:
+	for i in range(GameManager.player_party.size()):
+		if GameManager.player_party[i] == current_character:
+			return i
+	return 0
+
+func _pan_camera_to_allies():
+	if not camera: return
+	var t = create_tween()
+	t.set_parallel(true)
+	t.tween_property(camera, "position", camera_ally_pos, 0.4)
+	t.tween_method(func(v): camera.look_at(v, Vector3.UP),
+		camera_default_target, camera_ally_target, 0.4)
+
+func _pan_camera_to_default():
+	if not camera: return
+	var t = create_tween()
+	t.set_parallel(true)
+	t.tween_property(camera, "position", camera_default_pos, 0.4)
+	t.tween_method(func(v): camera.look_at(v, Vector3.UP),
+		camera_ally_target, camera_default_target, 0.4)
+
+# ─────────────────────────────────────────────
+#  Skill slot selection
 # ─────────────────────────────────────────────
 func _activate_selected_skill():
 	match selected_skill_slot:
@@ -174,24 +271,51 @@ func _refresh_skill_highlights():
 	_restyle_slot_btn(skill_btn, Color(0.85, 0.35, 0.28), selected_skill_slot == "skill")
 
 func _restyle_slot_btn(btn: Button, color: Color, active: bool):
+	# Active = bigger, brighter. Inactive = smaller, darker.
+	var active_size   = Vector2(180, 180)
+	var inactive_size = Vector2(130, 130)
+	btn.custom_minimum_size = active_size if active else inactive_size
+
 	var s = StyleBoxFlat.new()
-	s.bg_color = color if active else color.darkened(0.4)
+	s.bg_color = color if active else color.darkened(0.45)
 	for c in ["top_left","top_right","bottom_left","bottom_right"]:
 		s.set("corner_radius_" + c, 999)
 	btn.add_theme_stylebox_override("normal", s)
+
 	var h = StyleBoxFlat.new()
 	h.bg_color = color.lightened(0.2)
 	for c in ["top_left","top_right","bottom_left","bottom_right"]:
 		h.set("corner_radius_" + c, 999)
 	btn.add_theme_stylebox_override("hover", h)
 
+	# Font size reflects selection
+	btn.add_theme_font_size_override("font_size", 16 if active else 13)
+
 func _trigger_ult(idx: int):
 	if idx >= GameManager.player_party.size(): return
-	var c = GameManager.player_party[idx]
-	if c.ultimate == null: return
-	current_character = c
-	current_skill     = c.ultimate as SkillData
-	show_card_panel()
+	var cd = GameManager.player_party[idx]
+	if cd.ultimate == null: return
+	if not cd.is_ult_ready():
+		print("Ult not ready for ", cd.character_name)
+		return
+	current_character = cd
+	current_skill     = cd.ultimate as SkillData
+	_decide_targeting()
+
+# ─────────────────────────────────────────────
+#  Targeting decision — ally or enemy
+# ─────────────────────────────────────────────
+func _decide_targeting():
+	if current_skill == null: return
+	if current_skill.is_aoe() or current_skill.target_type == "Self":
+		# AoE or Self — no targeting needed, go straight to card panel
+		show_card_panel()
+	elif current_skill.targets_ally() and current_skill.target_type == "Single":
+		# Single ally target — begin ally selection
+		_begin_ally_targeting()
+	else:
+		# Enemy target
+		show_card_panel()
 
 # ─────────────────────────────────────────────
 #  Zone enemy spawning
@@ -200,11 +324,8 @@ func _spawn_enemies_for_zone():
 	enemies.clear()
 	var pool = _get_enemy_pool()
 	if pool.is_empty():
-		if GameManager.active_enemy_data:
-			pool = [GameManager.active_enemy_data]
-		else:
-			push_error("No enemy pool!")
-			return
+		if GameManager.active_enemy_data: pool = [GameManager.active_enemy_data]
+		else: push_error("No enemy pool!"); return
 
 	var count = _weighted_count()
 	pool.shuffle()
@@ -234,15 +355,14 @@ func _get_enemy_pool() -> Array:
 	if pools.has(origin_scene): return pools[origin_scene]
 	var fallback = []
 	for f in DirAccess.get_files_at("res://Resources/Enemies/"):
-		if f.ends_with(".tres"):
-			fallback.append(load("res://Resources/Enemies/" + f))
+		if f.ends_with(".tres"): fallback.append(load("res://Resources/Enemies/" + f))
 	return fallback
 
 func _weighted_count() -> int:
 	var total = 0
 	for w in ENCOUNTER_WEIGHTS: total += w
-	var roll  = randi() % total
-	var cum   = 0
+	var roll = randi() % total
+	var cum  = 0
 	for i in range(ENCOUNTER_WEIGHTS.size()):
 		cum += ENCOUNTER_WEIGHTS[i]
 		if roll < cum: return i + 1
@@ -261,7 +381,7 @@ func _build_turn_queue():
 	turn_queue.sort_custom(func(a, b): return a.speed > b.speed)
 
 # ─────────────────────────────────────────────
-#  Enemy HP / Shield UI
+#  Enemy HP / Shield UI (billboard)
 # ─────────────────────────────────────────────
 func _build_enemy_ui():
 	for ui in enemy_ui_nodes:
@@ -269,19 +389,19 @@ func _build_enemy_ui():
 	enemy_ui_nodes.clear()
 
 	for i in range(enemies.size()):
-		var enemy   = enemies[i]
-		var wx      = _enemy_world_x(i)
+		var enemy = enemies[i]
+		var wx    = _enemy_world_x(i)
 
-		var root    = Control.new()
-		root.name   = "EnemyUI_" + str(i)
+		var root  = Control.new()
+		root.name = "EnemyUI_" + str(i)
 		root.custom_minimum_size = Vector2(160, 64)
 		root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		$BattleUI.add_child(root)
 
-		# Shield bar (top, thin, blue)
+		# Shield bar — thin blue on top
 		var shield_bar = ProgressBar.new()
 		shield_bar.custom_minimum_size = Vector2(150, 7)
-		shield_bar.max_value    = float(enemy.data.get_actual_shield_hp())
+		shield_bar.max_value    = float(max(1, enemy.data.get_actual_shield_hp()))
 		shield_bar.value        = float(enemy.current_shield_hp)
 		shield_bar.show_percentage = false
 		shield_bar.visible      = enemy.is_shield_active
@@ -289,7 +409,7 @@ func _build_enemy_ui():
 		_style_bar(shield_bar, Color(0.4, 0.7, 1.0), Color(0.1, 0.2, 0.4))
 		root.add_child(shield_bar)
 
-		# HP bar (below shield)
+		# HP bar
 		var hp_bar = ProgressBar.new()
 		hp_bar.custom_minimum_size = Vector2(150, 11)
 		hp_bar.max_value    = float(enemy.data.get_actual_hp())
@@ -301,7 +421,7 @@ func _build_enemy_ui():
 
 		# HP text
 		var hp_lbl = Label.new()
-		hp_lbl.text = _hp_text(enemy)
+		hp_lbl.text = _hp_text(enemy.current_hp, enemy.data.get_actual_hp())
 		hp_lbl.add_theme_font_size_override("font_size", 10)
 		hp_lbl.add_theme_color_override("font_color", Color.WHITE)
 		hp_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -309,7 +429,7 @@ func _build_enemy_ui():
 		hp_lbl.size     = Vector2(150, 14)
 		root.add_child(hp_lbl)
 
-		# Enemy name
+		# Name
 		var name_lbl = Label.new()
 		name_lbl.text = enemy.data.enemy_name
 		name_lbl.add_theme_font_size_override("font_size", 11)
@@ -323,7 +443,7 @@ func _build_enemy_ui():
 		var btn = Button.new()
 		btn.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 		btn.flat = true
-		btn.pressed.connect(func(): _set_target(i))
+		btn.pressed.connect(func(): _set_enemy_target(i))
 		root.add_child(btn)
 
 		enemy_ui_nodes.append({
@@ -334,22 +454,18 @@ func _build_enemy_ui():
 			"world_x":    wx
 		})
 
-func _hp_text(enemy: Dictionary) -> String:
-	return str(max(0, enemy.current_hp)) + "/" + str(enemy.data.get_actual_hp())
-
-func _set_target(index: int):
-	targeted_enemy_index = clamp(index, 0, enemies.size() - 1)
-	_refresh_target_highlight()
-
 func _style_bar(bar: ProgressBar, fill: Color, bg: Color):
 	var sf = StyleBoxFlat.new()
 	sf.bg_color = fill
-	for c in ["top_left","top_right","bottom_left","bottom_right"]: sf.set("corner_radius_"+c,4)
+	for c in ["top_left","top_right","bottom_left","bottom_right"]: sf.set("corner_radius_"+c, 4)
 	var sb = StyleBoxFlat.new()
 	sb.bg_color = bg
-	for c in ["top_left","top_right","bottom_left","bottom_right"]: sb.set("corner_radius_"+c,4)
+	for c in ["top_left","top_right","bottom_left","bottom_right"]: sb.set("corner_radius_"+c, 4)
 	bar.add_theme_stylebox_override("fill", sf)
 	bar.add_theme_stylebox_override("background", sb)
+
+func _hp_text(current: float, maximum: int) -> String:
+	return str(max(0, int(current))) + "/" + str(maximum)
 
 func _process(_delta):
 	if not camera: return
@@ -360,17 +476,15 @@ func _process(_delta):
 		ui.root.position = sp - Vector2(75, 0)
 
 func _update_enemy_ui(idx: int):
-	if idx >= enemy_ui_nodes.size(): return
+	if idx >= enemy_ui_nodes.size() or idx >= enemies.size(): return
 	var ui    = enemy_ui_nodes[idx]
 	var enemy = enemies[idx]
 	if not ui or not is_instance_valid(ui.root): return
-	ui.hp_bar.value   = float(max(0, enemy.current_hp))
-	ui.hp_label.text  = _hp_text(enemy)
+	ui.hp_bar.value  = float(max(0, enemy.current_hp))
+	ui.hp_label.text = _hp_text(enemy.current_hp, enemy.data.get_actual_hp())
+	ui.shield_bar.visible = enemy.is_shield_active
 	if enemy.is_shield_active:
-		ui.shield_bar.visible = true
-		ui.shield_bar.value   = float(enemy.current_shield_hp)
-	else:
-		ui.shield_bar.visible = false
+		ui.shield_bar.value = float(enemy.current_shield_hp)
 
 func _shatter_shield(idx: int):
 	if idx >= enemy_ui_nodes.size(): return
@@ -378,14 +492,13 @@ func _shatter_shield(idx: int):
 	if not ui or not is_instance_valid(ui.root): return
 	var sb = ui.shield_bar
 	var t  = create_tween()
-	t.tween_property(sb, "modulate", Color(2,2,2),     0.05)
-	t.tween_property(sb, "modulate", Color(1,1,1),     0.05)
-	t.tween_property(sb, "modulate", Color(2,2,2),     0.05)
-	t.tween_property(sb, "modulate", Color(0,0,0,0),   0.15)
+	t.tween_property(sb, "modulate", Color(2,2,2),   0.05)
+	t.tween_property(sb, "modulate", Color(1,1,1),   0.05)
+	t.tween_property(sb, "modulate", Color(2,2,2),   0.05)
+	t.tween_property(sb, "modulate", Color(0,0,0,0), 0.15)
 	await t.finished
 	sb.visible  = false
 	sb.modulate = Color(1,1,1,1)
-	# Flash sprite
 	var sprite = $Background.get_node_or_null("enemy_sprite_" + str(idx))
 	if sprite:
 		var st = create_tween()
@@ -393,10 +506,69 @@ func _shatter_shield(idx: int):
 		st.tween_property(sprite, "modulate", Color(1,1,1), 0.25)
 
 func _enemy_world_x(idx: int) -> float:
+	# Enemies spread right side of screen, leftmost enemy = index 0
 	var spacing = 2.5
 	var total   = enemies.size()
-	var start_x = 2.0 + (total - 1) * spacing * 0.5
-	return start_x - idx * spacing
+	# index 0 = leftmost on screen = smallest x value
+	var start_x = 2.0
+	return start_x + idx * spacing
+
+# ─────────────────────────────────────────────
+#  Character portrait HP + shield bar
+# ─────────────────────────────────────────────
+func _update_portrait_hp(char_idx: int):
+	if char_idx >= GameManager.player_party.size(): return
+	var cd      = GameManager.player_party[char_idx]
+	var max_hp  = float(cd.get_actual_hp())
+	var cur_hp  = character_hp[char_idx]
+	var shield  = character_shields[char_idx]
+
+	if char_idx < portrait_hp_bars.size() and is_instance_valid(portrait_hp_bars[char_idx]):
+		portrait_hp_bars[char_idx].value = max(0.0, cur_hp)
+
+	if char_idx < portrait_hp_labels.size() and is_instance_valid(portrait_hp_labels[char_idx]):
+		portrait_hp_labels[char_idx].text = _hp_text(cur_hp, int(max_hp))
+
+	# Shield wrap — scales width based on shield / max_hp ratio, extends from left
+	if char_idx < portrait_shields.size() and is_instance_valid(portrait_shields[char_idx]):
+		var shield_rect = portrait_shields[char_idx]
+		if shield > 0.0:
+			shield_rect.visible = true
+			var ratio = clamp(shield / max_hp, 0.0, 1.0)
+			# The bar container is 90px wide
+			shield_rect.size.x = 90.0 * ratio
+		else:
+			shield_rect.visible = false
+
+func _update_energy_display(char_idx: int):
+	if char_idx >= GameManager.player_party.size(): return
+	var cd  = GameManager.player_party[char_idx]
+	if char_idx >= ult_buttons.size(): return
+	var btn = ult_buttons[char_idx]
+
+	var pct = cd.current_energy / cd.max_energy
+	btn.text = "[" + str(char_idx + 1) + "] ULT\n" + str(int(pct * 100)) + "%"
+
+	if cd.is_ult_ready():
+		btn.disabled = false
+		btn.modulate = Color(1, 1, 1)
+	else:
+		btn.disabled = true
+		btn.modulate = Color(0.5, 0.5, 0.5)
+
+# ─────────────────────────────────────────────
+#  Energy management
+# ─────────────────────────────────────────────
+func _give_energy_action(char_data: CharacterData, base_amount: float):
+	char_data.gain_energy(base_amount, true)
+	var idx = GameManager.player_party.find(char_data)
+	if idx >= 0: _update_energy_display(idx)
+
+func _give_energy_hit_taken(char_data: CharacterData):
+	# Taking damage: not affected by regen_rate (like HSR)
+	char_data.gain_energy(ENERGY_FROM_HIT_TAKEN, false)
+	var idx = GameManager.player_party.find(char_data)
+	if idx >= 0: _update_energy_display(idx)
 
 # ─────────────────────────────────────────────
 #  Mastery
@@ -424,7 +596,7 @@ func _update_card_mastery_in_db(card: WordCard):
 	http.request_completed.connect(func(_r,_c,_h,body_bytes):
 		var res = JSON.parse_string(body_bytes.get_string_from_utf8())
 		if res is Array and res.size() > 0:
-			if res[0].get("times_used",0) >= 10 and not res[0].get("is_mastered",false):
+			if res[0].get("times_used", 0) >= 10 and not res[0].get("is_mastered", false):
 				_set_card_mastered(card.card_id, int(uid))
 				mastered_card_ids.append(card.card_id)
 		http.queue_free()
@@ -454,20 +626,24 @@ func _set_card_mastered(card_id: int, uid: int):
 func _setup_card_panel_bg():
 	var s = StyleBoxFlat.new()
 	s.bg_color = Color(0.08, 0.08, 0.12, 0.88)
-	for c in ["top_left","top_right","bottom_left","bottom_right"]: s.set("corner_radius_"+c,16)
+	for c in ["top_left","top_right","bottom_left","bottom_right"]: s.set("corner_radius_"+c, 16)
 	card_panel.add_theme_stylebox_override("panel", s)
 
 func _setup_character_portraits():
 	for child in char_portraits.get_children(): child.queue_free()
 	ult_buttons.clear()
 	portrait_containers.clear()
+	portrait_hp_bars.clear()
+	portrait_hp_labels.clear()
+	portrait_shields.clear()
 
 	for i in range(GameManager.player_party.size()):
 		var cd: CharacterData = GameManager.player_party[i]
 		var box = VBoxContainer.new()
 		box.name = "Portrait" + str(i+1)
-		box.custom_minimum_size = Vector2(100, 170)
+		box.custom_minimum_size = Vector2(100, 185)
 
+		# Portrait image
 		var img = TextureRect.new()
 		img.custom_minimum_size   = Vector2(80, 80)
 		img.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
@@ -477,6 +653,7 @@ func _setup_character_portraits():
 			img.expand_mode  = TextureRect.EXPAND_IGNORE_SIZE
 		box.add_child(img)
 
+		# Name
 		var name_lbl = Label.new()
 		name_lbl.text = cd.character_name
 		name_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -484,33 +661,54 @@ func _setup_character_portraits():
 		name_lbl.add_theme_color_override("font_color", Color.WHITE)
 		box.add_child(name_lbl)
 
-		# HP bar
+		# HP bar container (relative so shield can overlay)
+		var bar_container = Control.new()
+		bar_container.custom_minimum_size = Vector2(90, 14)
+		bar_container.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+
 		var hp_bar = ProgressBar.new()
 		hp_bar.name = "HPBar"
-		hp_bar.custom_minimum_size = Vector2(90, 8)
-		hp_bar.max_value    = float(cd.get_actual_hp())
-		hp_bar.value        = float(cd.get_actual_hp())
+		hp_bar.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		hp_bar.max_value       = float(cd.get_actual_hp())
+		hp_bar.value           = float(cd.get_actual_hp())
 		hp_bar.show_percentage = false
 		_style_bar(hp_bar, Color(0.2,0.85,0.35), Color(0.1,0.25,0.1))
-		box.add_child(hp_bar)
+		bar_container.add_child(hp_bar)
+
+		# Shield overlay — ColorRect on top of HP bar, extends from left
+		var shield_rect = ColorRect.new()
+		shield_rect.name    = "ShieldRect"
+		shield_rect.color   = Color(0.4, 0.7, 1.0, 0.6)
+		shield_rect.visible = false
+		shield_rect.position = Vector2(0, 0)
+		shield_rect.size     = Vector2(0, 14)
+		shield_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		bar_container.add_child(shield_rect)
+
+		box.add_child(bar_container)
+		portrait_hp_bars.append(hp_bar)
+		portrait_shields.append(shield_rect)
 
 		# HP label
 		var hp_lbl = Label.new()
 		hp_lbl.name = "HPLabel"
-		hp_lbl.text = str(cd.get_actual_hp()) + "/" + str(cd.get_actual_hp())
+		hp_lbl.text = _hp_text(float(cd.get_actual_hp()), cd.get_actual_hp())
 		hp_lbl.add_theme_font_size_override("font_size", 9)
 		hp_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		hp_lbl.add_theme_color_override("font_color", Color(0.8,1.0,0.8))
 		box.add_child(hp_lbl)
+		portrait_hp_labels.append(hp_lbl)
 
-		# ULT button
+		# ULT button with energy %
 		var ult = Button.new()
 		ult.name = "UltButton"
-		ult.text = "[" + str(i+1) + "] ULT"
-		ult.custom_minimum_size   = Vector2(80, 28)
+		ult.text = "[" + str(i+1) + "] ULT\n" + str(int((cd.current_energy / cd.max_energy) * 100)) + "%"
+		ult.custom_minimum_size   = Vector2(90, 32)
 		ult.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		ult.disabled              = not cd.is_ult_ready()
+		ult.modulate              = Color(1,1,1) if cd.is_ult_ready() else Color(0.5,0.5,0.5)
 		_style_ult_button(ult)
-		ult.pressed.connect(_on_ult_pressed.bind(i))
+		ult.pressed.connect(_trigger_ult.bind(i))
 		box.add_child(ult)
 
 		ult_buttons.append(ult)
@@ -524,16 +722,16 @@ func _style_ult_button(btn: Button):
 			"normal":   s.bg_color = Color(0.8,0.2,0.9)
 			"hover":    s.bg_color = Color(1.0,0.4,1.0)
 			"disabled": s.bg_color = Color(0.3,0.1,0.35)
-		for c in ["top_left","top_right","bottom_left","bottom_right"]: s.set("corner_radius_"+c,14)
+		for c in ["top_left","top_right","bottom_left","bottom_right"]: s.set("corner_radius_"+c, 14)
 		btn.add_theme_stylebox_override(state, s)
 	btn.add_theme_color_override("font_color", Color.WHITE)
-	btn.add_theme_font_size_override("font_size", 12)
+	btn.add_theme_font_size_override("font_size", 11)
 
 func _style_circular_button(btn: Button, color: Color):
 	for state in ["normal","hover"]:
 		var s = StyleBoxFlat.new()
 		s.bg_color = color.lightened(0.2) if state == "hover" else color
-		for c in ["top_left","top_right","bottom_left","bottom_right"]: s.set("corner_radius_"+c,999)
+		for c in ["top_left","top_right","bottom_left","bottom_right"]: s.set("corner_radius_"+c, 999)
 		btn.add_theme_stylebox_override(state, s)
 
 # ─────────────────────────────────────────────
@@ -597,6 +795,7 @@ func show_skill_buttons():
 	skill_buttons.visible = true
 	card_panel.visible    = false
 	sentence_bar.visible  = false
+	is_targeting_ally     = false
 
 	var bd = current_character.basic_attack as SkillData
 	var sd = current_character.skill as SkillData
@@ -608,11 +807,11 @@ func show_skill_buttons():
 	skill_btn.text     = "[E] Skill\n(-" + str(sd.sp_cost) + " SP)"
 	skill_btn.disabled = current_sp < sd.sp_cost
 
+	# Update all ult buttons
 	for i in range(ult_buttons.size()):
-		var ud = GameManager.player_party[i].ultimate as SkillData
-		ult_buttons[i].disabled = ud == null
-		ult_buttons[i].modulate = Color(1,1,1) if ud != null else Color(0.5,0.5,0.5)
+		_update_energy_display(i)
 
+	# Highlight current character portrait
 	for i in range(portrait_containers.size()):
 		portrait_containers[i].modulate = \
 			Color(1.2,1.2,1.2) if GameManager.player_party[i] == current_character \
@@ -620,7 +819,7 @@ func show_skill_buttons():
 
 	_refresh_skill_highlights()
 	_update_sp_display()
-	_refresh_target_highlight()
+	_refresh_enemy_highlight()
 
 # ─────────────────────────────────────────────
 #  Button callbacks
@@ -640,7 +839,7 @@ func _on_skill_btn_pressed():
 func _on_basic_pressed():
 	if current_character.basic_attack == null: return
 	current_skill = current_character.basic_attack as SkillData
-	show_card_panel()
+	_decide_targeting()
 
 func _on_skill_pressed():
 	var sd = current_character.skill as SkillData
@@ -648,12 +847,10 @@ func _on_skill_pressed():
 		print("Not enough SP!")
 		return
 	current_skill = sd
-	show_card_panel()
+	_decide_targeting()
 
 func _on_ult_pressed(idx: int):
-	current_character = GameManager.player_party[idx]
-	current_skill     = current_character.ultimate as SkillData
-	show_card_panel()
+	_trigger_ult(idx)
 
 func _on_affix_pressed(affix: String):
 	current_affix_filter = affix
@@ -681,20 +878,19 @@ func update_card_display():
 		var card = hand[i]
 		var cont = PanelContainer.new()
 		cont.custom_minimum_size = Vector2(150, 180)
-		var s = StyleBoxFlat.new()
+		var s  = StyleBoxFlat.new()
 		var bc = CARD_COLORS.get(card.card_type, Color(0.5,0.5,0.5))
 		s.bg_color = bc.darkened(0.4) if sentence.has(card) else bc
-		for c in ["top_left","top_right","bottom_left","bottom_right"]: s.set("corner_radius_"+c,8)
+		for c in ["top_left","top_right","bottom_left","bottom_right"]: s.set("corner_radius_"+c, 8)
 		cont.add_theme_stylebox_override("panel", s)
 
 		var vbox = VBoxContainer.new()
 		vbox.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-
 		for cfg in [
-			{"text": ("★ Mastered" if _is_card_mastered(card) else "☆ Learning"),
+			{"text": "★ Mastered" if _is_card_mastered(card) else "☆ Learning",
 			 "size": 9,
-			 "color": (Color(1.0,0.85,0.2) if _is_card_mastered(card) else Color(0.6,0.6,0.6))},
-			{"text": card.card_type, "size": 10, "color": Color.WHITE},
+			 "color": Color(1.0,0.85,0.2) if _is_card_mastered(card) else Color(0.6,0.6,0.6)},
+			{"text": card.card_type,        "size": 10, "color": Color.WHITE},
 			{"text": card.kapampangan_text, "size": 18, "color": Color.WHITE},
 			{"text": card.english_hint,     "size": 11, "color": Color(1,1,1,0.8)},
 			{"text": "["+card.category+"]", "size": 10, "color": Color(1,1,1,0.6)}
@@ -706,8 +902,8 @@ func update_card_display():
 			lbl.add_theme_color_override("font_color", cfg.color)
 			if cfg.size == 18: lbl.autowrap_mode = TextServer.AUTOWRAP_WORD
 			vbox.add_child(lbl)
-
 		cont.add_child(vbox)
+
 		var btn = Button.new()
 		btn.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 		btn.flat = true
@@ -734,7 +930,7 @@ func update_sentence_display():
 		var pill = PanelContainer.new()
 		var s    = StyleBoxFlat.new()
 		s.bg_color = CARD_COLORS.get(card.card_type, Color(0.5,0.5,0.5))
-		for c in ["top_left","top_right","bottom_left","bottom_right"]: s.set("corner_radius_"+c,20)
+		for c in ["top_left","top_right","bottom_left","bottom_right"]: s.set("corner_radius_"+c, 20)
 		pill.add_theme_stylebox_override("panel", s)
 		var lbl = Label.new()
 		lbl.text = card.kapampangan_text
@@ -744,8 +940,7 @@ func update_sentence_display():
 		var btn = Button.new()
 		btn.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 		btn.flat = true
-		btn.pressed.connect(func():
-			sentence.erase(card); update_card_display(); update_sentence_display())
+		btn.pressed.connect(func(): sentence.erase(card); update_card_display(); update_sentence_display())
 		pill.add_child(btn)
 		sentence_container.add_child(pill)
 
@@ -753,31 +948,48 @@ func update_sentence_display():
 #  Submit
 # ─────────────────────────────────────────────
 func _on_submit_pressed():
-	if sentence.size() == 0 or enemies.size() == 0: return
+	if sentence.size() == 0 or (enemies.size() == 0 and not current_skill.targets_ally()): return
 
-	var quality = analyse_sentence_quality()
-	var damage  = calculate_damage(quality)
+	var quality     = analyse_sentence_quality()
+	var raw_damage  = calculate_damage(quality)
+	var turn_damage = 0
 
-	if current_skill.target_type in ["AoE","Aoe"]:
-		for i in range(enemies.size()):
-			await deal_damage(damage, i)
-	else:
-		await deal_damage(damage, targeted_enemy_index)
+	# ── Damage skills ──────────────────────────────────────────────────
+	if current_skill.is_damage_skill():
+		if current_skill.is_aoe():
+			for i in range(enemies.size()):
+				turn_damage += await deal_damage(raw_damage, i)
+		else:
+			turn_damage = await deal_damage(raw_damage, targeted_enemy_index)
 
+	# ── Non-damage skills (heals, shields, buffs) ──────────────────────
 	resolve_skill_effects()
 
+	# ── SP: deduct or gain ─────────────────────────────────────────────
 	match current_skill.skill_type:
-		"Basic":   current_sp = min(current_sp + current_skill.sp_gain, max_sp)
-		"Skill":   current_sp -= current_skill.sp_cost
+		"Basic":
+			current_sp = min(current_sp + current_skill.sp_gain, max_sp)
+			_give_energy_action(current_character, ENERGY_FROM_BASIC)
+		"Skill":
+			current_sp = max(0, current_sp - current_skill.sp_cost)
+			_give_energy_action(current_character, ENERGY_FROM_SKILL)
 		"Ultimate":
-			if current_skill.sp_cost: current_sp -= current_skill.sp_cost
+			current_character.consume_energy()
+			_update_energy_display(_index_of_current_char())
+
 	_update_sp_display()
 
+	# ── Mastery ────────────────────────────────────────────────────────
 	if quality.grammar_ok:
 		for card in sentence: _update_card_mastery_in_db(card)
 
+	# ── Show turn damage (this turn only, auto-hides after 2.5s) ───────
+	if turn_damage > 0:
+		_show_turn_damage(turn_damage)
+
+	# ── Feedback popup ─────────────────────────────────────────────────
 	await get_tree().create_timer(0.5).timeout
-	show_feedback_popup(damage, quality)
+	show_feedback_popup(turn_damage, quality)
 
 	for card in sentence: hand.erase(card)
 	sentence.clear()
@@ -786,6 +998,7 @@ func _on_submit_pressed():
 	current_turn_index += 1
 	await get_tree().create_timer(1.5).timeout
 	card_panel.visible = false
+	_pan_camera_to_default()
 	process_next_turn()
 
 # ─────────────────────────────────────────────
@@ -805,10 +1018,10 @@ func analyse_sentence_quality() -> Dictionary:
 		if card.card_type == "Noun":   has_noun   = true
 
 	match current_skill.skill_type:
-		"Basic":   r.grammar_ok = has_action and has_noun
-		"Skill":   r.grammar_ok = has_action and has_noun and first_is_action and sentence.size() >= 3
-		"Ultimate":r.grammar_ok = has_action and has_noun and first_is_action and sentence.size() >= 4
-		_:         r.grammar_ok = has_action and has_noun
+		"Basic":    r.grammar_ok = has_action and has_noun
+		"Skill":    r.grammar_ok = has_action and has_noun and first_is_action and sentence.size() >= 3
+		"Ultimate": r.grammar_ok = has_action and has_noun and first_is_action and sentence.size() >= 4
+		_:          r.grammar_ok = has_action and has_noun
 
 	if not r.grammar_ok:
 		r.grammar_penalty = PENALTY_WRONG_GRAMMAR
@@ -817,8 +1030,7 @@ func analyse_sentence_quality() -> Dictionary:
 		r.feedback_lines.append({"text":"Correct grammar!","color":Color(0.35,1.0,0.5)})
 
 	for card in sentence:
-		if card.category in ["Affix","Prefix","Suffix","Connector"]:
-			r.has_affix = true; break
+		if card.category in ["Affix","Prefix","Suffix","Connector"]: r.has_affix = true; break
 	if not r.has_affix:
 		r.affix_penalty = PENALTY_NO_AFFIX
 		r.feedback_lines.append({"text":"No affixes  −10% DMG","color":Color(1.0,0.65,0.2)})
@@ -840,7 +1052,7 @@ func analyse_sentence_quality() -> Dictionary:
 #  Damage calculation
 # ─────────────────────────────────────────────
 func calculate_damage(quality: Dictionary) -> int:
-	if current_skill.effect_type != "Damage": return 0
+	if not current_skill.is_damage_skill(): return 0
 	var raw = int(current_character.get_actual_attack() * current_skill.get_actual_multiplier())
 
 	# Talent
@@ -871,14 +1083,14 @@ func calculate_damage(quality: Dictionary) -> int:
 # ─────────────────────────────────────────────
 #  Deal damage
 # ─────────────────────────────────────────────
-func deal_damage(raw: int, idx: int):
-	if idx >= enemies.size() or raw <= 0: return
+func deal_damage(raw: int, idx: int) -> int:
+	if idx >= enemies.size() or raw <= 0: return 0
 	var target = enemies[idx]
 
-	# DEF reduction
 	var def_red = active_debuffs.get(target, {}).get("def_reduction", 0.0)
 	var eff_def = int(target.data.get_actual_defense() * (1.0 - def_red))
 	var actual  = max(1, raw - int(eff_def * DEF_SCALAR))
+	var dealt   = 0   # actual HP damage dealt this hit
 
 	if target.is_shield_active:
 		if current_skill.element == target.data.shield_element:
@@ -888,28 +1100,30 @@ func deal_damage(raw: int, idx: int):
 				target.current_shield_hp = 0
 				target.is_shield_active  = false
 				target.current_hp       -= overflow
-				total_damage_dealt      += overflow
+				dealt                    = overflow
 				await _shatter_shield(idx)
 				_show_floating_text("BREAK!", Color(1.0,0.8,0.0), _enemy_sp(idx))
-				_show_floating_text(str(overflow), Color(1.0,0.95,0.3), _enemy_sp(idx) + Vector2(0,-35))
+				_show_floating_text(str(overflow), Color(1.0,0.95,0.3), _enemy_sp(idx)+Vector2(0,-35))
 			else:
 				_show_floating_text(str(actual)+" ⬡", Color(0.5,0.8,1.0), _enemy_sp(idx))
-				actual = 0
+				dealt = 0
 		else:
-			# Wrong element — full HP damage, shield untouched
-			target.current_hp  -= actual
-			total_damage_dealt += actual
+			# Wrong element: full damage to HP, shield untouched
+			target.current_hp -= actual
+			dealt              = actual
 			_show_floating_text(str(actual), Color(1.0,0.95,0.3), _enemy_sp(idx))
 	else:
-		target.current_hp  -= actual
-		total_damage_dealt += actual
+		target.current_hp -= actual
+		dealt              = actual
 		_show_floating_text(str(actual), Color(1.0,0.95,0.3), _enemy_sp(idx))
 
-	total_damage_label.text = str(total_damage_dealt)
 	_update_enemy_ui(idx)
 
 	if target.current_hp <= 0:
+		_give_energy_action(current_character, ENERGY_FROM_KILL)
 		await _on_enemy_defeated(idx)
+
+	return dealt
 
 func _enemy_sp(idx: int) -> Vector2:
 	if not camera: return Vector2(400,200)
@@ -926,8 +1140,115 @@ func _on_enemy_defeated(idx: int):
 		enemy_ui_nodes.remove_at(idx)
 	enemies.remove_at(idx)
 	targeted_enemy_index = clamp(targeted_enemy_index, 0, max(0, enemies.size()-1))
-	_refresh_target_highlight()
+	_refresh_enemy_highlight()
 	check_battle_end()
+
+# ─────────────────────────────────────────────
+#  Resolve non-damage skill effects
+# ─────────────────────────────────────────────
+func resolve_skill_effects():
+	if current_skill == null: return
+	match current_skill.effect_type:
+		"Buff":
+			if current_skill.is_aoe() or current_skill.target_type == "Team":
+				for cd in GameManager.player_party:
+					apply_buff(cd, current_skill.get_actual_effect_value(), current_skill.effect_duration)
+			else:
+				apply_buff(GameManager.player_party[targeted_ally_index],
+					current_skill.get_actual_effect_value(), current_skill.effect_duration)
+
+		"Debuff":
+			if enemies.size() > 0:
+				apply_debuff(enemies[targeted_enemy_index],
+					current_skill.get_actual_effect_value(), current_skill.effect_duration)
+
+		"Heal":
+			if current_skill.is_aoe() or current_skill.target_type == "Team":
+				for i in range(GameManager.player_party.size()):
+					_apply_heal(i)
+			else:
+				_apply_heal(targeted_ally_index)
+
+		"Shield":
+			if current_skill.is_aoe() or current_skill.target_type == "Team":
+				for i in range(GameManager.player_party.size()):
+					_apply_shield(i)
+			else:
+				_apply_shield(targeted_ally_index)
+
+func _apply_heal(char_idx: int):
+	if char_idx >= GameManager.player_party.size(): return
+	var cd      = GameManager.player_party[char_idx]
+	var max_hp  = float(cd.get_actual_hp())
+	var heal    = float(current_skill.get_actual_heal_flat()) + \
+		(max_hp * current_skill.get_actual_heal_scaling())
+	character_hp[char_idx] = min(character_hp[char_idx] + heal, max_hp)
+	_update_portrait_hp(char_idx)
+	_show_floating_text("+" + str(int(heal)) + " HP", Color(0.3,1.0,0.5),
+		_ally_screen_pos(char_idx))
+	print("Healed ", cd.character_name, " for ", int(heal))
+
+func _apply_shield(char_idx: int):
+	if char_idx >= GameManager.player_party.size(): return
+	var cd         = GameManager.player_party[char_idx]
+	var shield_val = float(current_skill.get_actual_shield_flat()) + \
+		(float(current_character.get_actual_defense()) * current_skill.get_actual_shield_scaling())
+	character_shields[char_idx] += shield_val
+	_update_portrait_hp(char_idx)
+	_show_floating_text("🛡 " + str(int(shield_val)), Color(0.4,0.7,1.0),
+		_ally_screen_pos(char_idx))
+	print("Shield on ", cd.character_name, ": ", int(shield_val))
+
+func _ally_screen_pos(char_idx: int) -> Vector2:
+	if not camera: return Vector2(200, 300)
+	var world_x = -4.0 + char_idx * 2.5
+	return camera.unproject_position(Vector3(world_x, 2.0, 0.0))
+
+# ─────────────────────────────────────────────
+#  Buffs / debuffs
+# ─────────────────────────────────────────────
+func apply_buff(target, atk_bonus: float, duration: int):
+	active_buffs[target] = {"atk_bonus": atk_bonus, "turns_left": duration}
+
+func apply_debuff(target, def_reduction: float, duration: int):
+	active_debuffs[target] = {"def_reduction": def_reduction, "turns_left": duration}
+
+func _tick_status_effects():
+	for d in [active_buffs, active_debuffs]:
+		var remove = []
+		for key in d:
+			d[key].turns_left -= 1
+			if d[key].turns_left <= 0: remove.append(key)
+		for k in remove: d.erase(k)
+
+# ─────────────────────────────────────────────
+#  Turn damage display (this turn only)
+# ─────────────────────────────────────────────
+func _show_turn_damage(amount: int):
+	# Remove any previous turn damage label
+	var old = get_node_or_null("BattleUI/TurnDmgLabel")
+	if old: old.queue_free()
+
+	var lbl = Label.new()
+	lbl.name = "TurnDmgLabel"
+	lbl.text = str(amount) + " DMG"
+	lbl.add_theme_font_size_override("font_size", 36)
+	lbl.add_theme_color_override("font_color", Color(1.0, 0.95, 0.3))
+	lbl.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
+	lbl.offset_left   = -200.0
+	lbl.offset_top    = 60.0
+	lbl.offset_right  = -10.0
+	lbl.offset_bottom = 110.0
+	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	$BattleUI.add_child(lbl)
+
+	# Auto-dismiss after 2.5s
+	await get_tree().create_timer(2.5).timeout
+	if not is_instance_valid(lbl): return
+	var t = create_tween()
+	t.tween_property(lbl, "modulate:a", 0.0, 0.4)
+	await t.finished
+	if is_instance_valid(lbl): lbl.queue_free()
 
 # ─────────────────────────────────────────────
 #  Feedback popup
@@ -940,16 +1261,15 @@ func show_feedback_popup(damage: int, quality: Dictionary):
 	popup.name = "FeedbackPopup"
 	var s = StyleBoxFlat.new()
 	s.bg_color = Color(0.05,0.05,0.08,0.92)
-	for c in ["top_left","top_right","bottom_left","bottom_right"]: s.set("corner_radius_"+c,12)
+	for c in ["top_left","top_right","bottom_left","bottom_right"]: s.set("corner_radius_"+c, 12)
 	s.border_width_left=2; s.border_width_right=2; s.border_width_top=2; s.border_width_bottom=2
 	s.border_color = Color(0.4,0.4,0.6)
 	popup.add_theme_stylebox_override("panel", s)
 	popup.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
-	popup.size = Vector2(280, 0)
+	popup.size = Vector2(280,0)
 
 	var vbox = VBoxContainer.new()
 	vbox.add_theme_constant_override("separation", 6)
-
 	for cfg in [
 		{"text":"⚔  Attack Result","size":16,"color":Color.WHITE},
 		{"text":str(damage)+" DMG","size":28,"color":Color(1.0,0.95,0.3)}
@@ -981,6 +1301,8 @@ func show_feedback_popup(damage: int, quality: Dictionary):
 	$BattleUI.add_child(popup)
 
 	await get_tree().create_timer(2.0).timeout
+	# Guard: popup may have been freed if battle ended
+	if not is_instance_valid(popup): return
 	var t = create_tween()
 	t.tween_property(popup, "modulate:a", 0.0, 0.5)
 	await t.finished
@@ -1004,57 +1326,35 @@ func _show_floating_text(text: String, color: Color, pos: Vector2):
 	if is_instance_valid(lbl): lbl.queue_free()
 
 # ─────────────────────────────────────────────
-#  Buffs / debuffs
-# ─────────────────────────────────────────────
-func apply_buff(target, atk_bonus: float, duration: int):
-	active_buffs[target] = {"atk_bonus": atk_bonus, "turns_left": duration}
-
-func apply_debuff(target, def_reduction: float, duration: int):
-	active_debuffs[target] = {"def_reduction": def_reduction, "turns_left": duration}
-
-func _tick_status_effects():
-	for d in [active_buffs, active_debuffs]:
-		var remove = []
-		for key in d:
-			d[key].turns_left -= 1
-			if d[key].turns_left <= 0: remove.append(key)
-		for k in remove: d.erase(k)
-
-func resolve_skill_effects():
-	if current_skill == null: return
-	match current_skill.effect_type:
-		"Buff":
-			var targets = GameManager.player_party if current_skill.target_type == "Team" \
-				else [current_character]
-			for t in targets:
-				apply_buff(t, current_skill.get_actual_effect_value(), current_skill.effect_duration)
-		"Debuff":
-			if enemies.size() > 0:
-				apply_debuff(enemies[targeted_enemy_index],
-					current_skill.get_actual_effect_value(), current_skill.effect_duration)
-		"Heal":
-			var targets = GameManager.player_party if current_skill.target_type in ["Team","AoE"] \
-				else [current_character]
-			for t in targets:
-				var heal = current_skill.get_actual_heal_flat() + \
-					int(t.get_actual_hp() * current_skill.get_actual_heal_scaling())
-				print("Heal ", t.character_name, ": ", heal)
-		"Shield":
-			var sv = current_skill.get_actual_shield_flat() + \
-				int(current_character.get_actual_defense() * current_skill.get_actual_shield_scaling())
-			print("Shield applied: ", sv)
-
-# ─────────────────────────────────────────────
 #  Enemy turn
 # ─────────────────────────────────────────────
 func enemy_turn(entry: Dictionary):
 	print(entry.data.enemy_name, " attacks!")
 	await get_tree().create_timer(1.5).timeout
-	if GameManager.player_party.size() > 0:
-		var target = GameManager.player_party[randi() % GameManager.player_party.size()]
-		var dmg    = entry.data.base_attack
-		print(entry.data.enemy_name, " → ", target.character_name, " for ", dmg)
-		_show_floating_text(str(dmg), Color(1.0,0.3,0.3), Vector2(200,300))
+	if GameManager.player_party.size() == 0:
+		current_turn_index += 1
+		process_next_turn()
+		return
+
+	var target_idx = randi() % GameManager.player_party.size()
+	var cd         = GameManager.player_party[target_idx]
+	var raw_dmg    = entry.data.base_attack
+
+	# Apply character shield first
+	if character_shields[target_idx] > 0.0:
+		var absorbed = min(character_shields[target_idx], float(raw_dmg))
+		character_shields[target_idx] -= absorbed
+		raw_dmg -= int(absorbed)
+		_show_floating_text("🛡 " + str(int(absorbed)), Color(0.4,0.7,1.0), _ally_screen_pos(target_idx))
+
+	if raw_dmg > 0:
+		character_hp[target_idx] = max(0.0, character_hp[target_idx] - float(raw_dmg))
+		_give_energy_hit_taken(cd)
+		_show_floating_text(str(raw_dmg), Color(1.0,0.3,0.3), _ally_screen_pos(target_idx))
+		print(entry.data.enemy_name, " → ", cd.character_name, " for ", raw_dmg)
+
+	_update_portrait_hp(target_idx)
+
 	current_turn_index += 1
 	process_next_turn()
 
@@ -1107,19 +1407,16 @@ func _update_sp_display():
 func _setup_battle_sprites():
 	for child in $Background.get_children():
 		if child.name.begins_with("player_") or child.name.begins_with("enemy_") \
-			or child.name.begins_with("Placeholder_"):
-			child.queue_free()
-
+			or child.name.begins_with("Placeholder_"): child.queue_free()
 	for i in range(GameManager.player_party.size()):
-		_spawn_character(GameManager.player_party[i], i, "player")
+		_spawn_character(GameManager.player_party[i], i)
 	for i in range(enemies.size()):
 		_spawn_enemy_sprite(i)
-
 	_build_enemy_ui()
 	targeted_enemy_index = 0
-	_refresh_target_highlight()
+	_refresh_enemy_highlight()
 
-func _spawn_character(data: CharacterData, idx: int, _side: String):
+func _spawn_character(data: CharacterData, idx: int):
 	var scene = load("res://Characters/" + data.character_name.to_lower() + ".tscn")
 	if scene == null: _create_placeholder(data, idx); return
 	var inst = scene.instantiate()
@@ -1130,8 +1427,7 @@ func _spawn_character(data: CharacterData, idx: int, _side: String):
 	$Background.add_child(inst)
 
 func _spawn_enemy_sprite(idx: int):
-	var enemy  = enemies[idx]
-	var sprite = AnimatedSprite3D.new()
+	var sprite  = AnimatedSprite3D.new()
 	sprite.name     = "enemy_sprite_" + str(idx)
 	sprite.position = Vector3(_enemy_world_x(idx), 0, 0)
 	sprite.scale    = Vector3(3, 3, 1)
@@ -1147,7 +1443,6 @@ func _spawn_enemy_sprite(idx: int):
 func _create_placeholder(data: CharacterData, idx: int):
 	var sprite = AnimatedSprite3D.new()
 	sprite.name = "player_" + data.character_name
-	var img = Image.create(64, 64, false, Image.FORMAT_RGBA8)
 	if data.splash_art:
 		var frames = SpriteFrames.new()
 		frames.add_animation("idle")
@@ -1156,6 +1451,7 @@ func _create_placeholder(data: CharacterData, idx: int):
 		sprite.animation     = "idle"
 		sprite.pixel_size    = 0.01
 	else:
+		var img = Image.create(64, 64, false, Image.FORMAT_RGBA8)
 		match data.element:
 			"Water": img.fill(Color(0.2,0.4,0.9))
 			"Fire":  img.fill(Color(0.9,0.3,0.1))
