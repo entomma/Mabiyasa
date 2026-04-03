@@ -9,8 +9,11 @@ class_name CharacterData
 @export var splash_art:     Texture2D
 @export var sprite:         Texture2D
 
+# ── Rarity ────────────────────────────────────────────────────────────────────
+@export var star_rating: int = 4   # 4 or 5 — set per character .tres file
+
 # ── Element ────────────────────────────────────────────────────────────────────
-@export var element: String   # "Water" | "Fire" | "Earth" | "Wind"
+@export var element: String
 
 # ── Level / EXP ───────────────────────────────────────────────────────────────
 @export var current_exp:   int = 0
@@ -33,17 +36,14 @@ func get_exp_to_next_level() -> int:
 
 # ── Crit ──────────────────────────────────────────────────────────────────────
 @export var crit_rate:   float = 0.05
-@export var crit_damage: float = 1.50   # fixed: was 0.50 which means no crit bonus
+@export var crit_damage: float = 1.50
 
 # ── Elemental ─────────────────────────────────────────────────────────────────
 @export var elemental_bonus: float = 0.20
 
 # ── Energy ────────────────────────────────────────────────────────────────────
-# current_energy persists between battles (stored on the resource itself)
 @export var current_energy:    float = 0.0
 @export var max_energy:        float = 100.0
-# energy_regen_rate multiplies all energy gains from actions (not from taking damage)
-# 1.0 = 100% default. Acts like a stat — raise it to charge ult faster.
 @export var energy_regen_rate: float = 1.0
 
 func gain_energy(base_amount: float, affected_by_rate: bool = true) -> void:
@@ -55,6 +55,10 @@ func consume_energy() -> void:
 
 func is_ult_ready() -> bool:
 	return current_energy >= max_energy
+
+# ── Equipped card (light cone) — set at runtime ───────────────────────────────
+var equipped_card: GachaCard  = null
+var equipped_card_stack: int  = 1
 
 # ── Talent ────────────────────────────────────────────────────────────────────
 @export var talent_name:        String
@@ -69,12 +73,31 @@ func is_ult_ready() -> bool:
 # ── Cards ─────────────────────────────────────────────────────────────────────
 @export var signature_cards: Array[Resource]
 
-# ── Stat calculators ──────────────────────────────────────────────────────────
+# ── Stat calculators (includes equipped card bonuses) ─────────────────────────
 func get_actual_hp() -> int:
-	return int(max_hp + (hp_per_level * (current_level - 1)))
+	var base = int(max_hp + (hp_per_level * (current_level - 1)))
+	if equipped_card:
+		base += equipped_card.get_scaled_hp(equipped_card_stack)
+	return base
 
 func get_actual_attack() -> int:
-	return int(base_attack + (attack_per_level * (current_level - 1)))
+	var base = int(base_attack + (attack_per_level * (current_level - 1)))
+	if equipped_card:
+		base += equipped_card.get_scaled_atk(equipped_card_stack)
+	return base
 
 func get_actual_defense() -> int:
 	return int(base_defense + (defense_per_level * (current_level - 1)))
+
+# ── Card passive helpers ───────────────────────────────────────────────────────
+func get_card_passive_value() -> float:
+	if equipped_card == null: return 0.0
+	return equipped_card.get_scaled_passive(equipped_card_stack)
+
+func get_card_passive_trigger() -> String:
+	if equipped_card == null: return "none"
+	return equipped_card.passive_trigger
+
+func get_card_passive_effect() -> String:
+	if equipped_card == null: return "none"
+	return equipped_card.passive_effect_type

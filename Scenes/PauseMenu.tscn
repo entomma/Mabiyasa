@@ -37,6 +37,10 @@ layout_mode = 2
 layout_mode = 2
 text = "Party Button"
 
+[node name="WishButton" type="Button" parent="MenuPanel/VBoxContainer" unique_id=766025808]
+layout_mode = 2
+text = "Wish Button"
+
 [node name="ResumeButton" type="Button" parent="MenuPanel/VBoxContainer" unique_id=1709291685]
 layout_mode = 2
 text = "Resume Button"
@@ -44,3 +48,5 @@ text = "Resume Button"
 [node name="QuitButton" type="Button" parent="MenuPanel/VBoxContainer" unique_id=521190417]
 layout_mode = 2
 text = "Quit Button"
+
+[connection signal="pressed" from="MenuPanel/VBoxContainer/WishButton" to="." method="_on_wish_pressed"]

@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="GachaCard" format=3 uid="uid://gacha_card_5star_001"]
+
+[ext_resource type="Script" path="res://Scripts/GachaCard.gd" id="1_gcard"]
+
+[resource]
+script = ExtResource("1_gcard")
+card_item_id = 1001
+card_name = "Rod of Deep Waters"
+card_name_kap = "Sibat ning Maragul a Danum"
+description = "A legendary fishing rod carved from the heartwood of a bayabas tree. When water words flow in battle, the fish come to you."
+star_rating = 5
+bonus_hp = 200
+bonus_atk = 80
+bonus_def = 0
+bonus_speed = 0
+passive_trigger = "water_card_on_turn"
+passive_effect_type = "dmg_bonus"
+passive_effect_value = 0.05
+superimposition_bonus = 0.05

@@ -3,6 +3,7 @@ extends Control
 @onready var resume_btn = $MenuPanel/VBoxContainer/ResumeButton
 @onready var party_btn = $MenuPanel/VBoxContainer/PartyButton
 @onready var quit_btn = $MenuPanel/VBoxContainer/QuitButton
+@onready var wish_btn = $MenuPanel/VBoxContainer/WishButton
 
 func _ready():
 	resume_btn.pressed.connect(_on_resume_pressed)
@@ -29,10 +30,10 @@ func _on_party_pressed():
 		SupabaseManager.save_checkpoint("pause_save", scene_name, player.global_position)
 	get_tree().paused = false
 	get_tree().change_scene_to_file("res://Scenes/PartySelect.tscn")
-
+func _on_wish_pressed():
+	get_tree().paused = false
+	get_tree().change_scene_to_file("res://Scenes/GachaScene.tscn")
 func _on_quit_pressed():
 	get_tree().paused = false
 	get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
-	
-	
 	
