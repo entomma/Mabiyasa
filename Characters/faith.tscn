@@ -1,0 +1,47 @@
+[gd_scene format=3 uid="uid://der43wd21u0aa"]
+
+[ext_resource type="Script" uid="uid://dem0eig31pqnd" path="res://Characters/faith.gd" id="1_uk17s"]
+[ext_resource type="Texture2D" uid="uid://dih4e434p3h05" path="res://Assets/16x32 Idle-Sheet.png" id="2_4a3ql"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sucsg"]
+atlas = ExtResource("2_4a3ql")
+region = Rect2(0, 0, 16, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8k340"]
+atlas = ExtResource("2_4a3ql")
+region = Rect2(16, 0, 16, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_34835"]
+atlas = ExtResource("2_4a3ql")
+region = Rect2(32, 0, 16, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yymlr"]
+atlas = ExtResource("2_4a3ql")
+region = Rect2(48, 0, 16, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_gr2uj"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sucsg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8k340")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_34835")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yymlr")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="faith" type="Node3D" unique_id=1913484459]
+script = ExtResource("1_uk17s")
+
+[node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="." unique_id=1243575212]
+texture_filter = 0
+sprite_frames = SubResource("SpriteFrames_gr2uj")

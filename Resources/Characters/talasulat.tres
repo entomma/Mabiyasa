@@ -1,6 +1,11 @@
 [gd_resource type="Resource" script_class="CharacterData" format=3 uid="uid://di3wvn3qkverc"]
 
 [ext_resource type="Script" uid="uid://c7oxuy1pf0voe" path="res://Scripts/CharacterData.gd" id="1_pwmkk"]
+[ext_resource type="Resource" uid="uid://bodgxe1rjd3hi" path="res://Resources/Skills/Talasulat/talasulat_basic.tres" id="1_wpfj0"]
+[ext_resource type="Resource" uid="uid://cmk0pmybvefmw" path="res://Resources/Skills/Talasulat/talasulat_skill.tres" id="3_qtlfi"]
+[ext_resource type="Texture2D" uid="uid://dfjjhq4yf7wb5" path="res://Assets/awrfawr.png" id="4_qtlfi"]
+[ext_resource type="Resource" uid="uid://c13o3lmuwj8bp" path="res://Resources/Skills/Talasulat/talasulat_talent.tres" id="4_tdiwn"]
+[ext_resource type="Resource" uid="uid://cg5w217htpoms" path="res://Resources/Skills/Talasulat/talasulat_ultimate.tres" id="5_17e78"]
 
 [resource]
 script = ExtResource("1_pwmkk")
@@ -8,6 +13,7 @@ character_id = 5
 character_name = "Angela"
 english_name = "Writer"
 job = "Talasulat"
+splash_art = ExtResource("4_qtlfi")
 element = "Wind"
 max_hp = 900
 base_attack = 720
@@ -18,4 +24,8 @@ attack_per_level = 30.0
 defense_per_level = 7.0
 talent_name = "Poetic Flow"
 talent_description = "NA"
+basic_attack = ExtResource("1_wpfj0")
+skill = ExtResource("3_qtlfi")
+ultimate = ExtResource("5_17e78")
+talent = ExtResource("4_tdiwn")
 metadata/_custom_type_script = "uid://c7oxuy1pf0voe"

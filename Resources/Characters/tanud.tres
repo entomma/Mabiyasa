@@ -1,13 +1,19 @@
 [gd_resource type="Resource" script_class="CharacterData" format=3 uid="uid://c8u8k3tc6gxo"]
 
+[ext_resource type="Resource" uid="uid://d4k62j282r53d" path="res://Resources/Skills/Tanud/tanud_basic.tres" id="1_ieaut"]
 [ext_resource type="Script" uid="uid://c7oxuy1pf0voe" path="res://Scripts/CharacterData.gd" id="1_rgbcg"]
+[ext_resource type="Resource" uid="uid://daobbibmrmmim" path="res://Resources/Skills/Tanud/tanud_skill.tres" id="3_51if7"]
+[ext_resource type="Texture2D" uid="uid://cwf411vlu28m3" path="res://Assets/vid.jpg" id="4_51if7"]
+[ext_resource type="Resource" uid="uid://chxsd7uctkjid" path="res://Resources/Skills/Tanud/tanud_talent.tres" id="4_hjj5s"]
+[ext_resource type="Resource" uid="uid://c71bf8ktkc1y2" path="res://Resources/Skills/Tanud/tanud_ultimate.tres" id="5_168q2"]
 
 [resource]
 script = ExtResource("1_rgbcg")
 character_id = 6
-character_name = "Aziel"
+character_name = "Arjay"
 english_name = "Watchman"
 job = "Tanud"
+splash_art = ExtResource("4_51if7")
 element = "Earth"
 max_hp = 1400
 base_attack = 450
@@ -17,4 +23,8 @@ hp_per_level = 60.0
 attack_per_level = 12.0
 defense_per_level = 18.0
 talent_name = "Watchman's eyes"
+basic_attack = ExtResource("1_ieaut")
+skill = ExtResource("3_51if7")
+ultimate = ExtResource("5_168q2")
+talent = ExtResource("4_hjj5s")
 metadata/_custom_type_script = "uid://c7oxuy1pf0voe"

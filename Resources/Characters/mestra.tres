@@ -1,6 +1,11 @@
 [gd_resource type="Resource" script_class="CharacterData" format=3 uid="uid://bb87ogql78x8g"]
 
 [ext_resource type="Script" uid="uid://c7oxuy1pf0voe" path="res://Scripts/CharacterData.gd" id="1_ajc6l"]
+[ext_resource type="Resource" uid="uid://1ss8anxi5aqr" path="res://Resources/Skills/Mestra/mestra_basic.tres" id="1_cc28l"]
+[ext_resource type="Resource" uid="uid://vkcdgqp1delp" path="res://Resources/Skills/Mestra/mestra_skill.tres" id="3_xwurg"]
+[ext_resource type="Resource" uid="uid://cavyliq16etm2" path="res://Resources/Skills/Mestra/mestra_talent.tres" id="4_evtdm"]
+[ext_resource type="Texture2D" uid="uid://drghtfib1em61" path="res://Assets/Illustration6n.png" id="4_xwurg"]
+[ext_resource type="Resource" uid="uid://daqqt2ux555bx" path="res://Resources/Skills/Mestra/mestra_ult.tres" id="5_0h62f"]
 
 [resource]
 script = ExtResource("1_ajc6l")
@@ -8,6 +13,7 @@ character_id = 2
 character_name = "Faith"
 english_name = "Teacher"
 job = "Mestra"
+splash_art = ExtResource("4_xwurg")
 element = "Wind"
 max_hp = 950
 base_attack = 520
@@ -18,4 +24,8 @@ attack_per_level = 18.0
 defense_per_level = 12.0
 talent_name = "Guided Lesson"
 talent_description = "NA"
+basic_attack = ExtResource("1_cc28l")
+skill = ExtResource("3_xwurg")
+ultimate = ExtResource("5_0h62f")
+talent = ExtResource("4_evtdm")
 metadata/_custom_type_script = "uid://c7oxuy1pf0voe"

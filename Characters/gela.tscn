@@ -1,0 +1,46 @@
+[gd_scene format=3 uid="uid://crjnmg804glgm"]
+
+[ext_resource type="Script" uid="uid://b8fy5d51b6y3v" path="res://Characters/gela.gd" id="1_r6r4u"]
+[ext_resource type="Texture2D" uid="uid://dih4e434p3h05" path="res://Assets/16x32 Idle-Sheet.png" id="2_tk7m6"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_i02fn"]
+atlas = ExtResource("2_tk7m6")
+region = Rect2(0, 0, 16, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bhubn"]
+atlas = ExtResource("2_tk7m6")
+region = Rect2(16, 0, 16, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v1kuy"]
+atlas = ExtResource("2_tk7m6")
+region = Rect2(32, 0, 16, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ni0d0"]
+atlas = ExtResource("2_tk7m6")
+region = Rect2(48, 0, 16, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_7kk6p"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_i02fn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bhubn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v1kuy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ni0d0")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="gela" type="Node3D" unique_id=817821251]
+script = ExtResource("1_r6r4u")
+
+[node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="." unique_id=168259332]
+sprite_frames = SubResource("SpriteFrames_7kk6p")
