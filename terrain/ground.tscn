@@ -1,0 +1,124 @@
+[gd_scene format=3 uid="uid://cyv3676qjycxv"]
+
+[ext_resource type="PackedScene" uid="uid://bdfswoqyr3x6v" path="res://Scenes/Player.tscn" id="1_5tvp6"]
+[ext_resource type="Script" uid="uid://r8t22aa01mxr" path="res://addons/zylann.hterrain/hterrain.gd" id="1_ahnyx"]
+[ext_resource type="Resource" uid="uid://dx72pceu8hsnm" path="res://terrain/data.hterrain" id="2_7qxil"]
+[ext_resource type="Script" uid="uid://d186hiqie80r6" path="res://addons/zylann.hterrain/hterrain_texture_set.gd" id="3_pgt2p"]
+[ext_resource type="PackedScene" uid="uid://bkmwek75cw6cr" path="res://terrain/house.tscn" id="4_7qxil"]
+[ext_resource type="PackedScene" uid="uid://ifdtrfncuq8n" path="res://terrain/tree.tscn" id="6_fm7vy"]
+[ext_resource type="PackedScene" uid="uid://bgnfcgouv4i12" path="res://terrain/manytree.tscn" id="7_4w285"]
+[ext_resource type="PackedScene" uid="uid://dbobaa6u56rlw" path="res://terrain/z_1_teleporter.tscn" id="8_4w285"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_7qxil"]
+sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+
+[sub_resource type="Sky" id="Sky_pl2fg"]
+sky_material = SubResource("ProceduralSkyMaterial_7qxil")
+
+[sub_resource type="Environment" id="Environment_fm7vy"]
+background_mode = 2
+sky = SubResource("Sky_pl2fg")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="Resource" id="Resource_rtguq"]
+script = ExtResource("3_pgt2p")
+mode = 0
+textures = [[], []]
+
+[sub_resource type="BoxMesh" id="BoxMesh_4w285"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pl2fg"]
+albedo_color = Color(0.4367652, 0.25846025, 0.18731537, 1)
+
+[node name="SmallVillage" type="Node3D" unique_id=13438698]
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=754967336]
+environment = SubResource("Environment_fm7vy")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1839102144]
+transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 0, 0)
+light_color = Color(0.96038765, 0.82553214, 0.53920466, 1)
+shadow_enabled = true
+
+[node name="HTerrain" type="Node3D" parent="." unique_id=1359549407]
+script = ExtResource("1_ahnyx")
+centered = true
+_terrain_data = ExtResource("2_7qxil")
+chunk_size = 32
+collision_enabled = true
+collision_layer = 1
+collision_mask = 1
+shader_type = "Classic4Lite"
+custom_shader = null
+custom_globalmap_shader = null
+texture_set = SubResource("Resource_rtguq")
+render_layers = 1
+cast_shadow = 1
+shader_params/u_ground_uv_scale = 20
+shader_params/u_depth_blending = true
+shader_params/u_triplanar = null
+shader_params/u_tile_reduction = null
+metadata/_custom_type_script = "uid://r8t22aa01mxr"
+
+[node name="Player" parent="." unique_id=865057644 instance=ExtResource("1_5tvp6")]
+transform = Transform3D(7, 0, 0, 0, 7, 0, 0, 0, 7, -31.127, 2.2, 4.073)
+
+[node name="Head" type="Node3D" parent="Player" unique_id=1471886039]
+
+[node name="SpringArm3D" type="SpringArm3D" parent="Player/Head" unique_id=881584569]
+spring_length = 4.0
+
+[node name="Camera3D" type="Camera3D" parent="Player/Head/SpringArm3D" unique_id=1941685969 groups=["camera"]]
+transform = Transform3D(0.0952381, 0, 0, 0, 0.087004334, 0.038736824, 0, -0.038736824, 0.087004334, 0, 0.8820001, 2.3)
+fov = 60.0
+near = 0.5
+far = 500.0
+
+[node name="house" parent="." unique_id=1811193183 instance=ExtResource("4_7qxil")]
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, -7.5390186, 1.3402405, 0)
+
+[node name="house2" parent="." unique_id=691870938 instance=ExtResource("4_7qxil")]
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, -126.2049, 1.2870846, 96.04646)
+
+[node name="house3" parent="." unique_id=135397731 instance=ExtResource("4_7qxil")]
+transform = Transform3D(1.2622662, 0, -0.81036043, 0, 1.5, 0, 0.81036043, 0, 1.2622662, -126.2049, 1.2870846, -30.023987)
+
+[node name="house4" parent="." unique_id=1321622353 instance=ExtResource("4_7qxil")]
+transform = Transform3D(1.26085, 0, 0.8125622, 0, 1.5, 0, -0.8125622, 0, 1.26085, -63.89023, 1.2870846, 52.806618)
+
+[node name="house5" parent="." unique_id=1117478711 instance=ExtResource("4_7qxil")]
+transform = Transform3D(1.438971, 0, -0.42351216, 0, 1.5, 0, 0.42351216, 0, 1.438971, 52.706734, 1.2870846, 60.522095)
+
+[node name="tree" parent="." unique_id=457371394 instance=ExtResource("6_fm7vy")]
+transform = Transform3D(6, 0, 0, 0, 6, 0, 0, 0, 6, -65.93297, 3.4326859, 0)
+
+[node name="manytree" parent="." unique_id=1533042615 instance=ExtResource("7_4w285")]
+transform = Transform3D(0.15705363, 0, 4.997533, 0, 5, 0, -4.997533, 0, 0.15705363, -243.52122, 3.1586113, -25.06823)
+
+[node name="manytree3" parent="." unique_id=1457047452 instance=ExtResource("7_4w285")]
+transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, -125.81778, 3.1586113, 146.37296)
+
+[node name="manytree2" parent="." unique_id=1941127452 instance=ExtResource("7_4w285")]
+transform = Transform3D(-2.31648, 0, 4.431018, 0, 5, 0, -4.431018, 0, -2.31648, -226.98912, 3.0103207, 84.67386)
+
+[node name="tree2" parent="." unique_id=1692813773 instance=ExtResource("6_fm7vy")]
+transform = Transform3D(5.372081, 0, -2.672219, 0, 6, 0, 2.672219, 0, 5.372081, -65.93297, 3.4326859, 83.8052)
+
+[node name="tree3" parent="." unique_id=684695875 instance=ExtResource("6_fm7vy")]
+transform = Transform3D(5.372081, 0, -2.672219, 0, 6, 0, 2.672219, 0, 5.372081, -148.4193, 3.4326859, 24.443096)
+
+[node name="tree4" parent="." unique_id=1112097687 instance=ExtResource("6_fm7vy")]
+transform = Transform3D(5.372081, 0, -2.672219, 0, 6, 0, 2.672219, 0, 5.372081, -148.4193, 3.4326859, 24.443096)
+
+[node name="z1 teleporter" parent="." unique_id=1052377900 instance=ExtResource("8_4w285")]
+transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, -53.374664, 4.7432394, 0)
+target_scene = "uid://mi57dghu3h6p"
+spawn_name = "forest"
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=413958992]
+transform = Transform3D(4.045085, 0, 8.816778, 0, 0.20000002, 0, -2.9389262, 0, 12.135256, 116.92095, 0, 137.39755)
+mesh = SubResource("BoxMesh_4w285")
+surface_material_override/0 = SubResource("StandardMaterial3D_pl2fg")

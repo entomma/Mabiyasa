@@ -1,0 +1,27 @@
+[gd_scene format=3 uid="uid://dbobaa6u56rlw"]
+
+[ext_resource type="Script" uid="uid://c8tnj4nwc2keb" path="res://teleporter.gd" id="1_ds8s0"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_jj4w3"]
+radius = 0.3544922
+height = 1.9707031
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_0tdxk"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_htvlh"]
+albedo_color = Color(0.45882353, 1, 0.40784314, 1)
+
+[node name="z1 teleporter" type="Area3D" unique_id=1052377900]
+script = ExtResource("1_ds8s0")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1061784230]
+transform = Transform3D(2.5, 0, 0, 0, 1, 0, 0, 0, 0.7, 0, 0.0146484375, 0)
+shape = SubResource("CapsuleShape3D_jj4w3")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1956596103]
+transform = Transform3D(2, 0, 0, 0, 1, 0, 0, 0, 0.1, 0, 0, 0)
+mesh = SubResource("CapsuleMesh_0tdxk")
+surface_material_override/0 = SubResource("StandardMaterial3D_htvlh")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="body_exited" from="." to="." method="_on_body_exited"]

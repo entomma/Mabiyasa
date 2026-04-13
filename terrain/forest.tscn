@@ -1,0 +1,90 @@
+[gd_scene format=3 uid="uid://mi57dghu3h6p"]
+
+[ext_resource type="Script" uid="uid://r8t22aa01mxr" path="res://addons/zylann.hterrain/hterrain.gd" id="1_ww16c"]
+[ext_resource type="Resource" uid="uid://bb6evq64fw2am" path="res://data.hterrain" id="2_2abur"]
+[ext_resource type="Script" uid="uid://d186hiqie80r6" path="res://addons/zylann.hterrain/hterrain_texture_set.gd" id="3_yrjgv"]
+[ext_resource type="PackedScene" uid="uid://bgnfcgouv4i12" path="res://terrain/manytree.tscn" id="4_ag00h"]
+[ext_resource type="PackedScene" uid="uid://bdfswoqyr3x6v" path="res://Scenes/Player.tscn" id="5_yrjgv"]
+[ext_resource type="PackedScene" uid="uid://ifdtrfncuq8n" path="res://terrain/tree.tscn" id="6_ag00h"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_vh1m7"]
+sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+
+[sub_resource type="Sky" id="Sky_pgt2p"]
+sky_material = SubResource("ProceduralSkyMaterial_vh1m7")
+
+[sub_resource type="Environment" id="Environment_jqera"]
+background_mode = 2
+sky = SubResource("Sky_pgt2p")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="Resource" id="Resource_kqt2m"]
+script = ExtResource("3_yrjgv")
+mode = 0
+textures = [[], []]
+
+[node name="Forest" type="Node3D" unique_id=1409465772]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=652623973]
+environment = SubResource("Environment_jqera")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=932827393]
+transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 0, 0)
+light_color = Color(0.96038765, 0.82553214, 0.53920466, 1)
+shadow_enabled = true
+
+[node name="HTerrain" type="Node3D" parent="." unique_id=257122169]
+script = ExtResource("1_ww16c")
+centered = true
+_terrain_data = ExtResource("2_2abur")
+chunk_size = 32
+collision_enabled = true
+collision_layer = 1
+collision_mask = 1
+shader_type = "Classic4Lite"
+custom_shader = null
+custom_globalmap_shader = null
+texture_set = SubResource("Resource_kqt2m")
+render_layers = 1
+cast_shadow = 1
+shader_params/u_ground_uv_scale = 20
+shader_params/u_depth_blending = true
+shader_params/u_triplanar = null
+shader_params/u_tile_reduction = null
+metadata/_custom_type_script = "uid://r8t22aa01mxr"
+
+[node name="manytree" parent="." unique_id=1533042615 instance=ExtResource("4_ag00h")]
+transform = Transform3D(7, 0, 0, 0, 7, 0, 0, 0, 7, 170.29256, 0, 215.51079)
+
+[node name="manytree2" parent="." unique_id=812243962 instance=ExtResource("4_ag00h")]
+transform = Transform3D(7, 0, 0, 0, 7, 0, 0, 0, 7, -153.33057, 0, 215.51079)
+
+[node name="manytree3" parent="." unique_id=140112151 instance=ExtResource("4_ag00h")]
+transform = Transform3D(7, 0, 0, 0, 7, 0, 0, 0, 7, 8.37677, 0, 216.6682)
+
+[node name="manytree4" parent="." unique_id=361855805 instance=ExtResource("4_ag00h")]
+transform = Transform3D(7, 0, 0, 0, 7, 0, 0, 0, 7, 170.49982, 4.642639, -225.01088)
+
+[node name="Node3D" type="Node3D" parent="." unique_id=2127802086]
+
+[node name="forest" type="Marker3D" parent="Node3D" unique_id=919658990 groups=["spawn"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.378227, 0)
+
+[node name="Player" parent="." unique_id=865057644 instance=ExtResource("5_yrjgv")]
+transform = Transform3D(7, 0, 0, 0, 7, 0, 0, 0, 7, -23.14685, 2.2, 4.073)
+
+[node name="Head" type="Node3D" parent="Player" unique_id=648791340]
+
+[node name="SpringArm3D" type="SpringArm3D" parent="Player/Head" unique_id=1283447766]
+spring_length = 4.0
+
+[node name="Camera3D" type="Camera3D" parent="Player/Head/SpringArm3D" unique_id=1995700582 groups=["camera"]]
+transform = Transform3D(0.0952381, 0, 0, 0, 0.087004334, 0.038736824, 0, -0.038736824, 0.087004334, 0, 0.8820001, 2.3)
+fov = 60.0
+near = 0.5
+far = 500.0
+
+[node name="tree" parent="." unique_id=457371394 instance=ExtResource("6_ag00h")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.346096, 0.718194, 0)

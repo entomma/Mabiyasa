@@ -1,5 +1,6 @@
 extends Node
 
+var next_spawn: String = "default" # Add this line
 var player_profile: Dictionary = {}
 var player_characters: Array = []
 var player_cards: Array = []
