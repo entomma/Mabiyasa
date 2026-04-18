@@ -22,7 +22,7 @@ var transition: Node = null
 
 # ── Origin scene tracking ──────────────────────────────────────────────────────
 # Stored before combat starts so Battle.gd knows where to return
-var origin_scene: String = "res://Scenes/Zone1.tscn"
+var origin_scene: String = "res://Scenes/small_village.tscn"
 
 func _ready():
 	var transition_scene = preload("res://Scenes/Transition.tscn")

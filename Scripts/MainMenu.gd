@@ -18,7 +18,7 @@ func _ready():
 		account_level.text = "Antas 1"
 
 func _on_start_pressed():
-	get_tree().change_scene_to_file("res://Scenes/HubTown.tscn")
+	get_tree().change_scene_to_file("res://Scenes/small_village.tscn")
 
 func _on_settings_pressed():
 	pass  # Settings scene later

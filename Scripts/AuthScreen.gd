@@ -38,7 +38,7 @@ func _on_login_pressed():
 			get_tree().change_scene_to_file("res://Scenes/" + last_scene + ".tscn")
 		else:
 			# Default to HubTown
-			get_tree().change_scene_to_file("res://Scenes/HubTown.tscn")
+			get_tree().change_scene_to_file("res://Scenes/small_village.tscn")
 	else:
 		status_label.text = "Login failed! Check your credentials."
 		

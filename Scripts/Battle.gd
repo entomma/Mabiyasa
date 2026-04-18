@@ -97,6 +97,7 @@ const ENERGY_FROM_HIT_TAKEN = 10.0
 #  _ready
 # ─────────────────────────────────────────────
 func _ready():
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	var transition = get_tree().get_first_node_in_group("transition")
 	if transition: transition.fade_in()
 

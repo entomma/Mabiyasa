@@ -469,7 +469,7 @@ func _on_skip_all():
 func _on_back():
 	# Return to wherever we came from
 	var prev = GameManager.get_meta("gacha_return_scene",
-		"res://Scenes/HubTown.tscn")
+		"res://Scenes/small_village.tscn")
 	get_tree().change_scene_to_file(prev)
 
 # ─────────────────────────────────────────────

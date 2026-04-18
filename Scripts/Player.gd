@@ -1,6 +1,6 @@
 extends CharacterBody3D
 
-const SPEED = 7.0
+const SPEED = 4.0
 
 @onready var anim = $AnimatedSprite3D
 @onready var head = $Head
@@ -50,7 +50,7 @@ func _ready():
 	camera_pitch = head.rotation.x
 
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-	head.position.y = 1.5
+	head.position.y = 1.45
 
 func _physics_process(delta):
 	# --- INPUT ---
@@ -114,7 +114,7 @@ func play_walk(dir: Vector2):
 	if abs(dir.x) > abs(dir.y):
 		anim.play("walk right" if dir.x > 0 else "walk left")
 	else:
-		anim.play("walk back" if dir.y > 0 else "walk front")
+		anim.play("walk front" if dir.y > 0 else "walk back")
 
 
 func play_idle():

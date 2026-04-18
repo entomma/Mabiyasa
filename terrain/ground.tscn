@@ -5,6 +5,7 @@
 [ext_resource type="Resource" uid="uid://dx72pceu8hsnm" path="res://terrain/data.hterrain" id="2_7qxil"]
 [ext_resource type="Script" uid="uid://d186hiqie80r6" path="res://addons/zylann.hterrain/hterrain_texture_set.gd" id="3_pgt2p"]
 [ext_resource type="PackedScene" uid="uid://bkmwek75cw6cr" path="res://terrain/house.tscn" id="4_7qxil"]
+[ext_resource type="Script" uid="uid://uw5d14gbouo" path="res://Scripts/Player.gd" id="5_pl2fg"]
 [ext_resource type="PackedScene" uid="uid://ifdtrfncuq8n" path="res://terrain/tree.tscn" id="6_fm7vy"]
 [ext_resource type="PackedScene" uid="uid://bgnfcgouv4i12" path="res://terrain/manytree.tscn" id="7_4w285"]
 [ext_resource type="PackedScene" uid="uid://dbobaa6u56rlw" path="res://terrain/z_1_teleporter.tscn" id="8_4w285"]
@@ -33,7 +34,7 @@ textures = [[], []]
 albedo_color = Color(0.4367652, 0.25846025, 0.18731537, 1)
 
 [node name="SmallVillage" type="Node3D" unique_id=13438698]
-transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0)
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 219.86346, 0)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=754967336]
 environment = SubResource("Environment_fm7vy")
@@ -64,12 +65,13 @@ shader_params/u_tile_reduction = null
 metadata/_custom_type_script = "uid://r8t22aa01mxr"
 
 [node name="Player" parent="." unique_id=865057644 instance=ExtResource("1_5tvp6")]
-transform = Transform3D(7, 0, 0, 0, 7, 0, 0, 0, 7, -31.127, 2.2, 4.073)
+transform = Transform3D(7, 0, 0, 0, 7, 0, 0, 0, 7, -31.127005, 5.4713287, 4.073)
+script = ExtResource("5_pl2fg")
 
 [node name="Head" type="Node3D" parent="Player" unique_id=1471886039]
 
 [node name="SpringArm3D" type="SpringArm3D" parent="Player/Head" unique_id=881584569]
-spring_length = 4.0
+spring_length = 3.0
 
 [node name="Camera3D" type="Camera3D" parent="Player/Head/SpringArm3D" unique_id=1941685969 groups=["camera"]]
 transform = Transform3D(0.0952381, 0, 0, 0, 0.087004334, 0.038736824, 0, -0.038736824, 0.087004334, 0, 0.8820001, 2.3)
@@ -80,6 +82,9 @@ far = 500.0
 [node name="house" parent="." unique_id=1811193183 instance=ExtResource("4_7qxil")]
 transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, -7.5390186, 1.3402405, 0)
 
+[node name="house6" parent="." unique_id=896291292 instance=ExtResource("4_7qxil")]
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 20.469166, 1.3402405, -81.841354)
+
 [node name="house2" parent="." unique_id=691870938 instance=ExtResource("4_7qxil")]
 transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, -126.2049, 1.2870846, 96.04646)
 
@@ -89,20 +94,35 @@ transform = Transform3D(1.2622662, 0, -0.81036043, 0, 1.5, 0, 0.81036043, 0, 1.2
 [node name="house4" parent="." unique_id=1321622353 instance=ExtResource("4_7qxil")]
 transform = Transform3D(1.26085, 0, 0.8125622, 0, 1.5, 0, -0.8125622, 0, 1.26085, -63.89023, 1.2870846, 52.806618)
 
+[node name="house7" parent="." unique_id=164830344 instance=ExtResource("4_7qxil")]
+transform = Transform3D(1.26085, 0, 0.8125622, 0, 1.5, 0, -0.8125622, 0, 1.26085, -14.046492, 1.2870846, 134.23442)
+
 [node name="house5" parent="." unique_id=1117478711 instance=ExtResource("4_7qxil")]
 transform = Transform3D(1.438971, 0, -0.42351216, 0, 1.5, 0, 0.42351216, 0, 1.438971, 52.706734, 1.2870846, 60.522095)
 
 [node name="tree" parent="." unique_id=457371394 instance=ExtResource("6_fm7vy")]
-transform = Transform3D(6, 0, 0, 0, 6, 0, 0, 0, 6, -65.93297, 3.4326859, 0)
+transform = Transform3D(7, 0, 0, 0, 7, 0, 0, 0, 7, -90.10897, 3.4326859, 3.0910392)
+
+[node name="tree5" parent="." unique_id=1630747605 instance=ExtResource("6_fm7vy")]
+transform = Transform3D(7, 0, 0, 0, 7, 0, 0, 0, 7, 5.767212, 3.4326859, 13.935387)
+
+[node name="tree6" parent="." unique_id=672910022 instance=ExtResource("6_fm7vy")]
+transform = Transform3D(7, 0, 0, 0, 7, 0, 0, 0, 7, 5.767212, 3.4326859, -64.4113)
 
 [node name="manytree" parent="." unique_id=1533042615 instance=ExtResource("7_4w285")]
 transform = Transform3D(0.15705363, 0, 4.997533, 0, 5, 0, -4.997533, 0, 0.15705363, -243.52122, 3.1586113, -25.06823)
+
+[node name="manytree5" parent="." unique_id=119288688 instance=ExtResource("7_4w285")]
+transform = Transform3D(0.1657758, 0, -4.997251, 0, 5, 0, 4.997251, 0, 0.1657758, -208.96066, 3.1586113, -16.498772)
 
 [node name="manytree3" parent="." unique_id=1457047452 instance=ExtResource("7_4w285")]
 transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, -125.81778, 3.1586113, 146.37296)
 
 [node name="manytree2" parent="." unique_id=1941127452 instance=ExtResource("7_4w285")]
-transform = Transform3D(-2.31648, 0, 4.431018, 0, 5, 0, -4.431018, 0, -2.31648, -226.98912, 3.0103207, 84.67386)
+transform = Transform3D(-2.3164802, 0, 4.431018, 0, 5, 0, -4.431018, 0, -2.3164802, -230.55322, 3.36563, 92.90078)
+
+[node name="manytree6" parent="." unique_id=1782552467 instance=ExtResource("7_4w285")]
+transform = Transform3D(-2.3164802, 0, 4.431018, 0, 5, 0, -4.431018, 0, -2.3164802, -206.71983, 3.36563, 88.72551)
 
 [node name="tree2" parent="." unique_id=1692813773 instance=ExtResource("6_fm7vy")]
 transform = Transform3D(5.372081, 0, -2.672219, 0, 6, 0, 2.672219, 0, 5.372081, -65.93297, 3.4326859, 83.8052)
@@ -114,11 +134,24 @@ transform = Transform3D(5.372081, 0, -2.672219, 0, 6, 0, 2.672219, 0, 5.372081, 
 transform = Transform3D(5.372081, 0, -2.672219, 0, 6, 0, 2.672219, 0, 5.372081, -148.4193, 3.4326859, 24.443096)
 
 [node name="z1 teleporter" parent="." unique_id=1052377900 instance=ExtResource("8_4w285")]
-transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, -53.374664, 4.7432394, 0)
+transform = Transform3D(-0.36635157, 0, 4.9931474, 0, 5, 0, -6.9904065, 0, -0.2616797, -207.42412, 5.681295, 35.468983)
 target_scene = "uid://mi57dghu3h6p"
 spawn_name = "forest"
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=413958992]
-transform = Transform3D(4.045085, 0, 8.816778, 0, 0.20000002, 0, -2.9389262, 0, 12.135256, 116.92095, 0, 137.39755)
+transform = Transform3D(5.6631193, 0, 12.343491, 0, 0.28000003, 0, -4.114497, 0, 16.989357, 123.65535, 0, 139.14377)
 mesh = SubResource("BoxMesh_4w285")
 surface_material_override/0 = SubResource("StandardMaterial3D_pl2fg")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="." unique_id=56248733]
+transform = Transform3D(5.6631193, 0, 12.343491, 0, 0.28000003, 0, -4.114497, 0, 16.989357, 135.31012, 0, 130.4589)
+mesh = SubResource("BoxMesh_4w285")
+surface_material_override/0 = SubResource("StandardMaterial3D_pl2fg")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="." unique_id=234669327]
+transform = Transform3D(4.8801565, 0, -15.055122, 0, 0.28000003, 0, 5.0183744, 0, 14.640468, 123.32413, 0, 126.405174)
+mesh = SubResource("BoxMesh_4w285")
+surface_material_override/0 = SubResource("StandardMaterial3D_pl2fg")
+
+[node name="manytree4" parent="." unique_id=261303696 instance=ExtResource("7_4w285")]
+transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, -129.54561, 3.1586113, 161.00754)

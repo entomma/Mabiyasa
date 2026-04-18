@@ -6,6 +6,8 @@
 [ext_resource type="PackedScene" uid="uid://bgnfcgouv4i12" path="res://terrain/manytree.tscn" id="4_ag00h"]
 [ext_resource type="PackedScene" uid="uid://bdfswoqyr3x6v" path="res://Scenes/Player.tscn" id="5_yrjgv"]
 [ext_resource type="PackedScene" uid="uid://ifdtrfncuq8n" path="res://terrain/tree.tscn" id="6_ag00h"]
+[ext_resource type="Script" uid="uid://uw5d14gbouo" path="res://Scripts/Player.gd" id="6_vh1m7"]
+[ext_resource type="PackedScene" uid="uid://d027g76unt2h0" path="res://Scenes/Enemy.tscn" id="8_vh1m7"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_vh1m7"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -73,7 +75,8 @@ transform = Transform3D(7, 0, 0, 0, 7, 0, 0, 0, 7, 170.49982, 4.642639, -225.010
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.378227, 0)
 
 [node name="Player" parent="." unique_id=865057644 instance=ExtResource("5_yrjgv")]
-transform = Transform3D(7, 0, 0, 0, 7, 0, 0, 0, 7, -23.14685, 2.2, 4.073)
+transform = Transform3D(7, 0, 0, 0, 7, 0, 0, 0, 7, -23.14685, 2.0032704, 4.073)
+script = ExtResource("6_vh1m7")
 
 [node name="Head" type="Node3D" parent="Player" unique_id=648791340]
 
@@ -88,3 +91,6 @@ far = 500.0
 
 [node name="tree" parent="." unique_id=457371394 instance=ExtResource("6_ag00h")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.346096, 0.718194, 0)
+
+[node name="Enemy" parent="." unique_id=1716839156 instance=ExtResource("8_vh1m7")]
+transform = Transform3D(7, 0, 0, 0, 7, 0, 0, 0, 7, -11.584486, 1.9671633, 15.378083)

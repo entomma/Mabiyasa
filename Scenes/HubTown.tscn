@@ -5,9 +5,8 @@
 
 [node name="HubTown" type="Node3D" unique_id=907359194]
 
-[node name="Player" parent="." unique_id=865057644 node_paths=PackedStringArray("camera") instance=ExtResource("1_p5vlc")]
+[node name="Player" parent="." unique_id=865057644 instance=ExtResource("1_p5vlc")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
-camera = NodePath("../Camera3D")
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=665889540 groups=["camera"]]
 transform = Transform3D(1, 0, 0, 0, 0.9063078, 0.42261833, 0, -0.42261833, 0.9063078, 0, 0.8554194, 2.981129)

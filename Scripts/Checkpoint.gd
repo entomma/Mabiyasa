@@ -1,7 +1,7 @@
 extends Area3D
 
 @export var checkpoint_id: String = "checkpoint_1"
-@export var scene_name: String = "HubTown"  # set this per scene!
+@export var scene_name: String = "small_village"  # set this per scene!
 
 var activated: bool = false
 

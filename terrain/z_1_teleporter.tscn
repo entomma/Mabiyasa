@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dbobaa6u56rlw"]
 
-[ext_resource type="Script" uid="uid://c8tnj4nwc2keb" path="res://teleporter.gd" id="1_ds8s0"]
+[ext_resource type="Script" uid="uid://c8tnj4nwc2keb" path="res://Scripts/teleporter.gd" id="1_ds8s0"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_jj4w3"]
 radius = 0.3544922
@@ -9,9 +9,14 @@ height = 1.9707031
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_0tdxk"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_htvlh"]
-albedo_color = Color(0.45882353, 1, 0.40784314, 1)
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+blend_mode = 3
+albedo_color = Color(0.90588236, 0.90588236, 0.8392157, 0.63529414)
 
 [node name="z1 teleporter" type="Area3D" unique_id=1052377900]
+transform = Transform3D(1.5, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0)
 script = ExtResource("1_ds8s0")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1061784230]

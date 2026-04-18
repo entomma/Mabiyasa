@@ -1,0 +1,27 @@
+[gd_scene format=3 uid="uid://dslmubly8t8t1"]
+
+[ext_resource type="PackedScene" uid="uid://ctx51cfemxa33" path="res://Assets/low_poly_tree.glb" id="1_mnj8n"]
+[ext_resource type="PackedScene" uid="uid://bgcvmxc1cnn21" path="res://Assets/low_poly_tree_concept.glb" id="2_6hi40"]
+
+[node name="ManyTrees" type="Node3D" unique_id=948053606]
+
+[node name="Sketchfab_Scene" parent="." unique_id=1116563252 instance=ExtResource("1_mnj8n")]
+transform = Transform3D(0.05, 0, 0, 0, 0.05, 0, 0, 0, 0.05, 0, 0, 0)
+
+[node name="Sketchfab_Scene2" parent="." unique_id=696063173 instance=ExtResource("1_mnj8n")]
+transform = Transform3D(0.05, 0, 0, 0, 0.05, 0, 0, 0, 0.05, 0.25964713, 0, 1.3052728)
+
+[node name="Sketchfab_Scene3" parent="." unique_id=1662653210 instance=ExtResource("2_6hi40")]
+transform = Transform3D(0.002, 0, 0, 0, 0.002, 0, 0, 0, 0.002, 0, 0, 0)
+
+[node name="Sketchfab_Scene5" parent="." unique_id=309949119 instance=ExtResource("1_mnj8n")]
+transform = Transform3D(-0.033650625, 0, 0.036981557, 0, 0.05, 0, -0.036981557, 0, -0.033650625, 0.7513548, 0, -0.85441184)
+
+[node name="Sketchfab_Scene6" parent="." unique_id=250806152 instance=ExtResource("1_mnj8n")]
+transform = Transform3D(-0.033650625, 0, 0.036981557, 0, 0.05, 0, -0.036981557, 0, -0.033650625, 1.011002, 0, 0.45086098)
+
+[node name="Sketchfab_Scene7" parent="." unique_id=846999274 instance=ExtResource("2_6hi40")]
+transform = Transform3D(-0.001346025, 0, 0.0014792623, 0, 0.002, 0, -0.0014792623, 0, -0.001346025, 0.7513548, 0, -0.85441184)
+
+[node name="Sketchfab_Scene4" parent="." unique_id=1260656454 instance=ExtResource("2_6hi40")]
+transform = Transform3D(0.003, 0, 0, 0, 0.003, 0, 0, 0, 0.003, -1.8068566, 0, 1.3546832)
