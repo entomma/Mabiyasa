@@ -12,6 +12,8 @@ extends Control
 @onready var reg_email = $CenterContainer/PanelContainer/VBoxContainer/TabContainer/Register/EmailInput
 @onready var reg_password = $CenterContainer/PanelContainer/VBoxContainer/TabContainer/Register/PasswordInput
 
+const MAIN_SCENE = "res://Scenes/small_village.tscn"
+
 func _on_login_pressed():
 	status_label.text = "Logging in..."
 	var email = login_email.text
@@ -26,22 +28,13 @@ func _on_login_pressed():
 	if result.has("access_token"):
 		status_label.text = "Login successful!"
 		
-		# Load last scene or default to HubTown
-		var last_scene = GameManager.player_profile.get("current_scene", "")
-		
 		if GameManager.player_party.size() == 0:
-			# No party saved → go to party select first
 			get_tree().change_scene_to_file("res://Scenes/PartySelect.tscn")
-		elif last_scene != "":
-			# Load last scene
-			print("Loading last scene: ", last_scene)
-			get_tree().change_scene_to_file("res://Scenes/" + last_scene + ".tscn")
 		else:
-			# Default to HubTown
-			get_tree().change_scene_to_file("res://Scenes/small_village.tscn")
+			get_tree().change_scene_to_file(MAIN_SCENE)
 	else:
 		status_label.text = "Login failed! Check your credentials."
-		
+
 func _on_register_pressed():
 	status_label.text = "Registering..."
 	var username = reg_username.text
@@ -60,16 +53,13 @@ func _on_register_pressed():
 	print("Register result: ", result)
 	
 	if result.has("user") or result.has("id") or result.has("access_token"):
-		# Login first to get auth token
 		var login_result = await SupabaseManager.login(email, password)
 		print("Login result: ", login_result)
 		
 		if login_result.has("access_token"):
-			# Create profile
 			var profile_result = await SupabaseManager.create_player_profile(username)
 			print("Profile result: ", profile_result)
 			
-			# Fetch profile AFTER creating it
 			await SupabaseManager.fetch_player_profile()
 			print("Profile after fetch: ", GameManager.player_profile)
 			
@@ -84,21 +74,16 @@ func _on_register_pressed():
 			status_label.text = "Failed: " + result.message
 		else:
 			status_label.text = "Failed: " + str(result)
+
 func _ready():
-	# Allow clicking to focus
 	set_process_unhandled_input(true)
-# Force the control to handle mouse input
 	mouse_filter = Control.MOUSE_FILTER_PASS
-	
-	# Make sure all children can receive input
 	for child in get_children():
 		if child is Control:
 			child.mouse_filter = Control.MOUSE_FILTER_PASS
-			
-			
+
 func _unhandled_input(event):
 	if event is InputEventMouseButton:
-		# Release focus when clicking outside inputs
 		var focused = get_viewport().gui_get_focus_owner()
 		if focused:
 			focused.release_focus()
