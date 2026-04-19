@@ -1,6 +1,6 @@
 extends Node
 
-var next_spawn: String = "default" # Add this line
+var next_spawn: String = "default"
 var player_profile: Dictionary = {}
 var player_characters: Array = []
 var player_cards: Array = []
@@ -48,7 +48,8 @@ func start_combat(enemy, enemy_data):
 	if player:
 		player.set_physics_process(false)
 
-	transition.start_transition("res://Scenes/Battle.tscn")
+	# Use transition ONLY for the fade effect, NOT to change scene
+	transition.start_transition_fade()
 
 func end_combat():
 	in_combat         = false

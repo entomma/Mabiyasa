@@ -1,6 +1,6 @@
 extends CharacterBody3D
 
-const SPEED = 4.0
+const SPEED = 13.0
 
 @onready var anim = $AnimatedSprite3D
 @onready var head = $Head
@@ -11,13 +11,15 @@ var pause_menu_instance = null
 
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 
-# --- CAMERA ---
-@export var sensitivity := 0.0020
-var camera_yaw := 0.0
-var camera_pitch := 0.0
+@export var mouse_sensitivity := 0.003
 
-const PITCH_MIN := deg_to_rad(-60)
-const PITCH_MAX := deg_to_rad(60)
+# Y axis (pitch) limited to 45 degrees up/down
+const PITCH_MIN := deg_to_rad(-20)
+const PITCH_MAX := deg_to_rad(20)
+
+var current_facing_direction := Vector2.UP  # Track which direction player is facing
+var camera_yaw := 0.0  # X axis (unlimited rotation)
+var camera_pitch := 0.0  # Y axis (limited rotation)
 
 
 func _ready():
@@ -25,9 +27,7 @@ func _ready():
 
 	await get_tree().process_frame
 
-	# =========================
-	# 1. ZONE SPAWN (priority)
-	# =========================
+	# Spawn logic
 	var spawn_points = get_tree().get_nodes_in_group("spawn")
 	var spawned := false
 
@@ -37,35 +37,32 @@ func _ready():
 			spawned = true
 			break
 
-	# =========================
-	# 2. SAVE POSITION (fallback)
-	# =========================
 	if not spawned and GameManager.has_saved_position:
 		global_position = GameManager.saved_player_position
 
-	# =========================
-	# CAMERA INIT
-	# =========================
-	camera_yaw = rotation.y
-	camera_pitch = head.rotation.x
-
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-	head.position.y = 1.45
+	head.position.y = 1.33
+	
+	# Initialize camera rotation
+	camera_yaw = rotation.y
+	camera_pitch = 0.0
+
 
 func _physics_process(delta):
-	# --- INPUT ---
+	# Movement input
 	var input = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
-	var direction = Vector3(input.x, 0, input.y)
+	var direction = (transform.basis * Vector3(input.x, 0, input.y)).normalized()
 
-	if direction.length() > 0:
-		direction = direction.normalized()
+	if direction:
+		velocity.x = direction.x * SPEED
+		velocity.z = direction.z * SPEED
+		# Update facing direction based on movement
+		current_facing_direction = input.normalized()
+	else:
+		velocity.x = 0
+		velocity.z = 0
 
-	# --- MOVEMENT ---
-	var move_dir = transform.basis * direction
-	velocity.x = move_dir.x * SPEED
-	velocity.z = move_dir.z * SPEED
-
-	# --- GRAVITY ---
+	# Gravity
 	if not is_on_floor():
 		velocity.y -= gravity * delta
 	else:
@@ -73,11 +70,14 @@ func _physics_process(delta):
 
 	move_and_slide()
 
-	# --- ROTATION ---
+	# Apply camera rotation
 	rotation.y = camera_yaw
 	head.rotation.x = camera_pitch
 
-	# --- ANIMATION ---
+	# Keep camera centered on player
+	camera.global_position = global_position + Vector3(0, head.position.y, 0)
+
+	# Animation
 	if input == Vector2.ZERO:
 		play_idle()
 	else:
@@ -85,14 +85,14 @@ func _physics_process(delta):
 
 
 func _input(event):
-	# --- ALT KEY ---
+	# ALT toggle mouse
 	if event is InputEventKey:
 		if event.keycode == KEY_ALT:
 			Input.set_mouse_mode(
 				Input.MOUSE_MODE_VISIBLE if event.pressed else Input.MOUSE_MODE_CAPTURED
 			)
 
-	# --- PAUSE ---
+	# Pause
 	if event.is_action_pressed("ui_cancel"):
 		if pause_menu_instance == null:
 			pause_menu_instance = pause_menu_scene.instantiate()
@@ -101,12 +101,14 @@ func _input(event):
 			pause_menu_instance.tree_exiting.connect(_on_pause_menu_closed)
 			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
-	# --- CAMERA ---
+	# Camera movement - X axis (yaw) flat/unlimited, Y axis (pitch) 45 degrees
 	if event is InputEventMouseMotion:
 		if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
-			camera_yaw -= event.relative.x * sensitivity
-			camera_pitch -= event.relative.y * sensitivity
-
+			# X axis - unlimited horizontal rotation
+			camera_yaw -= event.relative.x * mouse_sensitivity
+			
+			# Y axis - limited to 45 degrees up/down
+			camera_pitch -= event.relative.y * mouse_sensitivity
 			camera_pitch = clamp(camera_pitch, PITCH_MIN, PITCH_MAX)
 
 
@@ -118,7 +120,11 @@ func play_walk(dir: Vector2):
 
 
 func play_idle():
-	anim.play("idle front")
+	# Play idle animation based on last facing direction
+	if abs(current_facing_direction.x) > abs(current_facing_direction.y):
+		anim.play("idle right" if current_facing_direction.x > 0 else "idle left")
+	else:
+		anim.play("idle back" if current_facing_direction.y < 0 else "idle front")
 
 
 func _on_pause_menu_closed():

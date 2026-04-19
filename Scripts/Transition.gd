@@ -20,6 +20,7 @@ func _ready():
 		anim_player.add_animation_library("", anim_lib)
 
 func start_transition(next_scene: String):
+	"""FULL transition: fade + change scene"""
 	target_scene = next_scene
 	
 	# Zoom effect
@@ -38,6 +39,20 @@ func start_transition(next_scene: String):
 		await get_tree().create_timer(1.0).timeout
 	
 	get_tree().change_scene_to_file(target_scene)
+
+func start_transition_fade():
+	"""FADE ONLY: for combat transitions (scene change happens separately)"""
+	# Zoom effect
+	var camera = get_tree().get_first_node_in_group("camera")
+	if camera:
+		var tween = create_tween()
+		tween.tween_property(camera, "fov", 30.0, 0.8)
+	
+	if anim_player.has_animation("zoom_fade"):
+		anim_player.play("zoom_fade")
+		await anim_player.animation_finished
+	else:
+		await get_tree().create_timer(1.0).timeout
 
 func fade_in():
 	color_rect.modulate.a = 1.0

@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://bvj7hhkac3rqk"]
 
 [ext_resource type="Script" uid="uid://cddg1xr5hye1d" path="res://addons/MarchingSquaresTerrain/algorithm/terrain/marching_squares_terrain.gd" id="1_lphnw"]
+[ext_resource type="Script" uid="uid://6h1vqxvwheoh" path="res://Scenes/TerrainInitializer.gd" id="1_rkkpx"]
 [ext_resource type="Script" uid="uid://cql4d8s5t5xcx" path="res://addons/MarchingSquaresTerrain/algorithm/terrain/marching_squares_terrain_chunk.gd" id="2_xjyb1"]
 [ext_resource type="Script" uid="uid://22l7ysgniux3" path="res://addons/MarchingSquaresTerrain/algorithm/grass/marching_squares_grass_planter.gd" id="3_8vsdb"]
 [ext_resource type="PackedScene" uid="uid://db8r3raxvypja" path="res://Assets/low_poly_fishermans_hut.glb" id="4_xjyb1"]
@@ -25,6 +26,7 @@ tonemap_mode = 2
 glow_enabled = true
 
 [node name="SmallVillage" type="Node3D" unique_id=995133886]
+script = ExtResource("1_rkkpx")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1447989357]
 environment = SubResource("Environment_0d65j")
@@ -36,6 +38,7 @@ shadow_enabled = true
 [node name="MarchingSquaresTerrain" type="Node3D" parent="." unique_id=366736933]
 script = ExtResource("1_lphnw")
 data_directory = "res://Scenes/small_village_TerrainData/MarchingSquaresTerrain_1366fb4f"
+enable_runtime_texture_baking = false
 _storage_initialized = true
 metadata/_custom_type_script = "uid://cddg1xr5hye1d"
 
