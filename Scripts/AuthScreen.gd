@@ -28,9 +28,33 @@ func _on_login_pressed():
 	if result.has("access_token"):
 		status_label.text = "Login successful!"
 		
+		# Check if we have a saved scene in the profile
+		var saved_scene = GameManager.player_profile.get("current_scene", "")
+		var has_saved_position = GameManager.has_saved_position
+		
+		print("Login - Saved scene: ", saved_scene)
+		print("Login - Has saved position: ", has_saved_position)
+		print("Login - Player party size: ", GameManager.player_party.size())
+		
+		# Priority 1: If player has no party, go to party select first
 		if GameManager.player_party.size() == 0:
+			print("No party found, going to PartySelect")
 			get_tree().change_scene_to_file("res://Scenes/PartySelect.tscn")
+		# Priority 2: If we have a saved scene AND saved position, go there
+		elif saved_scene != "" and saved_scene != null and has_saved_position:
+			print("Loading saved scene: ", saved_scene)
+			# Clear any pending teleport spawn (use saved position instead)
+			GameManager.next_spawn = ""
+			get_tree().change_scene_to_file(saved_scene)
+		# Priority 3: If we have a saved scene but no position, still go there (will use spawn point)
+		elif saved_scene != "" and saved_scene != null:
+			print("Loading saved scene (no position): ", saved_scene)
+			GameManager.next_spawn = ""  # Will use scene's default spawn
+			get_tree().change_scene_to_file(saved_scene)
+		# Priority 4: Fallback to main scene (small village)
 		else:
+			print("No saved scene found, loading default village")
+			GameManager.next_spawn = "VillageSpawn"
 			get_tree().change_scene_to_file(MAIN_SCENE)
 	else:
 		status_label.text = "Login failed! Check your credentials."
@@ -64,6 +88,7 @@ func _on_register_pressed():
 			print("Profile after fetch: ", GameManager.player_profile)
 			
 			status_label.text = "Account created!"
+			# New accounts go to MainMenu first
 			get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
 		else:
 			status_label.text = "Login after register failed!"

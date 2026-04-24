@@ -332,6 +332,17 @@ height = 0.83898926
 [node name="Player" type="CharacterBody3D" unique_id=1607055564 groups=["player"]]
 transform = Transform3D(1.3, 0, 0, 0, 1.3, 0, 0, 0, 1.3, 0, 0, 0)
 
+[node name="Head" type="Node3D" parent="." unique_id=546544518]
+
+[node name="SpringArm3D" type="SpringArm3D" parent="Head" unique_id=607370463]
+spring_length = 3.0
+
+[node name="Camera3D" type="Camera3D" parent="Head/SpringArm3D" unique_id=304429785 groups=["camera"]]
+transform = Transform3D(0.0952381, 0, 0, 0, 0.087004334, 0.038736824, 0, -0.038736824, 0.087004334, 0, 0.8820001, 2.3)
+fov = 60.0
+near = 0.5
+far = 500.0
+
 [node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="." unique_id=762640094]
 transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 0, 0, 0)
 billboard = 2

@@ -95,6 +95,7 @@ size = Vector2(40, 40)
 
 [node name="SmallVillage" type="Node3D" unique_id=995133886]
 script = ExtResource("1_rkkpx")
+player_scene = ExtResource("9_a3m1u")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1447989357]
 environment = SubResource("Environment_0d65j")
@@ -330,17 +331,6 @@ script = ExtResource("3_8vsdb")
 transform = Transform3D(8.4, 0, 0, 0, 8.4, 0, 0, 0, 8.4, -9.24029, 2.2484145, 40.58457)
 script = ExtResource("10_i7xru")
 
-[node name="Head" type="Node3D" parent="Player" unique_id=1443093401]
-
-[node name="SpringArm3D" type="SpringArm3D" parent="Player/Head" unique_id=1895567264]
-spring_length = 3.0
-
-[node name="Camera3D" type="Camera3D" parent="Player/Head/SpringArm3D" unique_id=1612517941 groups=["camera"]]
-transform = Transform3D(0.0952381, 0, 0, 0, 0.087004334, 0.038736824, 0, -0.038736824, 0.087004334, 0, 0.8820001, 2.3)
-fov = 60.0
-near = 0.5
-far = 500.0
-
 [node name="props" type="Node3D" parent="." unique_id=63647803]
 
 [node name="ManyTrees" parent="props" unique_id=948053606 instance=ExtResource("5_4ukxy")]
@@ -449,3 +439,6 @@ mesh = SubResource("PlaneMesh_d0wvm")
 [node name="z1 teleporter" parent="." unique_id=1052377900 instance=ExtResource("20_72y07")]
 transform = Transform3D(7, 0, 0, 0, 4.2, 0, 0, 0, 4.2, -25.932716, 3.441617, -98.11193)
 disable_mode = 1
+
+[node name="SpawnPoint" type="Marker3D" parent="." unique_id=304209341]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.195564, 2.5494032, 82.38652)

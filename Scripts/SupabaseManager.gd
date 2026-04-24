@@ -420,7 +420,8 @@ func spend_pulls(amount: int) -> bool:
 	GameManager.player_profile["pulls"] = current_pulls - amount
 	return true
 
-func save_checkpoint(checkpoint_id: String, scene_name: String, pos: Vector3) -> void:
+# Save checkpoint function (fixed)
+func save_checkpoint(checkpoint_id: String, scene_name: String, pos: Vector3):
 	var http = HTTPRequest.new()
 	add_child(http)
 	
@@ -431,13 +432,21 @@ func save_checkpoint(checkpoint_id: String, scene_name: String, pos: Vector3) ->
 	]
 	
 	var uid = GameManager.player_profile.get("uid", 0)
+	
+	# IMPORTANT: Ensure scene_name has .tscn extension
+	var full_scene_path = scene_name
+	if not full_scene_path.ends_with(".tscn"):
+		full_scene_path = "res://Scenes/" + scene_name + ".tscn"
+	
 	var body = JSON.stringify({
 		"last_checkpoint": checkpoint_id,
-		"current_scene": scene_name,
+		"current_scene": full_scene_path,
 		"last_pos_x": pos.x,
 		"last_pos_y": pos.y,
 		"last_pos_z": pos.z
 	})
+	
+	print("Saving checkpoint - Scene: ", full_scene_path, " Position: ", pos)
 	
 	http.request(SUPABASE_URL + "/rest/v1/player_profile?uid=eq." + str(int(uid)), headers, HTTPClient.METHOD_PATCH, body)
 	var response = await http.request_completed
@@ -445,11 +454,12 @@ func save_checkpoint(checkpoint_id: String, scene_name: String, pos: Vector3) ->
 	
 	# Update local profile too
 	GameManager.player_profile["last_checkpoint"] = checkpoint_id
-	GameManager.player_profile["current_scene"] = scene_name
+	GameManager.player_profile["current_scene"] = full_scene_path
 	GameManager.player_profile["last_pos_x"] = pos.x
 	GameManager.player_profile["last_pos_y"] = pos.y
 	GameManager.player_profile["last_pos_z"] = pos.z
-	print("Checkpoint saved: ", checkpoint_id, " in ", scene_name)
+	
+	print("Checkpoint saved: ", checkpoint_id, " in ", full_scene_path)
 
 # Add pulls after battle win
 func add_pulls(amount: int) -> void:
@@ -475,6 +485,77 @@ func add_pulls(amount: int) -> void:
 	GameManager.player_profile["pulls"] = current_pulls + amount
 	print("Pulls added: ", amount, " Total: ", current_pulls + amount)
 	print("Pulls save response code: ", response[1])
+
+# Auto-save player state (FIXED - proper connection handling)
+func save_current_scene_and_position():
+	var player = get_tree().get_first_node_in_group("player")
+	if not player:
+		print("⚠ Cannot save - no player found!")
+		return
+	
+	var current_scene = get_tree().current_scene
+	if not current_scene:
+		print("⚠ Cannot save - no current scene!")
+		return
+	
+	var scene_path = current_scene.scene_file_path
+	if scene_path == "" or scene_path == null:
+		print("⚠ Cannot save - scene has no file path!")
+		return
+	
+	var pos = player.global_position
+	
+	# Update local cache
+	GameManager.player_profile["current_scene"] = scene_path
+	GameManager.player_profile["last_pos_x"] = pos.x
+	GameManager.player_profile["last_pos_y"] = pos.y
+	GameManager.player_profile["last_pos_z"] = pos.z
+	
+	print("💾 Saving state - Scene: ", scene_path, " Position: ", pos)
+	
+	# Save to database
+	var http = HTTPRequest.new()
+	add_child(http)
+	
+	var headers = [
+		"Content-Type: application/json",
+		"apikey: " + SUPABASE_ANON_KEY,
+		"Authorization: Bearer " + auth_token
+	]
+	
+	var uid = GameManager.player_profile.get("uid", 0)
+	if uid == 0:
+		print("⚠ Cannot save - no UID found!")
+		http.queue_free()
+		return
+	
+	var body = JSON.stringify({
+		"current_scene": scene_path,
+		"last_pos_x": pos.x,
+		"last_pos_y": pos.y,
+		"last_pos_z": pos.z
+	})
+	
+	var error = http.request(SUPABASE_URL + "/rest/v1/player_profile?uid=eq." + str(int(uid)), headers, HTTPClient.METHOD_PATCH, body)
+	
+	if error != OK:
+		print("⚠ Failed to send save request!")
+		http.queue_free()
+		return
+	
+	# Wait for response
+	var response = await http.request_completed
+	var response_code = response[1]
+	http.queue_free()
+	
+	if response_code >= 200 and response_code < 300:
+		print("✓ Auto-save successful: ", scene_path, " at ", pos)
+	else:
+		print("⚠ Auto-save failed with code: ", response_code)
+
+# Keep old function name for compatibility
+func auto_save_player_state():
+	await save_current_scene_and_position()
 
 # Debug function to check characters
 func debug_check_characters():

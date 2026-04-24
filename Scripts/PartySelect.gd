@@ -422,6 +422,9 @@ func _on_confirm_pressed():
 	GameManager.set_party(party)
 	GameManager.player_profile["current_loadout"] = current_loadout
 	
+	# Clear next_spawn so Player.gd uses saved position
+	GameManager.next_spawn = ""
+	
 	var http = HTTPRequest.new()
 	add_child(http)
 	var headers = [
@@ -446,15 +449,23 @@ func _on_confirm_pressed():
 	GameManager.player_profile["current_loadout"] = current_loadout
 	
 	print("Deployed loadout ", current_loadout, " as active party")
-	get_tree().change_scene_to_file("res://Scenes/small_village.tscn")
+	
+	# Return to the scene we came from
+	var return_scene = GameManager.get_return_scene()
+	get_tree().change_scene_to_file(return_scene)
 
 func _on_close_pressed():
-	# Save current loadout state before closing
 	save_to_loadout(current_loadout)
 	save_loadout_to_database()
 	
-	print("Closed - current loadout saved to DB")
-	get_tree().change_scene_to_file("res://Scenes/small_village.tscn")
+	# Clear next_spawn so Player.gd uses saved position
+	GameManager.next_spawn = ""
+	
+	# Return to the scene we came from
+	var return_scene = GameManager.get_return_scene()
+	print("Closed - returning to: ", return_scene)
+	get_tree().change_scene_to_file(return_scene)
+
 func _input(event):
 	if event.is_action_pressed("ui_cancel"):
 		if char_select_panel.visible:

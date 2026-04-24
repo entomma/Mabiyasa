@@ -20,8 +20,6 @@ var active_enemy_data = null
 var player_party: Array = []
 var transition: Node = null
 
-# ── Origin scene tracking ──────────────────────────────────────────────────────
-# Stored before combat starts so Battle.gd knows where to return
 var origin_scene: String = "res://Scenes/small_village.tscn"
 
 func _ready():
@@ -37,7 +35,6 @@ func start_combat(enemy, enemy_data):
 	active_enemy      = enemy
 	active_enemy_data = enemy_data
 
-	# Record the current scene so Battle.gd can return here
 	var current = get_tree().current_scene
 	if current and current.scene_file_path != "":
 		origin_scene = current.scene_file_path
@@ -48,7 +45,6 @@ func start_combat(enemy, enemy_data):
 	if player:
 		player.set_physics_process(false)
 
-	# Use transition ONLY for the fade effect, NOT to change scene
 	transition.start_transition_fade()
 
 func end_combat():
@@ -69,6 +65,16 @@ func set_saved_position(pos: Vector3) -> void:
 	if pos != Vector3.ZERO:
 		saved_player_position = pos
 		has_saved_position    = true
+
+# ─── NEW: Get the scene to return to after menus ───
+func get_return_scene() -> String:
+	if has_meta("return_scene"):
+		var scene = get_meta("return_scene")
+		# Clear it after reading so we don't use stale data
+		remove_meta("return_scene")
+		return scene
+	# Fallback to origin_scene or default village
+	return origin_scene if origin_scene != "" else "res://Scenes/small_village.tscn"
 
 func load_character_resources() -> void:
 	owned_character_resources.clear()

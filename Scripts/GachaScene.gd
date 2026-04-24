@@ -467,10 +467,14 @@ func _on_skip_all():
 #  Navigation
 # ─────────────────────────────────────────────
 func _on_back():
-	# Return to wherever we came from
-	var prev = GameManager.get_meta("gacha_return_scene",
-		"res://Scenes/small_village.tscn")
-	get_tree().change_scene_to_file(prev)
+	# Clear next_spawn to use saved position
+	GameManager.next_spawn = ""
+	
+	# Get the actual scene we came from (not hardcoded village)
+	var return_scene = GameManager.get_return_scene()
+	print("Returning to: ", return_scene)
+	
+	get_tree().change_scene_to_file(return_scene)
 
 # ─────────────────────────────────────────────
 #  Helpers

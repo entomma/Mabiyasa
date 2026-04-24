@@ -648,13 +648,5 @@ transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, -38.92905, 0, -216.5317
 transform = Transform3D(10.94, 0, 0, 0, 10.94, 0, 0, 0, 10.94, 118.848816, 22.225222, -183.50317)
 script = ExtResource("8_vh310")
 
-[node name="Head" type="Node3D" parent="Player" unique_id=1659382872]
-
-[node name="SpringArm3D" type="SpringArm3D" parent="Player/Head" unique_id=655130293]
-spring_length = 3.0
-
-[node name="Camera3D" type="Camera3D" parent="Player/Head/SpringArm3D" unique_id=1106428638 groups=["camera"]]
-transform = Transform3D(0.0952381, 0, 0, 0, 0.087004334, 0.038736824, 0, -0.038736824, 0.087004334, 0, 0.8820001, 2.3)
-fov = 60.0
-near = 0.5
-far = 500.0
+[node name="SpawnPoint" type="Marker3D" parent="." unique_id=844294854]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 115.61504, 49.643284, -187.24371)
