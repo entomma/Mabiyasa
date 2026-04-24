@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://bpm5ktqamm0gp"]
+
+[ext_resource type="PackedScene" uid="uid://bgcvmxc1cnn21" path="res://Assets/low_poly_tree_concept.glb" id="1_lav3e"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_lav3e"]
+radius = 9.87207
+height = 97.95154
+
+[node name="pinetree" type="StaticBody3D" unique_id=226024957]
+
+[node name="Sketchfab_Scene" parent="." unique_id=1662653210 instance=ExtResource("1_lav3e")]
+transform = Transform3D(0.345, 0, 0, 0, 0.345, 0, 0, 0, 0.345, -158, 0, 63)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1101731580]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.624733, 45.835793, 4.4731884)
+shape = SubResource("CapsuleShape3D_lav3e")

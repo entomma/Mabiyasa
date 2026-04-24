@@ -6,7 +6,7 @@ func _ready():
 	
 	var terrain = find_child("MarchingSquaresTerrain", true, false)
 	if not terrain:
-		print("❌ Terrain not found")
+		print("❌ Terr ain not found")
 		return
 	
 	print("✓ Found terrain, applying soft reset...")

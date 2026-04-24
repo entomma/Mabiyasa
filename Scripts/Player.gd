@@ -1,6 +1,6 @@
 extends CharacterBody3D
 
-const SPEED = 13.0
+const SPEED = 20.0
 
 @onready var anim = $AnimatedSprite3D
 @onready var head = $Head

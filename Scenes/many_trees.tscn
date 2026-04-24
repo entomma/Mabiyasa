@@ -3,7 +3,11 @@
 [ext_resource type="PackedScene" uid="uid://ctx51cfemxa33" path="res://Assets/low_poly_tree.glb" id="1_mnj8n"]
 [ext_resource type="PackedScene" uid="uid://bgcvmxc1cnn21" path="res://Assets/low_poly_tree_concept.glb" id="2_6hi40"]
 
-[node name="ManyTrees" type="Node3D" unique_id=948053606]
+[sub_resource type="BoxShape3D" id="BoxShape3D_mnj8n"]
+size = Vector3(1.5361938, 1, 3.104248)
+
+[node name="ManyTrees" type="StaticBody3D" unique_id=1264127976]
+disable_mode = 1
 
 [node name="Sketchfab_Scene" parent="." unique_id=1116563252 instance=ExtResource("1_mnj8n")]
 transform = Transform3D(0.05, 0, 0, 0, 0.05, 0, 0, 0, 0.05, 0, 0, 0)
@@ -25,3 +29,7 @@ transform = Transform3D(-0.001346025, 0, 0.0014792623, 0, 0.002, 0, -0.001479262
 
 [node name="Sketchfab_Scene4" parent="." unique_id=1260656454 instance=ExtResource("2_6hi40")]
 transform = Transform3D(0.003, 0, 0, 0, 0.003, 0, 0, 0, 0.003, -1.8068566, 0, 1.3546832)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1113856678]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.26809692, 0.49671525, 0.26379395)
+shape = SubResource("BoxShape3D_mnj8n")

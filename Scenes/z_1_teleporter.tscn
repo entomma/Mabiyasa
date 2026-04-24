@@ -9,15 +9,15 @@ height = 1.9707031
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_0tdxk"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_htvlh"]
-transparency = 2
-alpha_scissor_threshold = 0.5
-alpha_antialiasing_mode = 0
 blend_mode = 3
+cull_mode = 1
+depth_draw_mode = 2
 albedo_color = Color(0.90588236, 0.90588236, 0.8392157, 0.63529414)
 
 [node name="z1 teleporter" type="Area3D" unique_id=1052377900]
-transform = Transform3D(1.5, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0)
 script = ExtResource("1_ds8s0")
+target_scene = "uid://dtpgwiinamcvo"
+spawn_name = "forest"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1061784230]
 transform = Transform3D(2.5, 0, 0, 0, 1, 0, 0, 0, 0.7, 0, 0.0146484375, 0)

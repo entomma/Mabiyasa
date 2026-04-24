@@ -1,0 +1,658 @@
+[gd_scene format=3 uid="uid://dtpgwiinamcvo"]
+
+[ext_resource type="Script" uid="uid://cddg1xr5hye1d" path="res://addons/MarchingSquaresTerrain/algorithm/terrain/marching_squares_terrain.gd" id="1_8hnfc"]
+[ext_resource type="Script" uid="uid://ci5gx0ncvb2v" path="res://Scenes/forest.gd" id="1_igsr3"]
+[ext_resource type="Script" uid="uid://cql4d8s5t5xcx" path="res://addons/MarchingSquaresTerrain/algorithm/terrain/marching_squares_terrain_chunk.gd" id="2_5ip0q"]
+[ext_resource type="Script" uid="uid://22l7ysgniux3" path="res://addons/MarchingSquaresTerrain/algorithm/grass/marching_squares_grass_planter.gd" id="3_u53w3"]
+[ext_resource type="PackedScene" uid="uid://cy72jmgrsmn18" path="res://Scenes/trees.tscn" id="4_5ip0q"]
+[ext_resource type="PackedScene" uid="uid://d1jsewohatax7" path="res://Scenes/1_tree.tscn" id="5_qq45g"]
+[ext_resource type="PackedScene" uid="uid://bpm5ktqamm0gp" path="res://Scenes/pinetree.tscn" id="6_wo0py"]
+[ext_resource type="PackedScene" uid="uid://bdfswoqyr3x6v" path="res://Scenes/Player.tscn" id="7_wo0py"]
+[ext_resource type="Script" uid="uid://uw5d14gbouo" path="res://Scripts/Player.gd" id="8_vh310"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_qq45g"]
+sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+
+[sub_resource type="Sky" id="Sky_rkkpx"]
+sky_material = SubResource("ProceduralSkyMaterial_qq45g")
+
+[sub_resource type="Environment" id="Environment_wo0py"]
+background_mode = 2
+sky = SubResource("Sky_rkkpx")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="MultiMesh" id="MultiMesh_vh310"]
+transform_format = 1
+
+[node name="forest" type="Node3D" unique_id=150893921]
+script = ExtResource("1_igsr3")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1094816781]
+environment = SubResource("Environment_wo0py")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1188591854]
+transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 0, 0)
+shadow_enabled = true
+
+[node name="MarchingSquaresTerrain" type="Node3D" parent="." unique_id=1549349717]
+script = ExtResource("1_8hnfc")
+data_directory = "res://Scenes/forest_TerrainData/MarchingSquaresTerrain_b3fbe62e"
+_storage_initialized = true
+tex6_has_grass = false
+texture_albedo_6 = Color(0.6392157, 0.4509804, 0.21176471, 1)
+texture_scale_4 = 0.9
+metadata/_custom_type_script = "uid://cddg1xr5hye1d"
+
+[node name="Chunk (0, -1)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=795682433 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -64)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(0, -1)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (0, -1)" unique_id=90576077]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (0, -2)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=699240428 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -128)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(0, -2)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (0, -2)" unique_id=1181405954]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (-1, -2)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=1752992922 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -64, 0, -128)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(-1, -2)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (-1, -2)" unique_id=1012182456]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (-1, -1)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=192831782 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -64, 0, -64)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(-1, -1)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (-1, -1)" unique_id=295600502]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (-1, 0)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=1900267118 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -64, 0, 0)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(-1, 0)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (-1, 0)" unique_id=258419735]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (0, 0)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=157146844 node_paths=PackedStringArray("terrain_system")]
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (0, 0)" unique_id=1071572840]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (1, 0)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=631179003 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64, 0, 0)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(1, 0)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (1, 0)" unique_id=1796600998]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (1, -1)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=468607591 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64, 0, -64)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(1, -1)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (1, -1)" unique_id=579717315]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (1, -2)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=248400844 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64, 0, -128)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(1, -2)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (1, -2)" unique_id=1930783546]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (1, -3)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=1117963295 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64, 0, -192)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(1, -3)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (1, -3)" unique_id=1936396403]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (0, -3)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=1165009521 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -192)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(0, -3)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (0, -3)" unique_id=2021937503]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (-1, -3)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=189135288 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -64, 0, -192)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(-1, -3)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (-1, -3)" unique_id=1842375709]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (-2, 0)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=1865215181 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -128, 0, 0)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(-2, 0)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (-2, 0)" unique_id=571731187]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (-2, -1)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=2126460800 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -128, 0, -64)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(-2, -1)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (-2, -1)" unique_id=1621792591]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (-2, -2)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=831588916 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -128, 0, -128)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(-2, -2)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (-2, -2)" unique_id=273930293]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (-2, -3)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=1270241025 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -128, 0, -192)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(-2, -3)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (-2, -3)" unique_id=879611481]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (1, 1)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=1689834507 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64, 0, 64)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(1, 1)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (1, 1)" unique_id=1546312745]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (0, 1)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=1757201456 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 64)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(0, 1)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (0, 1)" unique_id=186013984]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (-1, 1)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=516602634 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -64, 0, 64)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(-1, 1)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (-1, 1)" unique_id=1369854790]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (-2, 1)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=452419008 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -128, 0, 64)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(-2, 1)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (-2, 1)" unique_id=333103908]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (1, -4)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=2107105627 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64, 0, -256)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(1, -4)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (1, -4)" unique_id=1660177010]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (0, -4)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=518950060 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -256)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(0, -4)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (0, -4)" unique_id=572310249]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (-1, -4)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=1183907066 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -64, 0, -256)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(-1, -4)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (-1, -4)" unique_id=1450836133]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (-2, -4)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=761310526 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -128, 0, -256)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(-2, -4)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (-2, -4)" unique_id=329073125]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (-3, 1)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=389234808 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -192, 0, 64)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(-3, 1)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (-3, 1)" unique_id=1309211651]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (-3, 0)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=620486455 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -192, 0, 0)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(-3, 0)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (-3, 0)" unique_id=1442532120]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (-3, -1)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=1434437845 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -192, 0, -64)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(-3, -1)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (-3, -1)" unique_id=2143580578]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (-3, -2)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=1629474037 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -192, 0, -128)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(-3, -2)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (-3, -2)" unique_id=1198748801]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (-3, -3)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=1168488447 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -192, 0, -192)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(-3, -3)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (-3, -3)" unique_id=988485701]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (-3, -4)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=1967898258 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -192, 0, -256)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(-3, -4)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (-3, -4)" unique_id=1704340690]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="props" type="Node3D" parent="." unique_id=2038143775]
+
+[node name="MultiMeshInstance3D" type="MultiMeshInstance3D" parent="props" unique_id=616386526]
+multimesh = SubResource("MultiMesh_vh310")
+
+[node name="ManyTrees" parent="props/MultiMeshInstance3D" unique_id=1264127976 instance=ExtResource("4_5ip0q")]
+transform = Transform3D(-2.1394336, 0, -14.8466425, 0, 15, 0, 14.8466425, 0, -2.1394336, -42.801086, -1.4206429, -249.23134)
+
+[node name="ManyTrees7" parent="props/MultiMeshInstance3D" unique_id=252724525 instance=ExtResource("4_5ip0q")]
+transform = Transform3D(12.450184, 0, 8.366175, 0, 15, 0, -8.366175, 0, 12.450184, 55.25369, 20.546288, -235.38704)
+
+[node name="ManyTrees8" parent="props/MultiMeshInstance3D" unique_id=997731474 instance=ExtResource("4_5ip0q")]
+transform = Transform3D(12.450184, 0, 8.366175, 0, 15, 0, -8.366175, 0, 12.450184, 92.24807, 19.13838, -235.38704)
+
+[node name="ManyTrees6" parent="props/MultiMeshInstance3D" unique_id=802631000 instance=ExtResource("4_5ip0q")]
+transform = Transform3D(3.0930617, 0, 14.677634, 0, 15, 0, -14.677634, 0, 3.0930617, -107.39049, -1.152668, -184.53966)
+
+[node name="ManyTrees4" parent="props/MultiMeshInstance3D" unique_id=1113856765 instance=ExtResource("4_5ip0q")]
+transform = Transform3D(14.999999, 0, 0, 0, 15, 0, 0, 0, 14.999999, 2.896141, -0.67187023, -237.30756)
+
+[node name="ManyTrees5" parent="props/MultiMeshInstance3D" unique_id=987054371 instance=ExtResource("4_5ip0q")]
+transform = Transform3D(2.1394343, 0, 14.8466425, 0, 15, 0, -14.8466425, 0, 2.1394343, -97.309845, -1.7813973, -237.68176)
+
+[node name="ManyTrees2" parent="props/MultiMeshInstance3D" unique_id=1904242897 instance=ExtResource("4_5ip0q")]
+transform = Transform3D(2.2656593, 0, -15.722596, 0, 15.885, 0, 15.722596, 0, 2.2656593, 23.44483, -1.0329957, -37.4345)
+
+[node name="ManyTrees15" parent="props/MultiMeshInstance3D" unique_id=556406909 instance=ExtResource("4_5ip0q")]
+transform = Transform3D(2.1394343, 0, 14.8466425, 0, 15, 0, -14.8466425, 0, 2.1394343, -17.81181, -1.4513025, -44.504906)
+
+[node name="ManyTrees16" parent="props/MultiMeshInstance3D" unique_id=1099682140 instance=ExtResource("4_5ip0q")]
+transform = Transform3D(2.0517178, 0, 14.237931, 0, 14.385, 0, -14.237931, 0, 2.0517178, -63.37792, -1.2351794, -14.74291)
+
+[node name="ManyTrees3" parent="props/MultiMeshInstance3D" unique_id=788377544 instance=ExtResource("4_5ip0q")]
+transform = Transform3D(2.1394346, 0, 14.846644, 0, 15, 0, -14.846644, 0, 2.1394346, -52.17969, -0.15478897, -106.954506)
+
+[node name="ManyTrees9" parent="props/MultiMeshInstance3D" unique_id=393974464 instance=ExtResource("4_5ip0q")]
+transform = Transform3D(2.1394343, 0, 14.8466425, 0, 15, 0, -14.8466425, 0, 2.1394343, -142.47856, -0.15478897, 112.961624)
+
+[node name="ManyTrees11" parent="props/MultiMeshInstance3D" unique_id=1280374998 instance=ExtResource("4_5ip0q")]
+transform = Transform3D(2.1394343, 0, 14.8466425, 0, 15, 0, -14.8466425, 0, 2.1394343, -176.4491, -1.2804704, -0.54706764)
+
+[node name="ManyTrees17" parent="props/MultiMeshInstance3D" unique_id=1048444575 instance=ExtResource("4_5ip0q")]
+transform = Transform3D(2.5523434, 0, -17.712046, 0, 17.895, 0, 17.712046, 0, 2.5523434, -166.80106, -1.2710485, -59.57089)
+
+[node name="ManyTrees18" parent="props/MultiMeshInstance3D" unique_id=2136916862 instance=ExtResource("4_5ip0q")]
+transform = Transform3D(2.5523434, 0, -17.712046, 0, 17.895, 0, 17.712046, 0, 2.5523434, -172.7207, -0.15478897, -178.99939)
+
+[node name="ManyTrees19" parent="props/MultiMeshInstance3D" unique_id=634612964 instance=ExtResource("4_5ip0q")]
+transform = Transform3D(2.2300022, 0, -15.475152, 0, 15.635, 0, 15.475152, 0, 2.2300022, -120.999176, -0.15478897, -97.90897)
+
+[node name="ManyTrees12" parent="props/MultiMeshInstance3D" unique_id=2103847397 instance=ExtResource("4_5ip0q")]
+transform = Transform3D(2.2164524, 0, -15.381123, 0, 15.54, 0, 15.381123, 0, 2.2164524, -116.96425, -1.273931, -10.534424)
+
+[node name="ManyTrees13" parent="props/MultiMeshInstance3D" unique_id=406230961 instance=ExtResource("4_5ip0q")]
+transform = Transform3D(2.2164524, 0, -15.381123, 0, 15.54, 0, 15.381123, 0, 2.2164524, 14.052544, -0.8915186, 16.022968)
+
+[node name="ManyTrees14" parent="props/MultiMeshInstance3D" unique_id=1735691353 instance=ExtResource("4_5ip0q")]
+transform = Transform3D(-10.174672, 0, 11.745963, 0, 15.54, 0, -11.745963, 0, -10.174672, -49.563698, -1.8987398, 37.88299)
+
+[node name="ManyTrees10" parent="props/MultiMeshInstance3D" unique_id=367593722 instance=ExtResource("4_5ip0q")]
+transform = Transform3D(14.987915, 0, 0.6019769, 0, 15, 0, -0.6019769, 0, 14.987915, -175.60304, -1.5716305, 44.892216)
+
+[node name="1tree5" parent="props/MultiMeshInstance3D" unique_id=2057490320 instance=ExtResource("5_qq45g")]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, -56.741737, 1.0536928, -204.5916)
+
+[node name="1tree3" parent="props/MultiMeshInstance3D" unique_id=1571808467 instance=ExtResource("5_qq45g")]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, -14.273788, 0.11238766, -245.8281)
+
+[node name="1tree15" parent="props/MultiMeshInstance3D" unique_id=285004311 instance=ExtResource("5_qq45g")]
+transform = Transform3D(3.615, 0, 0, 0, 3.615, 0, 0, 0, 3.615, 121.815445, 19.982021, -171.55804)
+
+[node name="1tree18" parent="props/MultiMeshInstance3D" unique_id=697399585 instance=ExtResource("5_qq45g")]
+transform = Transform3D(3.615, 0, 0, 0, 3.615, 0, 0, 0, 3.615, 87.053314, 19.982021, -141.686)
+
+[node name="1tree19" parent="props/MultiMeshInstance3D" unique_id=314558188 instance=ExtResource("5_qq45g")]
+transform = Transform3D(3.835, 0, 0, 0, 3.835, 0, 0, 0, 3.835, 81.73988, 19.982021, -118.94163)
+
+[node name="1tree21" parent="props/MultiMeshInstance3D" unique_id=2137712704 instance=ExtResource("5_qq45g")]
+transform = Transform3D(3.195, 0, 0, 0, 3.195, 0, 0, 0, 3.195, 81.643036, 18.997574, -92.49499)
+
+[node name="1tree22" parent="props/MultiMeshInstance3D" unique_id=1143922606 instance=ExtResource("5_qq45g")]
+transform = Transform3D(3.195, 0, 0, 0, 3.195, 0, 0, 0, 3.195, 85.799835, 19.13329, -70.74049)
+
+[node name="1tree23" parent="props/MultiMeshInstance3D" unique_id=2102607617 instance=ExtResource("5_qq45g")]
+transform = Transform3D(3.195, 0, 0, 0, 3.195, 0, 0, 0, 3.195, 90.637726, 19.13329, -37.21769)
+
+[node name="1tree25" parent="props/MultiMeshInstance3D" unique_id=586721213 instance=ExtResource("5_qq45g")]
+transform = Transform3D(3.195, 0, 0, 0, 3.195, 0, 0, 0, 3.195, 122.160965, 19.13329, -59.24574)
+
+[node name="1tree26" parent="props/MultiMeshInstance3D" unique_id=1842523252 instance=ExtResource("5_qq45g")]
+transform = Transform3D(3.79, 0, 0, 0, 3.79, 0, 0, 0, 3.79, 116.11156, 19.894726, 25.524754)
+
+[node name="1tree27" parent="props/MultiMeshInstance3D" unique_id=1997827782 instance=ExtResource("5_qq45g")]
+transform = Transform3D(3.79, 0, 0, 0, 3.79, 0, 0, 0, 3.79, 83.10222, 19.894726, 25.524754)
+
+[node name="1tree28" parent="props/MultiMeshInstance3D" unique_id=215907817 instance=ExtResource("5_qq45g")]
+transform = Transform3D(3.12, 0, 0, 0, 3.12, 0, 0, 0, 3.12, 83.10222, 19.894726, 48.260185)
+
+[node name="1tree32" parent="props/MultiMeshInstance3D" unique_id=1137540729 instance=ExtResource("5_qq45g")]
+transform = Transform3D(3.12, 0, 0, 0, 3.12, 0, 0, 0, 3.12, 52.55285, 19.894726, 67.20546)
+
+[node name="1tree29" parent="props/MultiMeshInstance3D" unique_id=34909626 instance=ExtResource("5_qq45g")]
+transform = Transform3D(4.075, 0, 0, 0, 4.075, 0, 0, 0, 4.075, 112.42478, 19.894726, 110.416626)
+
+[node name="1tree30" parent="props/MultiMeshInstance3D" unique_id=1765055332 instance=ExtResource("5_qq45g")]
+transform = Transform3D(3.345, 0, 0, 0, 3.345, 0, 0, 0, 3.345, 34.301655, 19.894726, 110.416626)
+
+[node name="1tree31" parent="props/MultiMeshInstance3D" unique_id=631223783 instance=ExtResource("5_qq45g")]
+transform = Transform3D(3.345, 0, 0, 0, 3.345, 0, 0, 0, 3.345, 6.9159317, 19.894726, 101.88877)
+
+[node name="1tree38" parent="props/MultiMeshInstance3D" unique_id=2106073330 instance=ExtResource("5_qq45g")]
+transform = Transform3D(2.89, 0, 0, 0, 2.89, 0, 0, 0, 2.89, -52.55725, 19.894726, 114.64149)
+
+[node name="1tree42" parent="props/MultiMeshInstance3D" unique_id=1853785991 instance=ExtResource("5_qq45g")]
+transform = Transform3D(2.54, 0, 0, 0, 2.54, 0, 0, 0, 2.54, -61.4655, 19.894726, 80.11112)
+
+[node name="1tree40" parent="props/MultiMeshInstance3D" unique_id=1996299197 instance=ExtResource("5_qq45g")]
+transform = Transform3D(2.89, 0, 0, 0, 2.89, 0, 0, 0, 2.89, -73.93335, 19.894726, 114.64149)
+
+[node name="1tree39" parent="props/MultiMeshInstance3D" unique_id=2140757898 instance=ExtResource("5_qq45g")]
+transform = Transform3D(3.64, 0, 0, 0, 3.64, 0, 0, 0, 3.64, -97.495544, 19.894726, 114.64149)
+
+[node name="1tree36" parent="props/MultiMeshInstance3D" unique_id=650871401 instance=ExtResource("5_qq45g")]
+transform = Transform3D(2.71, 0, 0, 0, 2.71, 0, 0, 0, 2.71, -30.402594, 19.894726, 67.03813)
+
+[node name="1tree35" parent="props/MultiMeshInstance3D" unique_id=434340049 instance=ExtResource("5_qq45g")]
+transform = Transform3D(2.855, 0, 0, 0, 2.855, 0, 0, 0, 2.855, -3.64501, 19.894726, 61.28547)
+
+[node name="1tree17" parent="props/MultiMeshInstance3D" unique_id=1729828319 instance=ExtResource("5_qq45g")]
+transform = Transform3D(4.345, 0, 0, 0, 4.345, 0, 0, 0, 4.345, 124.7581, 19.982021, -116.57044)
+
+[node name="1tree48" parent="props/MultiMeshInstance3D" unique_id=1806797335 instance=ExtResource("5_qq45g")]
+transform = Transform3D(3.605, 0, 0, 0, 3.605, 0, 0, 0, 3.605, 44.930046, 0.48373508, -131.25659)
+
+[node name="1tree55" parent="props/MultiMeshInstance3D" unique_id=772256824 instance=ExtResource("5_qq45g")]
+transform = Transform3D(3.605, 0, 0, 0, 3.605, 0, 0, 0, 3.605, 59.61348, 0.48373508, -92.57903)
+
+[node name="1tree49" parent="props/MultiMeshInstance3D" unique_id=1770526334 instance=ExtResource("5_qq45g")]
+transform = Transform3D(3.605, 0, 0, 0, 3.605, 0, 0, 0, 3.605, 66.889175, 0.48373508, -47.045692)
+
+[node name="1tree58" parent="props/MultiMeshInstance3D" unique_id=485762565 instance=ExtResource("5_qq45g")]
+transform = Transform3D(4.17, 0, 0, 0, 4.17, 0, 0, 0, 4.17, 72.176445, -0.059931755, -17.13615)
+
+[node name="1tree60" parent="props/MultiMeshInstance3D" unique_id=1367876573 instance=ExtResource("5_qq45g")]
+transform = Transform3D(4.17, 0, 0, 0, 4.17, 0, 0, 0, 4.17, 56.1131, -0.059931755, 6.8896294)
+
+[node name="1tree61" parent="props/MultiMeshInstance3D" unique_id=917049575 instance=ExtResource("5_qq45g")]
+transform = Transform3D(4.17, 0, 0, 0, 4.17, 0, 0, 0, 4.17, -25.63269, -0.059931755, 36.699642)
+
+[node name="1tree71" parent="props/MultiMeshInstance3D" unique_id=92879097 instance=ExtResource("5_qq45g")]
+transform = Transform3D(4.17, 0, 0, 0, 4.17, 0, 0, 0, 4.17, -180.23386, -0.059931755, 107.57669)
+
+[node name="1tree62" parent="props/MultiMeshInstance3D" unique_id=1462652668 instance=ExtResource("5_qq45g")]
+transform = Transform3D(4.17, 0, 0, 0, 4.17, 0, 0, 0, 4.17, -25.63269, -0.059931755, -5.939205)
+
+[node name="1tree63" parent="props/MultiMeshInstance3D" unique_id=320413196 instance=ExtResource("5_qq45g")]
+transform = Transform3D(4.17, 0, 0, 0, 4.17, 0, 0, 0, 4.17, 15.170694, -0.059931755, -60.674984)
+
+[node name="1tree64" parent="props/MultiMeshInstance3D" unique_id=1464681897 instance=ExtResource("5_qq45g")]
+transform = Transform3D(4.17, 0, 0, 0, 4.17, 0, 0, 0, 4.17, -117.85873, -0.059931755, -62.341278)
+
+[node name="1tree73" parent="props/MultiMeshInstance3D" unique_id=1645006540 instance=ExtResource("5_qq45g")]
+transform = Transform3D(4.17, 0, 0, 0, 4.17, 0, 0, 0, 4.17, -91.08696, 3.269332, -73.378784)
+
+[node name="1tree65" parent="props/MultiMeshInstance3D" unique_id=349784989 instance=ExtResource("5_qq45g")]
+transform = Transform3D(4.17, 0, 0, 0, 4.17, 0, 0, 0, 4.17, -80.44504, -0.059931755, -95.67924)
+
+[node name="1tree66" parent="props/MultiMeshInstance3D" unique_id=826482839 instance=ExtResource("5_qq45g")]
+transform = Transform3D(4.17, 0, 0, 0, 4.17, 0, 0, 0, 4.17, -65.58924, -0.059931755, -57.613354)
+
+[node name="1tree67" parent="props/MultiMeshInstance3D" unique_id=486098737 instance=ExtResource("5_qq45g")]
+transform = Transform3D(4.17, 0, 0, 0, 4.17, 0, 0, 0, 4.17, -129.63974, -0.059931755, -154.43773)
+
+[node name="1tree68" parent="props/MultiMeshInstance3D" unique_id=1452834319 instance=ExtResource("5_qq45g")]
+transform = Transform3D(4.17, 0, 0, 0, 4.17, 0, 0, 0, 4.17, -173.36401, -0.059931755, -93.98001)
+
+[node name="1tree70" parent="props/MultiMeshInstance3D" unique_id=2010798686 instance=ExtResource("5_qq45g")]
+transform = Transform3D(4.17, 0, 0, 0, 4.17, 0, 0, 0, 4.17, -109.039024, -0.059931755, -216.30418)
+
+[node name="1tree44" parent="props/MultiMeshInstance3D" unique_id=1328230457 instance=ExtResource("5_qq45g")]
+transform = Transform3D(3.1, 0, 0, 0, 3.1, 0, 0, 0, 3.1, 1.413868, 5.95452, -85.41215)
+
+[node name="1tree45" parent="props/MultiMeshInstance3D" unique_id=460413981 instance=ExtResource("5_qq45g")]
+transform = Transform3D(2.53, 0, 0, 0, 2.53, 0, 0, 0, 2.53, 17.869434, 5.95452, -85.41215)
+
+[node name="1tree51" parent="props/MultiMeshInstance3D" unique_id=2119760868 instance=ExtResource("5_qq45g")]
+transform = Transform3D(2.845, 0, 0, 0, 2.845, 0, 0, 0, 2.845, -9.7220745, 0.50358105, -130.88712)
+
+[node name="1tree52" parent="props/MultiMeshInstance3D" unique_id=2091854898 instance=ExtResource("5_qq45g")]
+transform = Transform3D(2.845, 0, 0, 0, 2.845, 0, 0, 0, 2.845, 4.485732, 0.50358105, -117.578674)
+
+[node name="1tree53" parent="props/MultiMeshInstance3D" unique_id=2119025449 instance=ExtResource("5_qq45g")]
+transform = Transform3D(2.845, 0, 0, 0, 2.845, 0, 0, 0, 2.845, 31.139664, 0.50358105, -64.89055)
+
+[node name="1tree56" parent="props/MultiMeshInstance3D" unique_id=663484709 instance=ExtResource("5_qq45g")]
+transform = Transform3D(2.27, 0, 0, 0, 2.27, 0, 0, 0, 2.27, 60.10133, 0.50358105, -110.46524)
+
+[node name="1tree46" parent="props/MultiMeshInstance3D" unique_id=1277579183 instance=ExtResource("5_qq45g")]
+transform = Transform3D(3.38, 0, 0, 0, 3.38, 0, 0, 0, 3.38, -27.50734, 2.6212683, -141.4571)
+
+[node name="1tree74" parent="props/MultiMeshInstance3D" unique_id=1028400465 instance=ExtResource("5_qq45g")]
+transform = Transform3D(3.38, 0, 0, 0, 3.38, 0, 0, 0, 3.38, -51.76033, 0.32038832, -142.2695)
+
+[node name="1tree8" parent="props/MultiMeshInstance3D" unique_id=1329852237 instance=ExtResource("5_qq45g")]
+transform = Transform3D(3.1, 0, 0, 0, 3.1, 0, 0, 0, 3.1, -24.95471, 0.2686491, -204.90297)
+
+[node name="1tree7" parent="props/MultiMeshInstance3D" unique_id=268706533 instance=ExtResource("5_qq45g")]
+transform = Transform3D(3.74, 0, 0, 0, 3.74, 0, 0, 0, 3.74, 52.139153, 1.1892061, -197.49866)
+
+[node name="pinetree4" parent="props/MultiMeshInstance3D" unique_id=1663796025 instance=ExtResource("6_wo0py")]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0.5599518, 0, -201.20206)
+
+[node name="pinetree29" parent="props/MultiMeshInstance3D" unique_id=980367637 instance=ExtResource("6_wo0py")]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 43.78042, 0, -115.897804)
+
+[node name="pinetree36" parent="props/MultiMeshInstance3D" unique_id=1824010555 instance=ExtResource("6_wo0py")]
+transform = Transform3D(0.12, 0, 0, 0, 0.12, 0, 0, 0, 0.12, -16.594288, 1.3269405, -102.91757)
+
+[node name="pinetree42" parent="props/MultiMeshInstance3D" unique_id=1060823641 instance=ExtResource("6_wo0py")]
+transform = Transform3D(0.12, 0, 0, 0, 0.12, 0, 0, 0, 0.12, -73.18085, 0.24225616, -147.4305)
+
+[node name="pinetree44" parent="props/MultiMeshInstance3D" unique_id=385461261 instance=ExtResource("6_wo0py")]
+transform = Transform3D(0.12, 0, 0, 0, 0.12, 0, 0, 0, 0.12, -128.81717, 1.3269444, -118.290184)
+
+[node name="pinetree50" parent="props/MultiMeshInstance3D" unique_id=1274594970 instance=ExtResource("6_wo0py")]
+transform = Transform3D(0.165, 0, 0, 0, 0.165, 0, 0, 0, 0.165, -107.660095, 6.191681, -125.53864)
+
+[node name="pinetree47" parent="props/MultiMeshInstance3D" unique_id=754786417 instance=ExtResource("6_wo0py")]
+transform = Transform3D(0.12, 0, 0, 0, 0.12, 0, 0, 0, 0.12, -10.6343, -0.50523686, -22.155964)
+
+[node name="pinetree48" parent="props/MultiMeshInstance3D" unique_id=683624149 instance=ExtResource("6_wo0py")]
+transform = Transform3D(0.12, 0, 0, 0, 0.12, 0, 0, 0, 0.12, -122.02679, -0.6137786, 40.183033)
+
+[node name="pinetree40" parent="props/MultiMeshInstance3D" unique_id=1532919329 instance=ExtResource("6_wo0py")]
+transform = Transform3D(0.12, 0, 0, 0, 0.12, 0, 0, 0, 0.12, 29.435009, 0.00023984909, -93.11278)
+
+[node name="pinetree37" parent="props/MultiMeshInstance3D" unique_id=466416690 instance=ExtResource("6_wo0py")]
+transform = Transform3D(0.13, 0, 0, 0, 0.13, 0, 0, 0, 0.13, 26.823494, 3.7112808, -158.02777)
+
+[node name="pinetree38" parent="props/MultiMeshInstance3D" unique_id=982406465 instance=ExtResource("6_wo0py")]
+transform = Transform3D(0.13, 0, 0, 0, 0.13, 0, 0, 0, 0.13, 14.399889, 3.7112808, -156.6594)
+
+[node name="pinetree31" parent="props/MultiMeshInstance3D" unique_id=1473918638 instance=ExtResource("6_wo0py")]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, -93.59833, 0, -40.182476)
+
+[node name="pinetree32" parent="props/MultiMeshInstance3D" unique_id=2032236029 instance=ExtResource("6_wo0py")]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, -95.125305, 0, -136.65686)
+
+[node name="pinetree9" parent="props/MultiMeshInstance3D" unique_id=1990213039 instance=ExtResource("6_wo0py")]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 103.94188, 23.52759, -211.01091)
+
+[node name="pinetree10" parent="props/MultiMeshInstance3D" unique_id=1394344767 instance=ExtResource("6_wo0py")]
+transform = Transform3D(0.105, 0, 0, 0, 0.105, 0, 0, 0, 0.105, 118.71304, 18.380215, -161.11923)
+
+[node name="pinetree11" parent="props/MultiMeshInstance3D" unique_id=1660909573 instance=ExtResource("6_wo0py")]
+transform = Transform3D(0.115, 0, 0, 0, 0.115, 0, 0, 0, 0.115, 86.43235, 17.746357, -161.94254)
+
+[node name="pinetree12" parent="props/MultiMeshInstance3D" unique_id=1483050933 instance=ExtResource("6_wo0py")]
+transform = Transform3D(0.115, 0, 0, 0, 0.115, 0, 0, 0, 0.115, 94.83354, 17.746357, -120.757324)
+
+[node name="pinetree14" parent="props/MultiMeshInstance3D" unique_id=1548215155 instance=ExtResource("6_wo0py")]
+transform = Transform3D(0.115, 0, 0, 0, 0.115, 0, 0, 0, 0.115, 92.91825, 18.161404, -52.2924)
+
+[node name="pinetree15" parent="props/MultiMeshInstance3D" unique_id=638735684 instance=ExtResource("6_wo0py")]
+transform = Transform3D(0.18, 0, 0, 0, 0.18, 0, 0, 0, 0.18, 92.91825, 18.161404, -9.415848)
+
+[node name="pinetree18" parent="props/MultiMeshInstance3D" unique_id=1896009732 instance=ExtResource("6_wo0py")]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 115.664635, 18.451168, 86.118835)
+
+[node name="pinetree19" parent="props/MultiMeshInstance3D" unique_id=537153121 instance=ExtResource("6_wo0py")]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 115.664635, 18.451168, 48.953617)
+
+[node name="pinetree26" parent="props/MultiMeshInstance3D" unique_id=1530252671 instance=ExtResource("6_wo0py")]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 25.56108, -0.4229889, 48.953617)
+
+[node name="pinetree20" parent="props/MultiMeshInstance3D" unique_id=2133147909 instance=ExtResource("6_wo0py")]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 85.44442, 18.451168, 110.150375)
+
+[node name="pinetree22" parent="props/MultiMeshInstance3D" unique_id=2121184380 instance=ExtResource("6_wo0py")]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, -48.264725, 18.451168, 69.81298)
+
+[node name="pinetree24" parent="props/MultiMeshInstance3D" unique_id=1291126713 instance=ExtResource("6_wo0py")]
+transform = Transform3D(0.15, 0, 0, 0, 0.15, 0, 0, 0, 0.15, 72.56498, 18.451168, 73.40702)
+
+[node name="pinetree25" parent="props/MultiMeshInstance3D" unique_id=1854625657 instance=ExtResource("6_wo0py")]
+transform = Transform3D(0.15, 0, 0, 0, 0.15, 0, 0, 0, 0.15, -15.203606, 18.451168, 112.18975)
+
+[node name="pinetree27" parent="props/MultiMeshInstance3D" unique_id=1546424417 instance=ExtResource("6_wo0py")]
+transform = Transform3D(0.115, 0, 0, 0, 0.115, 0, 0, 0, 0.115, -15.203606, 18.451168, 67.71641)
+
+[node name="pinetree16" parent="props/MultiMeshInstance3D" unique_id=2059467625 instance=ExtResource("6_wo0py")]
+transform = Transform3D(0.18, 0, 0, 0, 0.18, 0, 0, 0, 0.18, 122.01745, 18.161404, -75.46089)
+
+[node name="pinetree8" parent="props/MultiMeshInstance3D" unique_id=1819246413 instance=ExtResource("6_wo0py")]
+transform = Transform3D(0.14, 0, 0, 0, 0.14, 0, 0, 0, 0.14, 29.392849, 0, -226.67915)
+
+[node name="pinetree6" parent="props/MultiMeshInstance3D" unique_id=1927659355 instance=ExtResource("6_wo0py")]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, -38.92905, 0, -216.53178)
+
+[node name="Player" parent="." unique_id=1607055564 instance=ExtResource("7_wo0py")]
+transform = Transform3D(10.94, 0, 0, 0, 10.94, 0, 0, 0, 10.94, 118.848816, 22.225222, -183.50317)
+script = ExtResource("8_vh310")
+
+[node name="Head" type="Node3D" parent="Player" unique_id=1659382872]
+
+[node name="SpringArm3D" type="SpringArm3D" parent="Player/Head" unique_id=655130293]
+spring_length = 3.0
+
+[node name="Camera3D" type="Camera3D" parent="Player/Head/SpringArm3D" unique_id=1106428638 groups=["camera"]]
+transform = Transform3D(0.0952381, 0, 0, 0, 0.087004334, 0.038736824, 0, -0.038736824, 0.087004334, 0, 0.8820001, 2.3)
+fov = 60.0
+near = 0.5
+far = 500.0

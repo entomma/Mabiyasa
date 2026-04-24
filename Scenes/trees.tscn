@@ -1,0 +1,60 @@
+[gd_scene format=3 uid="uid://cy72jmgrsmn18"]
+
+[ext_resource type="PackedScene" uid="uid://ctx51cfemxa33" path="res://Assets/low_poly_tree.glb" id="1_atcab"]
+[ext_resource type="PackedScene" uid="uid://bgcvmxc1cnn21" path="res://Assets/low_poly_tree_concept.glb" id="2_mtaav"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_atcab"]
+radius = 0.09082031
+height = 1.2138672
+
+[node name="ManyTrees" type="StaticBody3D" unique_id=1264127976]
+disable_mode = 1
+
+[node name="Sketchfab_Scene" parent="." unique_id=1116563252 instance=ExtResource("1_atcab")]
+transform = Transform3D(0.07, 0, 0, 0, 0.07, 0, 0, 0, 0.07, 0, 0.005836785, 0)
+
+[node name="Sketchfab_Scene2" parent="." unique_id=696063173 instance=ExtResource("1_atcab")]
+transform = Transform3D(0.05, 0, 0, 0, 0.05, 0, 0, 0, 0.05, 0.40961266, 0, 1.0546232)
+
+[node name="Sketchfab_Scene3" parent="." unique_id=1662653210 instance=ExtResource("2_mtaav")]
+transform = Transform3D(0.002, 0, 0, 0, 0.002, 0, 0, 0, 0.002, 0, 0, 0)
+
+[node name="Sketchfab_Scene5" parent="." unique_id=309949119 instance=ExtResource("1_atcab")]
+transform = Transform3D(-0.047110874, 0, 0.051774178, 0, 0.07, 0, -0.051774178, 0, -0.047110874, 0.7513548, 0, -0.85441184)
+
+[node name="Sketchfab_Scene6" parent="." unique_id=250806152 instance=ExtResource("1_atcab")]
+transform = Transform3D(-0.04038075, 0, 0.044377867, 0, 0.06, 0, -0.044377867, 0, -0.04038075, 1.011002, 0, 0.45086098)
+
+[node name="Sketchfab_Scene7" parent="." unique_id=846999274 instance=ExtResource("2_mtaav")]
+transform = Transform3D(-0.001346025, 0, 0.0014792623, 0, 0.002, 0, -0.0014792623, 0, -0.001346025, 0.6902064, 0.0405609, 0.025478601)
+
+[node name="Sketchfab_Scene4" parent="." unique_id=1260656454 instance=ExtResource("2_mtaav")]
+transform = Transform3D(0.003, 0, 0, 0, 0.003, 0, 0, 0, 0.003, -1.7259914, 0.061377287, 0.89912033)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=222777875]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.39955342, -0.06686272)
+shape = SubResource("CapsuleShape3D_atcab")
+
+[node name="CollisionShape3D7" type="CollisionShape3D" parent="." unique_id=434602576]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.20380431, 0.39955342, -0.42786008)
+shape = SubResource("CapsuleShape3D_atcab")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="." unique_id=1066070599]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.32441214, 0.39955342, 0.39742512)
+shape = SubResource("CapsuleShape3D_atcab")
+
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="." unique_id=1927045251]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.97376895, 0.39955342, 0.46071476)
+shape = SubResource("CapsuleShape3D_atcab")
+
+[node name="CollisionShape3D4" type="CollisionShape3D" parent="." unique_id=557569697]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.42327356, 0.39955342, 0.99462193)
+shape = SubResource("CapsuleShape3D_atcab")
+
+[node name="CollisionShape3D5" type="CollisionShape3D" parent="." unique_id=1111816971]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.7181436, 0.39955342, -0.818567)
+shape = SubResource("CapsuleShape3D_atcab")
+
+[node name="CollisionShape3D6" type="CollisionShape3D" parent="." unique_id=1789227019]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.964754, 0.39955342, -0.3302185)
+shape = SubResource("CapsuleShape3D_atcab")

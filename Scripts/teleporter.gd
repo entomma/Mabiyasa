@@ -1,13 +1,13 @@
 extends Area3D
 
-@export_file("*.tscn") var target_scene: String 
+@export_file("*.tscn") var target_scene: String
 @export var spawn_name: String = "default"
 
 var player_inside := false
+var is_teleporting := false
 
 func _input(event):
-	# Make sure "interact" is defined in Project Settings -> Input Map
-	if player_inside and event.is_action_pressed("interact"): 
+	if player_inside and event.is_action_pressed("interact"):
 		teleport()
 
 func _on_body_entered(body):
@@ -21,17 +21,34 @@ func _on_body_exited(body):
 		hide_prompt()
 
 func teleport():
-	# 1. Check if the Inspector variable is empty
-	if target_scene == "" or target_scene == null:
-		print("Warning: No target scene assigned in the Inspector!")
+	if is_teleporting:
 		return
-	
-	# 2. Tell GameManager where we want to land
+
+	if target_scene == "" or target_scene == null:
+		print("⚠ No target scene assigned!")
+		return
+
+	is_teleporting = true
+
+	print("🚪 Teleport preparing...")
+
+	# Tell spawn system BEFORE switching
 	GameManager.next_spawn = spawn_name
-	
-	# 3. Use the VARIABLE, not a hardcoded path
-	print("Teleporting to: ", target_scene)
+
+	# ─────────────────────────────
+	# WAIT WHILE TREE IS STILL VALID
+	# ─────────────────────────────
+	await get_tree().create_timer(0.05).timeout
+
+	# ─────────────────────────────
+	# SAFE SCENE SWITCH (NO AWAIT AFTER THIS)
+	# ─────────────────────────────
+	print("🚀 Switching scene...")
 	get_tree().change_scene_to_file(target_scene)
+
+	# DO NOT PUT ANY CODE AFTER THIS THAT USES get_tree()
+
+	is_teleporting = false
 
 func show_prompt():
 	print("Press E to travel")

@@ -1,33 +1,16 @@
 [gd_scene format=3 uid="uid://bkmwek75cw6cr"]
 
-[sub_resource type="BoxMesh" id="BoxMesh_f362e"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_f362e"]
-disable_ambient_light = true
-albedo_color = Color(0.46666667, 0.56078434, 0.5921569, 1)
-
-[sub_resource type="PrismMesh" id="PrismMesh_b8t04"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_b8t04"]
-disable_ambient_light = true
-albedo_color = Color(0.3657617, 0.25138813, 0.11491277, 1)
+[ext_resource type="PackedScene" uid="uid://db8r3raxvypja" path="res://Assets/low_poly_fishermans_hut.glb" id="1_b8t04"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_fn0f6"]
-size = Vector3(8.9668865, 4.294409, 11.437548)
+size = Vector3(3.4805298, 1.5756836, 2.6526413)
 
-[node name="house" type="RigidBody3D" unique_id=1811193183]
-freeze = true
+[node name="house" type="StaticBody3D" unique_id=1015821474]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0)
+disable_mode = 1
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=2115700519]
-transform = Transform3D(9, 0, 0, 0, 4, 0, 0, 0, 12, 0, 0.59944624, 0)
-mesh = SubResource("BoxMesh_f362e")
-surface_material_override/0 = SubResource("StandardMaterial3D_f362e")
+[node name="Sketchfab_Scene" parent="." unique_id=69787102 instance=ExtResource("1_b8t04")]
 
-[node name="MeshInstance3D2" type="MeshInstance3D" parent="." unique_id=1060977093]
-transform = Transform3D(10, 0, 0, 0, 3, 0, 0, 0, 14, 0, 4.11733, 0)
-mesh = SubResource("PrismMesh_b8t04")
-surface_material_override/0 = SubResource("StandardMaterial3D_b8t04")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1463166075]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.015986443, 0.67994595, 0.118159294)
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1331829602]
+transform = Transform3D(100.000046, 0, 0, 0, 100.000046, 0, 0, 0, 100.000046, -4.4003806, 118.6002, 2.642013)
 shape = SubResource("BoxShape3D_fn0f6")

@@ -8,7 +8,7 @@
 [ext_resource type="Script" uid="uid://uw5d14gbouo" path="res://Scripts/Player.gd" id="5_pl2fg"]
 [ext_resource type="PackedScene" uid="uid://ifdtrfncuq8n" path="res://terrain/tree.tscn" id="6_fm7vy"]
 [ext_resource type="PackedScene" uid="uid://bgnfcgouv4i12" path="res://terrain/manytree.tscn" id="7_4w285"]
-[ext_resource type="PackedScene" uid="uid://dbobaa6u56rlw" path="res://terrain/z_1_teleporter.tscn" id="8_4w285"]
+[ext_resource type="PackedScene" uid="uid://dbobaa6u56rlw" path="res://Scenes/z_1_teleporter.tscn" id="8_4w285"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_7qxil"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)

@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://d1jsewohatax7"]
+
+[ext_resource type="PackedScene" uid="uid://ctx51cfemxa33" path="res://Assets/low_poly_tree.glb" id="1_gk1y4"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_gk1y4"]
+height = 6.2731934
+
+[node name="1tree" type="StaticBody3D" unique_id=1602243122]
+
+[node name="Sketchfab_Scene" parent="." unique_id=1116563252 instance=ExtResource("1_gk1y4")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=457689759]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.1365967, -0.2784865)
+shape = SubResource("CapsuleShape3D_gk1y4")
