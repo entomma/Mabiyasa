@@ -115,7 +115,6 @@ albedo_color = Color(0.2490074, 0.087448366, 0.038414598, 1)
 
 [node name="SmallVillage" type="Node3D" unique_id=995133886]
 script = ExtResource("1_rkkpx")
-player_scene = ExtResource("9_a3m1u")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1447989357]
 environment = SubResource("Environment_0d65j")

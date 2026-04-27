@@ -53,6 +53,9 @@ func start_transition_fade():
 		await anim_player.animation_finished
 	else:
 		await get_tree().create_timer(1.0).timeout
+	
+	# ✅ ADD THIS: Load the battle scene
+	get_tree().change_scene_to_file("res://Scenes/Battle.tscn")
 
 func fade_in():
 	color_rect.modulate.a = 1.0

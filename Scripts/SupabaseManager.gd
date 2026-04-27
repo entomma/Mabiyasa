@@ -118,7 +118,8 @@ func create_player_profile(username: String) -> Dictionary:
 		"account_exp": 0,
 		"world_level": 1,
 		"gold": 0,
-		"pulls": 0
+		"pulls": 0,
+		"current_scene": "res://Scenes/small_village.tscn"  # Set default scene for new players
 	})
 	
 	print("Creating profile with body: ", body)
@@ -264,10 +265,50 @@ func fetch_player_profile() -> void:
 		current_uid = result[0].uid
 		GameManager.player_profile = result[0]
 		
+		# FIX: Check if the saved scene is hubtown and replace with small_village
+		var saved_scene = GameManager.player_profile.get("current_scene", "")
+		if saved_scene == "res://Scenes/hubtown.tscn" or saved_scene == "hubtown.tscn":
+			print("WARNING: Found hubtown reference, replacing with small_village")
+			GameManager.player_profile["current_scene"] = "res://Scenes/small_village.tscn"
+			# Optionally save this change back to database
+			await update_current_scene_to_small_village()
+		
 		await fetch_player_characters()
 		GameManager.load_character_resources()
 		load_player_state()
 		print("Profile, characters and state loaded!")
+
+# New function to update current scene in database
+func update_current_scene_to_small_village() -> void:
+	var http = HTTPRequest.new()
+	add_child(http)
+	
+	var headers = [
+		"Content-Type: application/json",
+		"apikey: " + SUPABASE_ANON_KEY,
+		"Authorization: Bearer " + auth_token
+	]
+	
+	var uid = GameManager.player_profile.get("uid", 0)
+	if uid == 0:
+		print("Cannot update scene - no UID")
+		http.queue_free()
+		return
+	
+	var body = JSON.stringify({
+		"current_scene": "res://Scenes/small_village.tscn"
+	})
+	
+	print("Updating current_scene to small_village for UID: ", uid)
+	http.request(SUPABASE_URL + "/rest/v1/player_profile?uid=eq." + str(int(uid)), headers, HTTPClient.METHOD_PATCH, body)
+	var response = await http.request_completed
+	http.queue_free()
+	
+	var response_code = response[1]
+	if response_code >= 200 and response_code < 300:
+		print("Successfully updated current_scene to small_village")
+	else:
+		print("Failed to update current_scene: ", response_code)
 
 func load_player_state() -> void:
 	var profile = GameManager.player_profile
