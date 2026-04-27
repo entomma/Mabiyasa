@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://ckd5ccifbxth4"]
 
 [ext_resource type="Script" uid="uid://c6ear2eku2n7u" path="res://Scripts/PartySelect.gd" id="1_cdbme"]
+[ext_resource type="Texture2D" uid="uid://bdqndhwj8t7cd" path="res://Assets/landscape.png" id="2_jf25b"]
 
 [node name="PartySelect" type="Control" unique_id=1938133594]
 layout_mode = 3
@@ -11,7 +12,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_cdbme")
 
-[node name="Background" type="ColorRect" parent="." unique_id=1689974120]
+[node name="Background" type="TextureRect" parent="." unique_id=1818322135]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -19,7 +20,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.24780053, 0.3133042, 0.42358288, 1)
+texture = ExtResource("2_jf25b")
 
 [node name="TopBar" type="HBoxContainer" parent="." unique_id=2088495641]
 custom_minimum_size = Vector2(0, 70)
@@ -138,7 +139,6 @@ offset_left = -4.0
 offset_top = -15.02002
 offset_right = 1.0
 offset_bottom = -12.0
-metadata/_edit_group_ = true
 
 [node name="SlotName1" type="Label" parent="CharacterDisplay/SlotsContainer/Slot1/SlotInfo1" unique_id=1414836882]
 layout_mode = 2
@@ -190,7 +190,6 @@ offset_left = 1.0
 offset_top = -19.718018
 offset_right = 4.0
 offset_bottom = -12.0
-metadata/_edit_group_ = true
 
 [node name="SlotName2" type="Label" parent="CharacterDisplay/SlotsContainer/Slot2/SlotInfo2" unique_id=1187417211]
 layout_mode = 2

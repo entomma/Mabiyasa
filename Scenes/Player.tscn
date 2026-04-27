@@ -346,6 +346,7 @@ far = 500.0
 [node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="." unique_id=762640094]
 transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 0, 0, 0)
 billboard = 2
+shaded = true
 alpha_cut = 1
 texture_filter = 0
 sprite_frames = SubResource("SpriteFrames_52ee3")

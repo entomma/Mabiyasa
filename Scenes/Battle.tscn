@@ -2,13 +2,29 @@
 
 [ext_resource type="Script" uid="uid://c7ydarmawgviy" path="res://Scripts/Battle.gd" id="1_wvl2i"]
 
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_wvl2i"]
+sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+
+[sub_resource type="Sky" id="Sky_vr6xi"]
+sky_material = SubResource("ProceduralSkyMaterial_wvl2i")
+
+[sub_resource type="Environment" id="Environment_2h7oj"]
+background_mode = 2
+sky = SubResource("Sky_vr6xi")
+tonemap_mode = 2
+glow_enabled = true
+
 [sub_resource type="PlaneMesh" id="PlaneMesh_wvl2i"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vr6xi"]
-albedo_color = Color(0.48468196, 0.801673, 0.63487345, 1)
+albedo_color = Color(0.28139675, 0.5352819, 0.40643585, 1)
 
 [node name="Battle" type="Node3D" unique_id=968084594]
 script = ExtResource("1_wvl2i")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=2019279693]
+environment = SubResource("Environment_2h7oj")
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1245459190]
 transform = Transform3D(1, 0, 0, 0, 0.99026805, 0.1391731, 0, -0.1391731, 0.99026805, 0, 3, 8)

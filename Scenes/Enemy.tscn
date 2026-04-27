@@ -49,6 +49,8 @@ enemy_data = ExtResource("2_xeo28")
 
 [node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="." unique_id=917201330]
 transform = Transform3D(1.7, 0, 0, 0, 1.7, 0, 0, 0, 1.7, 0, 0, 0)
+billboard = 2
+shaded = true
 texture_filter = 0
 sprite_frames = SubResource("SpriteFrames_mo1ky")
 animation = &"enemy_idle"

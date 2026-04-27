@@ -1,32 +1,58 @@
 [gd_scene format=3 uid="uid://bqmvvrmyl0grx"]
 
 [ext_resource type="Script" uid="uid://cktacboha1ijp" path="res://Scripts/MainMenu.gd" id="1_tt5f1"]
+[ext_resource type="Texture2D" uid="uid://bihl47orp223j" path="res://Assets/ChatGPT Image Apr 6, 2026, 04_34_28 PM.png" id="2_853f1"]
+[ext_resource type="Texture2D" uid="uid://b5vl4nmc4w5ik" path="res://Assets/mabiyasaWHITE.png" id="3_8saeu"]
 
 [node name="MainMenu" type="Control" unique_id=390840336]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_tt5f1")
 
-[node name="Backgorund" type="ColorRect" parent="." unique_id=1086261584]
+[node name="Backgorund" type="TextureRect" parent="." unique_id=1431069061]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 3.0
+offset_top = -2.0
+offset_right = 1.0
+offset_bottom = -1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0.31764707, 0.27450982, 1)
+texture = ExtResource("2_853f1")
+expand_mode = 3
+stretch_mode = 6
+
+[node name="TextureRect" type="TextureRect" parent="Backgorund" unique_id=56065191]
+custom_minimum_size = Vector2(1, 1)
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -401.5
+offset_top = 96.0
+offset_right = 406.5
+offset_bottom = 351.552
+grow_horizontal = 2
+texture = ExtResource("3_8saeu")
+expand_mode = 2
+stretch_mode = 6
 
 [node name="TopBar" type="HBoxContainer" parent="." unique_id=945665437]
 custom_minimum_size = Vector2(0, 60)
 layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_bottom = 50.0
-grow_horizontal = 2
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -60.0
+offset_right = 141.0
+grow_vertical = 0
 
 [node name="PlayerInfo" type="VBoxContainer" parent="TopBar" unique_id=258885357]
 layout_mode = 2
@@ -40,6 +66,7 @@ layout_mode = 2
 text = "UID: 00000"
 
 [node name="AccountLevel" type="Label" parent="TopBar" unique_id=688844854]
+visible = false
 layout_mode = 2
 text = "Level 1"
 

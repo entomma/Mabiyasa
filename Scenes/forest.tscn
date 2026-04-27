@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://bpm5ktqamm0gp" path="res://Scenes/pinetree.tscn" id="6_wo0py"]
 [ext_resource type="PackedScene" uid="uid://bdfswoqyr3x6v" path="res://Scenes/Player.tscn" id="7_wo0py"]
 [ext_resource type="Script" uid="uid://uw5d14gbouo" path="res://Scripts/Player.gd" id="8_vh310"]
+[ext_resource type="PackedScene" uid="uid://d027g76unt2h0" path="res://Scenes/Enemy.tscn" id="10_xgdwn"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_qq45g"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -650,3 +651,6 @@ script = ExtResource("8_vh310")
 
 [node name="SpawnPoint" type="Marker3D" parent="." unique_id=844294854]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 115.61504, 49.643284, -187.24371)
+
+[node name="Enemy" parent="." unique_id=1716839156 instance=ExtResource("10_xgdwn")]
+transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 58.44631, 9.598868, -179.06999)

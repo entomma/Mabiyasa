@@ -58,7 +58,7 @@ var selected_skill_slot: String = "basic"
 var active_buffs:   Dictionary = {}
 var active_debuffs: Dictionary = {}
 
-var origin_scene: String = "res://Scenes/Zone1.tscn"
+var origin_scene: String = "res://Scenes/forest.tscn"
 
 var mastered_card_ids: Array = []
 
