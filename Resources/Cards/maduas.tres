@@ -7,6 +7,7 @@ script = ExtResource("1_cyf6t")
 card_id = 1
 kapampangan_text = "Madua's"
 english_hint = "To Fish"
+example_sentence = "."
 card_type = "Action"
 category = "Motion"
 metadata/_custom_type_script = "uid://c45njmt8b0c61"

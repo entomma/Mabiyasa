@@ -8,10 +8,6 @@ extends Node3D
 @onready var sentence_bar       = $BattleUI/CardPanel/SentenceBar
 @onready var sentence_container = $BattleUI/CardPanel/SentenceBar/SentenceContainer
 @onready var submit_btn         = $BattleUI/CardPanel/SentenceBar/SubmitButton
-@onready var prefix_btn         = $BattleUI/CardPanel/AffixPanel/PrefixBtn
-@onready var suffix_btn         = $BattleUI/CardPanel/AffixPanel/SuffixBtn
-@onready var connector_btn      = $BattleUI/CardPanel/AffixPanel/ConnectorBtn
-@onready var other_btn          = $BattleUI/CardPanel/AffixPanel/OtherBtn
 @onready var turn_order_ui      = $BattleUI/TurnOrder
 @onready var char_portraits     = $BattleUI/BottomLeft/CharPortraits
 @onready var skill_buttons      = $BattleUI/BottomRight
@@ -19,6 +15,12 @@ extends Node3D
 @onready var skill_btn          = $BattleUI/BottomRight/SkillButton
 @onready var sp_stars           = $BattleUI/BottomRight/SPStars
 @onready var camera             = $Camera3D
+
+# ── Card System ───────────────────────────────
+const CARD_SCENE = preload("res://Scenes/Card.tscn")
+var hand: Array = []           # Array of WordCard resources
+var current_hand_nodes: Array = []
+var sentence: Array = []       # Array of WordCard resources for sentence building
 
 # ─────────────────────────────────────────────
 #  Dynamic storage
@@ -37,14 +39,11 @@ var turn_queue:           Array          = []
 var current_turn_index:   int            = 0
 var current_character:    CharacterData  = null
 var current_skill:        SkillData      = null
-var hand:                 Array          = []
-var sentence:             Array          = []
 var total_damage_dealt:   int            = 0
 var current_sp:           int            = 3
 var max_sp:               int            = 5
 var enemies:              Array          = []
 var is_player_turn:       bool           = true
-var current_affix_filter: String         = ""
 
 var character_hp:      Array = []
 var character_shields: Array = []
@@ -59,8 +58,6 @@ var active_buffs:   Dictionary = {}
 var active_debuffs: Dictionary = {}
 
 var origin_scene: String = "res://Scenes/forest.tscn"
-
-var mastered_card_ids: Array = []
 
 var camera_default_pos:    Vector3 = Vector3(0, 3, 8)
 var camera_default_target: Vector3 = Vector3(0, 0, 0)
@@ -96,34 +93,80 @@ const ENERGY_FROM_HIT_TAKEN = 10.0
 # ─────────────────────────────────────────────
 #  _ready
 # ─────────────────────────────────────────────
+# ─────────────────────────────────────────────
+#  _ready (Fixed with Robust Terrain Stabilization)
+# ─────────────────────────────────────────────
 func _ready():
+	# 1. Hide UI immediately so it doesn't pop in during the wait
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	card_panel.visible = false
+	skill_buttons.visible = false
+	
+	print("🌍 Battle Scene: Stabilizing Yugen Terrain...")
+
+	# 2. STEP 1: WAIT FOR SCENE + RENDER STABILITY
+	await get_tree().process_frame
+	await get_tree().process_frame
+	await get_tree().physics_frame
+	await RenderingServer.frame_post_draw
+
+	# 3. STEP 2: FIND AND RESET TERRAIN
+	var terrain = find_child("MarchingSquaresTerrain", true, false)
+	if terrain:
+		print("✓ Terrain found - starting hard reset")
+		
+		# Pause and hide it while we clear buffers
+		terrain.set_process(false)
+		terrain.set_physics_process(false)
+		terrain.visible = false
+		
+		# Clear Yugen cache/state safely
+		if terrain.has_method("clear_cache"): terrain.call("clear_cache")
+		if terrain.has_method("reset"): terrain.call("reset")
+		if terrain.has_method("free_chunks"): terrain.call("free_chunks")
+
+		# Wait for GPU buffer release
+		await get_tree().process_frame
+		await RenderingServer.frame_post_draw
+		
+		# Re-enable and Force Rebuild
+		terrain.visible = true
+		terrain.set_process(true)
+		terrain.set_physics_process(true)
+		
+		# Give engine a breath before generation
+		await get_tree().create_timer(0.1).timeout
+		
+		# Force the rebuild using available methods
+		if terrain.has_method("force_update"): terrain.call("force_update")
+		elif terrain.has_method("update_terrain"): terrain.call("update_terrain")
+		elif terrain.has_method("generate"): terrain.call("generate")
+		
+		# Final wait to ensure textures are applied before showing the screen
+		await RenderingServer.frame_post_draw
+		print("✓ Terrain FULLY stabilized")
+
+	# 4. STEP 3: START BATTLE UI & FADE IN
 	var transition = get_tree().get_first_node_in_group("transition")
 	if transition: transition.fade_in()
 
 	if GameManager.has_meta("last_scene"):
 		origin_scene = GameManager.get_meta("last_scene")
 
-	_load_mastered_cards()
 	_init_character_hp()
 
+	# Connect buttons
 	basic_btn.pressed.connect(_on_basic_btn_pressed)
 	skill_btn.pressed.connect(_on_skill_btn_pressed)
 	submit_btn.pressed.connect(_on_submit_pressed)
-	prefix_btn.pressed.connect(_on_affix_pressed.bind("prefix"))
-	suffix_btn.pressed.connect(_on_affix_pressed.bind("suffix"))
-	connector_btn.pressed.connect(_on_affix_pressed.bind("connector"))
-	other_btn.pressed.connect(_on_affix_pressed.bind("other"))
 
 	_style_circular_button(basic_btn, Color(0.72, 0.58, 0.42))
 	_style_circular_button(skill_btn, Color(0.85, 0.35, 0.28))
 
-	card_panel.visible    = false
-	skill_buttons.visible = false
-
 	var old_dmg_panel = get_node_or_null("BattleUI/TotalDamage")
 	if old_dmg_panel: old_dmg_panel.visible = false
 
+	# Final Setup
 	_setup_card_panel_bg()
 	_spawn_enemies_for_zone()
 	_build_turn_queue()
@@ -142,6 +185,133 @@ func _init_character_hp():
 	for character in GameManager.player_party:
 		character_hp.append(float(character.get_actual_hp()))
 		character_shields.append(0.0)
+
+# ─────────────────────────────────────────────
+#  Card System Functions
+# ─────────────────────────────────────────────
+func draw_hand():
+	# Clear existing hand
+	for card_node in current_hand_nodes:
+		if is_instance_valid(card_node):
+			card_node.queue_free()
+	current_hand_nodes.clear()
+	hand.clear()
+	
+	# Load all WordCard resources
+	var all_cards = []
+	var dir = DirAccess.open("res://Resources/Cards/")
+	if dir:
+		for f in dir.get_files():
+			if f.ends_with(".tres"):
+				var card = load("res://Resources/Cards/" + f)
+				if card is WordCard:
+					all_cards.append(card)
+	
+	# Ensure you have at least one of each required type
+	var has_action = false
+	var has_noun = false
+	var has_pronoun = false
+	
+	for card in all_cards:
+		match card.card_type:
+			"Action": has_action = true
+			"Noun": has_noun = true
+			"Pronoun": has_pronoun = true
+	
+	# Add default cards if missing
+	if not has_action:
+		var default_action = WordCard.new()
+		default_action.kapampangan_text = "Gawa"
+		default_action.english_hint = "Do/Action"
+		default_action.card_type = "Action"
+		all_cards.append(default_action)
+	
+	if not has_noun:
+		var default_noun = WordCard.new()
+		default_noun.kapampangan_text = "Bagay"
+		default_noun.english_hint = "Thing/Noun"
+		default_noun.card_type = "Noun"
+		all_cards.append(default_noun)
+	
+	if not has_pronoun:
+		var default_pronoun = WordCard.new()
+		default_pronoun.kapampangan_text = "Aku"
+		default_pronoun.english_hint = "I/Me"
+		default_pronoun.card_type = "Pronoun"
+		all_cards.append(default_pronoun)
+	
+	all_cards.shuffle()
+	
+	# Draw up to 7 cards
+	for i in range(min(7, all_cards.size())):
+		var card_data = all_cards[i]
+		hand.append(card_data)
+		var card_node = CARD_SCENE.instantiate()
+		card_node.card_data = card_data
+		card_grid.add_child(card_node)
+		current_hand_nodes.append(card_node)
+		card_node.card_selected.connect(_on_card_toggled)
+
+	
+	update_sentence_display()
+
+func _on_card_toggled(card_data: WordCard):
+	if _is_processing_turn or _is_selecting_skill:
+		return
+	
+	# Toggle card in sentence
+	if sentence.has(card_data):
+		sentence.erase(card_data)
+	else:
+		sentence.append(card_data)
+	
+	# Update visual highlights
+	for card_node in current_hand_nodes:
+		if card_node.card_data == card_data:
+			card_node.set_highlight(sentence.has(card_data))
+	
+	update_sentence_display()
+
+func update_sentence_display():
+	# Clear sentence container
+	for child in sentence_container.get_children():
+		child.queue_free()
+	
+	if sentence.size() == 0:
+		var ph = Label.new()
+		ph.text = "Select cards to build your sentence..."
+		ph.add_theme_color_override("font_color", Color(0.5, 0.5, 0.5))
+		sentence_container.add_child(ph)
+		return
+	
+	# Display each card in the sentence
+	for card in sentence:
+		var pill = PanelContainer.new()
+		var s = StyleBoxFlat.new()
+		s.bg_color = CARD_COLORS.get(card.card_type, Color(0.5, 0.5, 0.5))
+		for c in ["top_left","top_right","bottom_left","bottom_right"]:
+			s.set("corner_radius_"+c, 20)
+		pill.add_theme_stylebox_override("panel", s)
+		
+		var lbl = Label.new()
+		lbl.text = card.kapampangan_text
+		lbl.add_theme_color_override("font_color", Color.WHITE)
+		lbl.add_theme_font_size_override("font_size", 16)
+		pill.add_child(lbl)
+		
+		var btn = Button.new()
+		btn.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		btn.flat = true
+		btn.pressed.connect(func(): 
+			sentence.erase(card)
+			update_sentence_display()
+			# Update hand highlights
+			for card_node in current_hand_nodes:
+				if card_node.card_data == card:
+					card_node.set_highlight(false)
+		)
+		pill.add_child(btn)
+		sentence_container.add_child(pill)
 
 # ─────────────────────────────────────────────
 #  Input
@@ -332,8 +502,10 @@ func _get_enemy_pool() -> Array:
 	}
 	if pools.has(origin_scene): return pools[origin_scene]
 	var fallback = []
-	for f in DirAccess.get_files_at("res://Resources/Enemies/"):
-		if f.ends_with(".tres"): fallback.append(load("res://Resources/Enemies/" + f))
+	var dir = DirAccess.open("res://Resources/Enemies/")
+	if dir:
+		for f in dir.get_files():
+			if f.ends_with(".tres"): fallback.append(load("res://Resources/Enemies/" + f))
 	return fallback
 
 func _weighted_count() -> int:
@@ -533,56 +705,6 @@ func _give_energy_hit_taken(char_data: CharacterData):
 	if idx >= 0: _update_energy_display(idx)
 
 # ─────────────────────────────────────────────
-#  Mastery
-# ─────────────────────────────────────────────
-func _load_mastered_cards():
-	mastered_card_ids.clear()
-	for entry in GameManager.player_profile.get("player_cards", []):
-		if entry.get("is_mastered", false):
-			mastered_card_ids.append(entry.get("card_id", -1))
-
-func _is_card_mastered(card: WordCard) -> bool:
-	return mastered_card_ids.has(card.card_id)
-
-func _update_card_mastery_in_db(card: WordCard):
-	var uid = GameManager.player_profile.get("uid", 0)
-	if uid == 0: return
-	var http = HTTPRequest.new()
-	add_child(http)
-	var headers = [
-		"Content-Type: application/json",
-		"apikey: " + SupabaseManager.SUPABASE_ANON_KEY,
-		"Authorization: Bearer " + SupabaseManager.auth_token,
-		"Prefer: return=representation"
-	]
-	http.request_completed.connect(func(_r,_c,_h,body_bytes):
-		var res = JSON.parse_string(body_bytes.get_string_from_utf8())
-		if res is Array and res.size() > 0:
-			if res[0].get("times_used", 0) >= 10 and not res[0].get("is_mastered", false):
-				_set_card_mastered(card.card_id, int(uid))
-				mastered_card_ids.append(card.card_id)
-		http.queue_free()
-	)
-	http.request(
-		SupabaseManager.SUPABASE_URL + "/rest/v1/player_cards?uid=eq." + str(int(uid))
-		+ "&card_id=eq." + str(card.card_id),
-		headers, HTTPClient.METHOD_PATCH, JSON.stringify({"times_used": 1}))
-
-func _set_card_mastered(card_id: int, uid: int):
-	var http = HTTPRequest.new()
-	add_child(http)
-	var headers = [
-		"Content-Type: application/json",
-		"apikey: " + SupabaseManager.SUPABASE_ANON_KEY,
-		"Authorization: Bearer " + SupabaseManager.auth_token
-	]
-	http.request_completed.connect(func(_r,_c,_h,_b): http.queue_free())
-	http.request(
-		SupabaseManager.SUPABASE_URL + "/rest/v1/player_cards?uid=eq." + str(uid)
-		+ "&card_id=eq." + str(card_id),
-		headers, HTTPClient.METHOD_PATCH, JSON.stringify({"is_mastered": true}))
-
-# ─────────────────────────────────────────────
 #  Setup helpers
 # ─────────────────────────────────────────────
 func _setup_card_panel_bg():
@@ -691,33 +813,6 @@ func _style_circular_button(btn: Button, color: Color):
 		btn.add_theme_stylebox_override(state, s)
 
 # ─────────────────────────────────────────────
-#  Card hand
-# ─────────────────────────────────────────────
-func draw_hand():
-	var all_cards = []
-	for f in DirAccess.get_files_at("res://Resources/Cards/"):
-		if f.ends_with(".tres"): all_cards.append(load("res://Resources/Cards/" + f))
-
-	var verbs    = all_cards.filter(func(c): return c.card_type == "Action")
-	var nouns    = all_cards.filter(func(c): return c.card_type == "Noun")
-	var pronouns = all_cards.filter(func(c): return c.card_type == "Pronoun")
-	verbs.shuffle(); nouns.shuffle(); pronouns.shuffle()
-
-	var has_verb    = hand.any(func(c): return c.card_type == "Action")
-	var has_noun    = hand.any(func(c): return c.card_type == "Noun")
-	var has_pronoun = hand.any(func(c): return c.card_type == "Pronoun")
-
-	if not has_verb    and verbs.size()    > 0: hand.append(verbs[0])
-	if not has_noun    and nouns.size()    > 0: hand.append(nouns[0])
-	if not has_pronoun and pronouns.size() > 0: hand.append(pronouns[0])
-
-	all_cards.shuffle()
-	for card in all_cards:
-		if hand.size() >= 7: break
-		if not hand.has(card): hand.append(card)
-	update_card_display()
-
-# ─────────────────────────────────────────────
 #  Turn flow
 # ─────────────────────────────────────────────
 func start_battle():
@@ -757,7 +852,6 @@ func show_skill_buttons():
 	submit_btn.disabled   = false
 	skill_buttons.visible = true
 	card_panel.visible    = false
-	sentence_bar.visible  = false
 	is_targeting_ally     = false
 
 	var bd = current_character.basic_attack as SkillData
@@ -816,112 +910,24 @@ func _on_skill_pressed():
 	current_skill = sd
 	_decide_targeting()
 
-func _on_ult_pressed(idx: int):
-	_trigger_ult(idx)
-
-func _on_affix_pressed(affix: String):
-	current_affix_filter = affix
-	for btn in [prefix_btn,suffix_btn,connector_btn,other_btn]: btn.modulate = Color(1,1,1)
-	match affix:
-		"prefix":    prefix_btn.modulate    = Color(1.5,1.5,0.5)
-		"suffix":    suffix_btn.modulate    = Color(1.5,1.5,0.5)
-		"connector": connector_btn.modulate = Color(1.5,1.5,0.5)
-		"other":     other_btn.modulate     = Color(1.5,1.5,0.5)
-
 func show_card_panel():
 	_is_selecting_skill   = false
 	skill_buttons.visible = false
 	card_panel.visible    = true
 	sentence_bar.visible  = true
-	sentence.clear()
-	update_sentence_display()
-	update_card_display()
 
 # ─────────────────────────────────────────────
-#  Card display
-# ─────────────────────────────────────────────
-func update_card_display():
-	for child in card_grid.get_children(): child.queue_free()
-	for i in range(hand.size()):
-		var card = hand[i]
-		var cont = PanelContainer.new()
-		cont.custom_minimum_size = Vector2(150, 180)
-		var s  = StyleBoxFlat.new()
-		var bc = CARD_COLORS.get(card.card_type, Color(0.5,0.5,0.5))
-		s.bg_color = bc.darkened(0.4) if sentence.has(card) else bc
-		for c in ["top_left","top_right","bottom_left","bottom_right"]: s.set("corner_radius_"+c, 8)
-		cont.add_theme_stylebox_override("panel", s)
-
-		var vbox = VBoxContainer.new()
-		vbox.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		for cfg in [
-			{"text": "★ Mastered" if _is_card_mastered(card) else "☆ Learning",
-			 "size": 9,
-			 "color": Color(1.0,0.85,0.2) if _is_card_mastered(card) else Color(0.6,0.6,0.6)},
-			{"text": card.card_type,        "size": 10, "color": Color.WHITE},
-			{"text": card.kapampangan_text, "size": 18, "color": Color.WHITE},
-			{"text": card.english_hint,     "size": 11, "color": Color(1,1,1,0.8)},
-			{"text": "["+card.category+"]", "size": 10, "color": Color(1,1,1,0.6)}
-		]:
-			var lbl = Label.new()
-			lbl.text = cfg.text
-			lbl.add_theme_font_size_override("font_size", cfg.size)
-			lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-			lbl.add_theme_color_override("font_color", cfg.color)
-			if cfg.size == 18: lbl.autowrap_mode = TextServer.AUTOWRAP_WORD
-			vbox.add_child(lbl)
-		cont.add_child(vbox)
-
-		var btn = Button.new()
-		btn.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		btn.flat = true
-		btn.pressed.connect(_on_card_pressed.bind(i))
-		cont.add_child(btn)
-		card_grid.add_child(cont)
-
-func _on_card_pressed(idx: int):
-	var card = hand[idx]
-	if sentence.has(card): sentence.erase(card)
-	else: sentence.append(card)
-	update_card_display()
-	update_sentence_display()
-
-func update_sentence_display():
-	for child in sentence_container.get_children(): child.queue_free()
-	if sentence.size() == 0:
-		var ph = Label.new()
-		ph.text = "Select cards to build your sentence..."
-		ph.add_theme_color_override("font_color", Color(0.5,0.5,0.5))
-		sentence_container.add_child(ph)
-		return
-	for card in sentence:
-		var pill = PanelContainer.new()
-		var s    = StyleBoxFlat.new()
-		s.bg_color = CARD_COLORS.get(card.card_type, Color(0.5,0.5,0.5))
-		for c in ["top_left","top_right","bottom_left","bottom_right"]: s.set("corner_radius_"+c, 20)
-		pill.add_theme_stylebox_override("panel", s)
-		var lbl = Label.new()
-		lbl.text = card.kapampangan_text
-		lbl.add_theme_color_override("font_color", Color.WHITE)
-		lbl.add_theme_font_size_override("font_size", 16)
-		pill.add_child(lbl)
-		var btn = Button.new()
-		btn.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		btn.flat = true
-		btn.pressed.connect(func(): sentence.erase(card); update_card_display(); update_sentence_display())
-		pill.add_child(btn)
-		sentence_container.add_child(pill)
-
-# ─────────────────────────────────────────────
-#  Submit
+#  Submit with sentence building
 # ─────────────────────────────────────────────
 func _on_submit_pressed():
 	if _is_processing_turn: return
-	if sentence.size() == 0 or (enemies.size() == 0 and not current_skill.targets_ally()): return
+	if sentence.size() == 0 or (enemies.size() == 0 and not current_skill.targets_ally()):
+		return
+	
 	_is_processing_turn = true
 	submit_btn.disabled = true
 
-	var quality    = analyse_sentence_quality()
+	var quality = analyse_sentence_quality()
 	var raw_damage = calculate_damage(quality)
 	var turn_damage = 0
 
@@ -933,27 +939,20 @@ func _on_submit_pressed():
 			turn_damage = await deal_damage(raw_damage, targeted_enemy_index)
 
 	resolve_skill_effects()
-	print("skill_type raw: '", current_skill.skill_type, "' → lower: '", current_skill.skill_type.to_lower() if current_skill.skill_type else "NULL", "'")
-	# Normalize skill_type to handle lowercase in .tres files
+
 	var stype = current_skill.skill_type.to_lower() if current_skill.skill_type else ""
 	match stype:
 		"basic":
 			current_sp = min(current_sp + current_skill.sp_gain, max_sp)
 			_give_energy_action(current_character, ENERGY_FROM_BASIC)
-			print("Basic — SP: ", current_sp, " energy given: ", ENERGY_FROM_BASIC)
 		"skill":
 			current_sp = max(0, current_sp - current_skill.sp_cost)
 			_give_energy_action(current_character, ENERGY_FROM_SKILL)
-			print("Skill — SP: ", current_sp, " energy given: ", ENERGY_FROM_SKILL)
 		"ultimate":
 			current_character.consume_energy()
 			_update_energy_display(_index_of_current_char())
-			print("ultimate used")
 
 	_update_sp_display()
-
-	if quality.grammar_ok:
-		for card in sentence: _update_card_mastery_in_db(card)
 
 	if turn_damage > 0:
 		_show_turn_damage(turn_damage)
@@ -961,8 +960,12 @@ func _on_submit_pressed():
 	await get_tree().create_timer(0.5).timeout
 	show_feedback_popup(turn_damage, quality)
 
-	for card in sentence: hand.erase(card)
+	# Remove used cards from hand
+	for card in sentence:
+		hand.erase(card)
 	sentence.clear()
+
+	# Draw new cards
 	draw_hand()
 
 	current_turn_index += 1
@@ -972,11 +975,10 @@ func _on_submit_pressed():
 
 	_is_processing_turn = false
 	submit_btn.disabled = false
-
 	process_next_turn()
 
 # ─────────────────────────────────────────────
-#  Sentence quality
+#  Sentence quality analysis
 # ─────────────────────────────────────────────
 func analyse_sentence_quality() -> Dictionary:
 	var r = {
@@ -1069,20 +1071,14 @@ func analyse_sentence_quality() -> Dictionary:
 
 	for card in sentence:
 		if card.category in ["Affix", "Prefix", "Suffix", "Connector"]:
-			r.has_affix = true; break
+			r.has_affix = true
+			break
+	
 	if not r.has_affix:
 		r.affix_penalty = PENALTY_NO_AFFIX
 		r.feedback_lines.append({"text": "No affixes  −10% DMG", "color": Color(1.0, 0.65, 0.2)})
 	else:
 		r.feedback_lines.append({"text": "✓ Affixes used!", "color": Color(0.35, 1.0, 0.5)})
-
-	for card in sentence:
-		if not _is_card_mastered(card): r.all_mastered = false; break
-	if not r.all_mastered:
-		r.mastery_penalty = PENALTY_UNMASTERED
-		r.feedback_lines.append({"text": "Unmastered cards  −20% DMG", "color": Color(1.0, 0.35, 0.35)})
-	else:
-		r.feedback_lines.append({"text": "✓ All cards mastered!", "color": Color(1.0, 0.85, 0.2)})
 
 	r.total_multiplier = max(0.40, 1.0 - r.grammar_penalty - r.affix_penalty - r.mastery_penalty)
 	return r
@@ -1098,7 +1094,8 @@ func calculate_damage(quality: Dictionary) -> int:
 	if talent and talent.trigger_effect == "DamageBoost":
 		for card in sentence:
 			if card.category == talent.trigger_card_category or card.card_type == talent.trigger_card_type:
-				raw = int(raw * (1.0 + talent.trigger_value)); break
+				raw = int(raw * (1.0 + talent.trigger_value))
+				break
 
 	if active_buffs.has(current_character):
 		raw = int(raw * (1.0 + active_buffs[current_character].get("atk_bonus", 0.0)))
@@ -1366,18 +1363,14 @@ func enemy_turn(entry: Dictionary):
 
 	_update_portrait_hp(target_idx)
 
-	# ── CHECK IF CHARACTER DIED ────────────────────────────────────────
 	if character_hp[target_idx] <= 0:
 		print(cd.character_name, " has fallen!")
-		# Fade out portrait
 		if target_idx < portrait_containers.size() and is_instance_valid(portrait_containers[target_idx]):
 			var t = create_tween()
 			t.tween_property(portrait_containers[target_idx], "modulate:a", 0.3, 0.4)
-		# Remove from party and tracking arrays
 		GameManager.player_party.remove_at(target_idx)
 		character_hp.remove_at(target_idx)
 		character_shields.remove_at(target_idx)
-		# Remove from turn queue too
 		turn_queue = turn_queue.filter(func(t):
 			if t.type == "player": return GameManager.player_party.has(t.data)
 			return true
@@ -1396,7 +1389,7 @@ func check_battle_end():
 	if enemies.size() == 0:
 		print("Victory!")
 		await get_tree().create_timer(2.0).timeout
-		await SupabaseManager.add_pulls(1)  # ← add await
+		await SupabaseManager.add_pulls(1)
 		GameManager.end_combat()
 		get_tree().change_scene_to_file(origin_scene)
 	elif GameManager.player_party.size() == 0:
@@ -1448,7 +1441,8 @@ func _setup_battle_sprites():
 	_refresh_enemy_highlight()
 
 func _spawn_character(data: CharacterData, idx: int):
-	var scene = load("res://Characters/" + data.character_name.to_lower() + ".tscn")
+	var scene_path = "res://Characters/" + data.character_name.to_lower() + ".tscn"
+	var scene = load(scene_path) if ResourceLoader.exists(scene_path) else null
 	if scene == null: _create_placeholder(data, idx); return
 	var inst = scene.instantiate()
 	if inst.has_method("setup"): inst.setup(data, "player")

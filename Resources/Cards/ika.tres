@@ -7,6 +7,7 @@ script = ExtResource("1_uygs7")
 card_id = 12
 kapampangan_text = "Ika"
 english_hint = "You"
+example_sentence = "."
 card_type = "Pronoun"
 category = "General"
 metadata/_custom_type_script = "uid://c45njmt8b0c61"

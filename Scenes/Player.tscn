@@ -4,19 +4,19 @@
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_rpqav"]
 atlas = ExtResource("1_rpqav")
-region = Rect2(0, 1024, 64, 64)
+region = Rect2(0, 512, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_kyqiw"]
 atlas = ExtResource("1_rpqav")
-region = Rect2(0, 896, 64, 64)
+region = Rect2(0, 640, 64, 64)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_h1ppb"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_gntrk"]
 atlas = ExtResource("1_rpqav")
-region = Rect2(0, 1088, 64, 64)
+region = Rect2(0, 576, 64, 64)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_fgqou"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_dewec"]
 atlas = ExtResource("1_rpqav")
-region = Rect2(0, 1216, 64, 64)
+region = Rect2(0, 704, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_arntx"]
 atlas = ExtResource("1_rpqav")
@@ -182,7 +182,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_h1ppb")
+"texture": SubResource("AtlasTexture_gntrk")
 }],
 "loop": true,
 "name": &"idle left",
@@ -190,7 +190,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_fgqou")
+"texture": SubResource("AtlasTexture_dewec")
 }],
 "loop": true,
 "name": &"idle right",
@@ -332,12 +332,12 @@ height = 0.83898926
 [node name="Player" type="CharacterBody3D" unique_id=1607055564 groups=["player"]]
 transform = Transform3D(1.3, 0, 0, 0, 1.3, 0, 0, 0, 1.3, 0, 0, 0)
 
-[node name="Head" type="Node3D" parent="." unique_id=546544518]
+[node name="Head" type="Node3D" parent="." unique_id=965889351]
 
-[node name="SpringArm3D" type="SpringArm3D" parent="Head" unique_id=607370463]
+[node name="SpringArm3D" type="SpringArm3D" parent="Head" unique_id=2060520898]
 spring_length = 3.0
 
-[node name="Camera3D" type="Camera3D" parent="Head/SpringArm3D" unique_id=304429785 groups=["camera"]]
+[node name="Camera3D" type="Camera3D" parent="Head/SpringArm3D" unique_id=789676081 groups=["camera"]]
 transform = Transform3D(0.0952381, 0, 0, 0, 0.087004334, 0.038736824, 0, -0.038736824, 0.087004334, 0, 0.8820001, 2.3)
 fov = 60.0
 near = 0.5
@@ -350,7 +350,7 @@ shaded = true
 alpha_cut = 1
 texture_filter = 0
 sprite_frames = SubResource("SpriteFrames_52ee3")
-animation = &"idle left"
+animation = &"idle right"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=701005610]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, -0.052836757, 0)

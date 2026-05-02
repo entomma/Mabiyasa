@@ -7,6 +7,7 @@ script = ExtResource("1_gja4b")
 card_id = 7
 kapampangan_text = "Dalan"
 english_hint = "Road"
+example_sentence = "."
 card_type = "Noun"
 category = "Nature"
 metadata/_custom_type_script = "uid://c45njmt8b0c61"

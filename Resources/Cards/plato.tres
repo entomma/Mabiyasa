@@ -7,6 +7,7 @@ script = ExtResource("1_2fhrf")
 card_id = 4
 kapampangan_text = "Plato"
 english_hint = "Plate"
+example_sentence = "."
 card_type = "Noun"
 category = "Dinnerware"
 metadata/_custom_type_script = "uid://c45njmt8b0c61"

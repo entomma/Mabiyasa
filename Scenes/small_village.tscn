@@ -83,13 +83,6 @@ preset_name = "Empty Project"
 new_tex_names = SubResource("Resource_38l2j")
 new_textures = SubResource("Resource_658wv")
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_72y07"]
-size = Vector3(347.1861, 500, 263.44446)
-
-[sub_resource type="CylinderShape3D" id="CylinderShape3D_d0wvm"]
-height = 197.11182
-radius = 152.81494
-
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_72y07"]
 render_priority = 0
 shader = ExtResource("19_fdwkt")
@@ -112,6 +105,13 @@ height = 14.195
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_htv3o"]
 albedo_color = Color(0.2490074, 0.087448366, 0.038414598, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_72y07"]
+size = Vector3(347.1861, 500, 263.44446)
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_d0wvm"]
+height = 197.11182
+radius = 152.81494
 
 [node name="SmallVillage" type="Node3D" unique_id=995133886]
 script = ExtResource("1_rkkpx")
@@ -391,17 +391,6 @@ transform = Transform3D(-14.724406, 0, 2.862134, 0, 15, 0, -2.862134, 0, -14.724
 [node name="ManyTrees11" parent="props" unique_id=30535522 instance=ExtResource("5_4ukxy")]
 transform = Transform3D(-14.724406, 0, 2.862134, 0, 15, 0, -2.862134, 0, -14.724406, -105.8471, 0, -12.314957)
 
-[node name="Sketchfab_Scene3" parent="props" unique_id=681723776 instance=ExtResource("6_poheq")]
-transform = Transform3D(-0.039921068, 0, -0.0025116184, 0, 0.04, 0, 0.0025116184, 0, -0.039921068, 1.0837059, -0.6142664, 40.458923)
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="props/Sketchfab_Scene3" unique_id=1171476255]
-transform = Transform3D(1, 0, 3.7252903e-08, 0, 1, 0, -3.7252903e-08, 0, 1, 0.63949966, 0, -0.52001953)
-shape = SubResource("BoxShape3D_72y07")
-
-[node name="CollisionShape3D2" type="CollisionShape3D" parent="props/Sketchfab_Scene3" unique_id=1748039932]
-transform = Transform3D(1, 0, 3.7252903e-08, 0, 1, 0, -3.7252903e-08, 0, 1, 298.55185, 110.109795, 515.5742)
-shape = SubResource("CylinderShape3D_d0wvm")
-
 [node name="Sketchfab_Scene4" parent="props" unique_id=1662653210 instance=ExtResource("7_n6jjt")]
 transform = Transform3D(0.04, 0, 0, 0, 0.04, 0, 0, 0, 0.04, 0, 0, -50.563087)
 
@@ -487,6 +476,21 @@ surface_material_override/0 = SubResource("StandardMaterial3D_htv3o")
 transform = Transform3D(0.9987867, 0, -0.049268305, 0, 1, 0, 0.049268305, 0, 0.9987867, -4.9482193, -4.85336, -13.308304)
 mesh = SubResource("CylinderMesh_gim77")
 surface_material_override/0 = SubResource("StandardMaterial3D_htv3o")
+
+[node name="windmill" type="RigidBody3D" parent="props" unique_id=190437580]
+disable_mode = 1
+freeze = true
+
+[node name="Sketchfab_Scene3" parent="props/windmill" unique_id=681723776 instance=ExtResource("6_poheq")]
+transform = Transform3D(-0.039921068, 0, -0.0025116184, 0, 0.04, 0, 0.0025116184, 0, -0.039921068, 1.0837059, -0.6142664, 40.458923)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="props/windmill" unique_id=1171476255]
+transform = Transform3D(-0.039921068, 0, -0.0025116198, 0, 0.04, 0, 0.0025116198, 0, -0.039921068, 1.0594825, -0.6142664, 40.48129)
+shape = SubResource("BoxShape3D_72y07")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="props/windmill" unique_id=1748039932]
+transform = Transform3D(-0.039921068, 0, -0.0025116198, 0, 0.04, 0, 0.0025116198, 0, -0.039921068, -12.129728, 3.7901254, 20.626497)
+shape = SubResource("CylinderShape3D_d0wvm")
 
 [node name="z1 teleporter" parent="." unique_id=1052377900 instance=ExtResource("20_72y07")]
 transform = Transform3D(7, 0, 0, 0, 4.2, 0, 0, 0, 4.2, -25.932716, 3.441617, -98.11193)

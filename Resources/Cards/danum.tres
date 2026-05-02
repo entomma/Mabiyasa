@@ -7,6 +7,7 @@ script = ExtResource("1_hlw50")
 card_id = 3
 kapampangan_text = "Danum"
 english_hint = "Water"
+example_sentence = "."
 card_type = "Noun"
 category = "Nature"
 metadata/_custom_type_script = "uid://c45njmt8b0c61"
