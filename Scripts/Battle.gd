@@ -59,10 +59,15 @@ var active_debuffs: Dictionary = {}
 
 var origin_scene: String = "res://Scenes/forest.tscn"
 
-var camera_default_pos:    Vector3 = Vector3(0, 3, 8)
-var camera_default_target: Vector3 = Vector3(0, 0, 0)
-var camera_ally_pos:       Vector3 = Vector3(-5, 2, 4)
-var camera_ally_target:    Vector3 = Vector3(-4, 0, 0)
+# ─────────────────────────────────────────────
+#  Over-the-Shoulder Cinematic Camera
+# ─────────────────────────────────────────────
+# Camera placed far bottom-left, looking diagonally toward the enemies
+var camera_default_pos:    Vector3 = Vector3(-5.0, 3.5, 9.0)
+var camera_default_target: Vector3 = Vector3(1.0, 1.0, -1.0)
+
+var camera_ally_pos:       Vector3 = Vector3(-7.0, 3.0, 6.0)
+var camera_ally_target:    Vector3 = Vector3(-2.0, 1.5, 1.0)
 
 # ── Turn locks ────────────────────────────────
 var _is_processing_turn: bool = false
@@ -91,62 +96,61 @@ const ENERGY_FROM_KILL      = 10.0
 const ENERGY_FROM_HIT_TAKEN = 10.0
 
 # ─────────────────────────────────────────────
+#  3D Placement Helpers (Near Allies, Far Enemies)
+# ─────────────────────────────────────────────
+var floor_offset: float = 1.8 # Raised slightly for scaled up models
+
+func _get_ally_pos(idx: int) -> Vector3:
+	# ALLIES: Near the screen (Z = 4.5). They trail backwards and to the left.
+	return Vector3(-3.0 - (idx * 1.5), floor_offset, 4.5 - (idx * 1.0))
+
+func _get_enemy_pos(idx: int) -> Vector3:
+	# ENEMIES: Far from screen (Z = -2.0). They start deep right and slant forward slightly.
+	return Vector3(2.5 + (idx * 3), floor_offset, -2.2 + (idx * 1.0))
+
+# ─────────────────────────────────────────────
 #  _ready
 # ─────────────────────────────────────────────
-# ─────────────────────────────────────────────
-#  _ready (Fixed with Robust Terrain Stabilization)
-# ─────────────────────────────────────────────
 func _ready():
-	# 1. Hide UI immediately so it doesn't pop in during the wait
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	card_panel.visible = false
 	skill_buttons.visible = false
 	
 	print("🌍 Battle Scene: Stabilizing Yugen Terrain...")
 
-	# 2. STEP 1: WAIT FOR SCENE + RENDER STABILITY
 	await get_tree().process_frame
 	await get_tree().process_frame
 	await get_tree().physics_frame
 	await RenderingServer.frame_post_draw
 
-	# 3. STEP 2: FIND AND RESET TERRAIN
 	var terrain = find_child("MarchingSquaresTerrain", true, false)
 	if terrain:
 		print("✓ Terrain found - starting hard reset")
 		
-		# Pause and hide it while we clear buffers
 		terrain.set_process(false)
 		terrain.set_physics_process(false)
 		terrain.visible = false
 		
-		# Clear Yugen cache/state safely
 		if terrain.has_method("clear_cache"): terrain.call("clear_cache")
 		if terrain.has_method("reset"): terrain.call("reset")
 		if terrain.has_method("free_chunks"): terrain.call("free_chunks")
 
-		# Wait for GPU buffer release
 		await get_tree().process_frame
 		await RenderingServer.frame_post_draw
 		
-		# Re-enable and Force Rebuild
 		terrain.visible = true
 		terrain.set_process(true)
 		terrain.set_physics_process(true)
 		
-		# Give engine a breath before generation
 		await get_tree().create_timer(0.1).timeout
 		
-		# Force the rebuild using available methods
 		if terrain.has_method("force_update"): terrain.call("force_update")
 		elif terrain.has_method("update_terrain"): terrain.call("update_terrain")
 		elif terrain.has_method("generate"): terrain.call("generate")
 		
-		# Final wait to ensure textures are applied before showing the screen
 		await RenderingServer.frame_post_draw
 		print("✓ Terrain FULLY stabilized")
 
-	# 4. STEP 3: START BATTLE UI & FADE IN
 	var transition = get_tree().get_first_node_in_group("transition")
 	if transition: transition.fade_in()
 
@@ -155,7 +159,6 @@ func _ready():
 
 	_init_character_hp()
 
-	# Connect buttons
 	basic_btn.pressed.connect(_on_basic_btn_pressed)
 	skill_btn.pressed.connect(_on_skill_btn_pressed)
 	submit_btn.pressed.connect(_on_submit_pressed)
@@ -166,7 +169,6 @@ func _ready():
 	var old_dmg_panel = get_node_or_null("BattleUI/TotalDamage")
 	if old_dmg_panel: old_dmg_panel.visible = false
 
-	# Final Setup
 	_setup_card_panel_bg()
 	_spawn_enemies_for_zone()
 	_build_turn_queue()
@@ -190,14 +192,12 @@ func _init_character_hp():
 #  Card System Functions
 # ─────────────────────────────────────────────
 func draw_hand():
-	# Clear existing hand
 	for card_node in current_hand_nodes:
 		if is_instance_valid(card_node):
 			card_node.queue_free()
 	current_hand_nodes.clear()
 	hand.clear()
 	
-	# Load all WordCard resources
 	var all_cards = []
 	var dir = DirAccess.open("res://Resources/Cards/")
 	if dir:
@@ -207,7 +207,6 @@ func draw_hand():
 				if card is WordCard:
 					all_cards.append(card)
 	
-	# Ensure you have at least one of each required type
 	var has_action = false
 	var has_noun = false
 	var has_pronoun = false
@@ -218,7 +217,6 @@ func draw_hand():
 			"Noun": has_noun = true
 			"Pronoun": has_pronoun = true
 	
-	# Add default cards if missing
 	if not has_action:
 		var default_action = WordCard.new()
 		default_action.kapampangan_text = "Gawa"
@@ -242,7 +240,6 @@ func draw_hand():
 	
 	all_cards.shuffle()
 	
-	# Draw up to 7 cards
 	for i in range(min(7, all_cards.size())):
 		var card_data = all_cards[i]
 		hand.append(card_data)
@@ -252,20 +249,17 @@ func draw_hand():
 		current_hand_nodes.append(card_node)
 		card_node.card_selected.connect(_on_card_toggled)
 
-	
 	update_sentence_display()
 
 func _on_card_toggled(card_data: WordCard):
 	if _is_processing_turn or _is_selecting_skill:
 		return
 	
-	# Toggle card in sentence
 	if sentence.has(card_data):
 		sentence.erase(card_data)
 	else:
 		sentence.append(card_data)
 	
-	# Update visual highlights
 	for card_node in current_hand_nodes:
 		if card_node.card_data == card_data:
 			card_node.set_highlight(sentence.has(card_data))
@@ -273,24 +267,24 @@ func _on_card_toggled(card_data: WordCard):
 	update_sentence_display()
 
 func update_sentence_display():
-	# Clear sentence container
 	for child in sentence_container.get_children():
 		child.queue_free()
 	
 	if sentence.size() == 0:
 		var ph = Label.new()
 		ph.text = "Select cards to build your sentence..."
-		ph.add_theme_color_override("font_color", Color(0.5, 0.5, 0.5))
+		ph.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7))
 		sentence_container.add_child(ph)
 		return
 	
-	# Display each card in the sentence
 	for card in sentence:
 		var pill = PanelContainer.new()
 		var s = StyleBoxFlat.new()
 		s.bg_color = CARD_COLORS.get(card.card_type, Color(0.5, 0.5, 0.5))
 		for c in ["top_left","top_right","bottom_left","bottom_right"]:
 			s.set("corner_radius_"+c, 20)
+		s.border_width_bottom = 2
+		s.border_color = s.bg_color.darkened(0.3)
 		pill.add_theme_stylebox_override("panel", s)
 		
 		var lbl = Label.new()
@@ -305,7 +299,6 @@ func update_sentence_display():
 		btn.pressed.connect(func(): 
 			sentence.erase(card)
 			update_sentence_display()
-			# Update hand highlights
 			for card_node in current_hand_nodes:
 				if card_node.card_data == card:
 					card_node.set_highlight(false)
@@ -415,7 +408,7 @@ func _pan_camera_to_default():
 		camera_ally_target, camera_default_target, 0.4)
 
 # ─────────────────────────────────────────────
-#  Skill slot selection
+#  Skill slot selection (Restored UI Shadows)
 # ─────────────────────────────────────────────
 func _activate_selected_skill():
 	match selected_skill_slot:
@@ -432,11 +425,20 @@ func _restyle_slot_btn(btn: Button, color: Color, active: bool):
 	s.bg_color = color if active else color.darkened(0.45)
 	for c in ["top_left","top_right","bottom_left","bottom_right"]:
 		s.set("corner_radius_" + c, 999)
+	var bw = 3 if active else 1
+	s.border_width_left = bw; s.border_width_right = bw; s.border_width_top = bw; s.border_width_bottom = bw
+	s.border_color = color.lightened(0.5) if active else color.darkened(0.2)
+	s.shadow_color = Color(0, 0, 0, 0.5)
+	s.shadow_size = 8 if active else 3
+	s.shadow_offset = Vector2(0, 4) if active else Vector2(0, 2)
 	btn.add_theme_stylebox_override("normal", s)
+	
 	var h = StyleBoxFlat.new()
 	h.bg_color = color.lightened(0.2)
 	for c in ["top_left","top_right","bottom_left","bottom_right"]:
 		h.set("corner_radius_" + c, 999)
+	h.border_width_left = 3; h.border_width_right = 3; h.border_width_top = 3; h.border_width_bottom = 3
+	h.border_color = color.lightened(0.8)
 	btn.add_theme_stylebox_override("hover", h)
 	btn.add_theme_font_size_override("font_size", 16 if active else 13)
 
@@ -540,7 +542,7 @@ func _build_enemy_ui():
 
 	for i in range(enemies.size()):
 		var enemy = enemies[i]
-		var wx    = _enemy_world_x(i)
+		var w_pos = _get_enemy_pos(i)
 
 		var root = Control.new()
 		root.name = "EnemyUI_" + str(i)
@@ -574,6 +576,9 @@ func _build_enemy_ui():
 		hp_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		hp_lbl.position = Vector2(5, 22)
 		hp_lbl.size     = Vector2(150, 14)
+		hp_lbl.add_theme_color_override("font_shadow_color", Color(0,0,0,0.8))
+		hp_lbl.add_theme_constant_override("shadow_offset_x", 1)
+		hp_lbl.add_theme_constant_override("shadow_offset_y", 1)
 		root.add_child(hp_lbl)
 
 		var name_lbl = Label.new()
@@ -583,6 +588,7 @@ func _build_enemy_ui():
 		name_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		name_lbl.position = Vector2(5, 38)
 		name_lbl.size     = Vector2(150, 14)
+		name_lbl.add_theme_color_override("font_shadow_color", Color(0,0,0,0.8))
 		root.add_child(name_lbl)
 
 		var btn = Button.new()
@@ -596,7 +602,7 @@ func _build_enemy_ui():
 			"hp_bar":     hp_bar,
 			"shield_bar": shield_bar,
 			"hp_label":   hp_lbl,
-			"world_x":    wx
+			"world_pos":  w_pos
 		})
 
 func _style_bar(bar: ProgressBar, fill: Color, bg: Color):
@@ -606,6 +612,8 @@ func _style_bar(bar: ProgressBar, fill: Color, bg: Color):
 	var sb = StyleBoxFlat.new()
 	sb.bg_color = bg
 	for c in ["top_left","top_right","bottom_left","bottom_right"]: sb.set("corner_radius_"+c, 4)
+	sb.border_width_left = 1; sb.border_width_right = 1; sb.border_width_top = 1; sb.border_width_bottom = 1
+	sb.border_color = Color(0.05, 0.05, 0.05, 0.8)
 	bar.add_theme_stylebox_override("fill", sf)
 	bar.add_theme_stylebox_override("background", sb)
 
@@ -617,7 +625,8 @@ func _process(_delta):
 	for i in range(enemy_ui_nodes.size()):
 		var ui = enemy_ui_nodes[i]
 		if not ui or not is_instance_valid(ui.root): continue
-		var sp = camera.unproject_position(Vector3(ui.world_x, 2.3, 0.0))
+		# Unproject dynamically with added height for scaled models
+		var sp = camera.unproject_position(ui.world_pos + Vector3(0, 2.8, 0))
 		ui.root.position = sp - Vector2(75, 0)
 
 func _update_enemy_ui(idx: int):
@@ -650,11 +659,8 @@ func _shatter_shield(idx: int):
 		st.tween_property(sprite, "modulate", Color(3,3,1), 0.05)
 		st.tween_property(sprite, "modulate", Color(1,1,1), 0.25)
 
-func _enemy_world_x(idx: int) -> float:
-	return 2.0 + idx * 2.5
-
 # ─────────────────────────────────────────────
-#  Character portrait HP + shield
+#  Character portrait HP + shield (Restored UI Shadows)
 # ─────────────────────────────────────────────
 func _update_portrait_hp(char_idx: int):
 	if char_idx >= GameManager.player_party.size(): return
@@ -709,8 +715,13 @@ func _give_energy_hit_taken(char_data: CharacterData):
 # ─────────────────────────────────────────────
 func _setup_card_panel_bg():
 	var s = StyleBoxFlat.new()
-	s.bg_color = Color(0.08, 0.08, 0.12, 0.88)
+	s.bg_color = Color(0.12, 0.12, 0.15, 0.92)
 	for c in ["top_left","top_right","bottom_left","bottom_right"]: s.set("corner_radius_"+c, 16)
+	s.border_width_left = 2; s.border_width_right = 2; s.border_width_top = 2; s.border_width_bottom = 2
+	s.border_color = Color(0.3, 0.3, 0.4, 0.5)
+	s.shadow_color = Color(0, 0, 0, 0.6)
+	s.shadow_size = 10
+	s.shadow_offset = Vector2(0, 4)
 	card_panel.add_theme_stylebox_override("panel", s)
 
 func _setup_character_portraits():
@@ -723,6 +734,15 @@ func _setup_character_portraits():
 
 	for i in range(GameManager.player_party.size()):
 		var cd: CharacterData = GameManager.player_party[i]
+		
+		var panel = PanelContainer.new()
+		var ps = StyleBoxFlat.new()
+		ps.bg_color = Color(0.05, 0.05, 0.08, 0.8) 
+		ps.set_corner_radius_all(12)
+		ps.content_margin_left = 6; ps.content_margin_right = 6; 
+		ps.content_margin_top = 8; ps.content_margin_bottom = 8;
+		panel.add_theme_stylebox_override("panel", ps)
+		
 		var box = VBoxContainer.new()
 		box.name = "Portrait" + str(i+1)
 		box.custom_minimum_size = Vector2(100, 185)
@@ -790,17 +810,23 @@ func _setup_character_portraits():
 		box.add_child(ult)
 
 		ult_buttons.append(ult)
-		portrait_containers.append(box)
-		char_portraits.add_child(box)
+		panel.add_child(box)
+		portrait_containers.append(panel)
+		char_portraits.add_child(panel)
 
 func _style_ult_button(btn: Button):
 	for state in ["normal","hover","disabled"]:
 		var s = StyleBoxFlat.new()
 		match state:
-			"normal":   s.bg_color = Color(0.8,0.2,0.9)
-			"hover":    s.bg_color = Color(1.0,0.4,1.0)
-			"disabled": s.bg_color = Color(0.3,0.1,0.35)
+			"normal":   s.bg_color = Color(0.65, 0.2, 0.8)
+			"hover":    s.bg_color = Color(0.85, 0.4, 1.0)
+			"disabled": s.bg_color = Color(0.25, 0.1, 0.3)
 		for c in ["top_left","top_right","bottom_left","bottom_right"]: s.set("corner_radius_"+c, 14)
+		s.border_width_left = 2; s.border_width_right = 2; s.border_width_top = 2; s.border_width_bottom = 2
+		s.border_color = Color(0.9, 0.6, 1.0) if state != "disabled" else Color(0.4, 0.2, 0.5)
+		s.shadow_color = Color(0,0,0,0.4)
+		s.shadow_size = 2
+		s.shadow_offset = Vector2(0, 1)
 		btn.add_theme_stylebox_override(state, s)
 	btn.add_theme_color_override("font_color", Color.WHITE)
 	btn.add_theme_font_size_override("font_size", 11)
@@ -810,6 +836,11 @@ func _style_circular_button(btn: Button, color: Color):
 		var s = StyleBoxFlat.new()
 		s.bg_color = color.lightened(0.2) if state == "hover" else color
 		for c in ["top_left","top_right","bottom_left","bottom_right"]: s.set("corner_radius_"+c, 999)
+		s.border_width_left = 2; s.border_width_right = 2; s.border_width_top = 2; s.border_width_bottom = 2
+		s.border_color = color.lightened(0.4)
+		s.shadow_color = Color(0,0,0,0.3)
+		s.shadow_size = 4
+		s.shadow_offset = Vector2(0, 3)
 		btn.add_theme_stylebox_override(state, s)
 
 # ─────────────────────────────────────────────
@@ -960,12 +991,10 @@ func _on_submit_pressed():
 	await get_tree().create_timer(0.5).timeout
 	show_feedback_popup(turn_damage, quality)
 
-	# Remove used cards from hand
 	for card in sentence:
 		hand.erase(card)
 	sentence.clear()
 
-	# Draw new cards
 	draw_hand()
 
 	current_turn_index += 1
@@ -1130,7 +1159,7 @@ func deal_damage(raw: int, idx: int) -> int:
 				var overflow             = abs(target.current_shield_hp)
 				target.current_shield_hp = 0
 				target.is_shield_active  = false
-				target.current_hp       -= overflow
+				target.current_hp        -= overflow
 				dealt                    = overflow
 				await _shatter_shield(idx)
 				_show_floating_text("BREAK!", Color(1.0,0.8,0.0), _enemy_sp(idx))
@@ -1157,7 +1186,11 @@ func deal_damage(raw: int, idx: int) -> int:
 
 func _enemy_sp(idx: int) -> Vector2:
 	if not camera: return Vector2(400,200)
-	return camera.unproject_position(Vector3(_enemy_world_x(idx), 2.0, 0.0))
+	return camera.unproject_position(_get_enemy_pos(idx) + Vector3(0, 2.0, 0))
+
+func _ally_screen_pos(char_idx: int) -> Vector2:
+	if not camera: return Vector2(200, 300)
+	return camera.unproject_position(_get_ally_pos(char_idx) + Vector3(0, 2.0, 0))
 
 func _on_enemy_defeated(idx: int):
 	if idx < enemy_ui_nodes.size():
@@ -1218,10 +1251,6 @@ func _apply_shield(char_idx: int):
 	_update_portrait_hp(char_idx)
 	_show_floating_text("🛡 " + str(int(shield_val)), Color(0.4,0.7,1.0), _ally_screen_pos(char_idx))
 
-func _ally_screen_pos(char_idx: int) -> Vector2:
-	if not camera: return Vector2(200, 300)
-	return camera.unproject_position(Vector3(-4.0 + char_idx * 2.5, 2.0, 0.0))
-
 func apply_buff(target, atk_bonus: float, duration: int):
 	active_buffs[target] = {"atk_bonus": atk_bonus, "turns_left": duration}
 
@@ -1247,6 +1276,12 @@ func _show_turn_damage(amount: int):
 	lbl.text = str(amount) + " DMG"
 	lbl.add_theme_font_size_override("font_size", 36)
 	lbl.add_theme_color_override("font_color", Color(1.0, 0.95, 0.3))
+	
+	# Add shadow
+	lbl.add_theme_color_override("font_shadow_color", Color(0,0,0,0.8))
+	lbl.add_theme_constant_override("shadow_offset_x", 2)
+	lbl.add_theme_constant_override("shadow_offset_y", 2)
+	
 	lbl.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
 	lbl.offset_left   = -200.0
 	lbl.offset_top    = 60.0
@@ -1275,6 +1310,8 @@ func show_feedback_popup(damage: int, quality: Dictionary):
 	for c in ["top_left","top_right","bottom_left","bottom_right"]: s.set("corner_radius_"+c, 12)
 	s.border_width_left=2; s.border_width_right=2; s.border_width_top=2; s.border_width_bottom=2
 	s.border_color = Color(0.4,0.4,0.6)
+	s.shadow_color = Color(0, 0, 0, 0.5)
+	s.shadow_size = 6
 	popup.add_theme_stylebox_override("panel", s)
 	popup.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
 	popup.size = Vector2(280,0)
@@ -1326,6 +1363,12 @@ func _show_floating_text(text: String, color: Color, pos: Vector2):
 	lbl.text = text
 	lbl.add_theme_font_size_override("font_size", 22)
 	lbl.add_theme_color_override("font_color", color)
+	
+	# Add shadow so numbers stand out on bright backgrounds
+	lbl.add_theme_color_override("font_shadow_color", Color(0,0,0,0.8))
+	lbl.add_theme_constant_override("shadow_offset_x", 1)
+	lbl.add_theme_constant_override("shadow_offset_y", 1)
+	
 	lbl.position = pos
 	$BattleUI.add_child(lbl)
 	var t = create_tween()
@@ -1409,20 +1452,40 @@ func update_turn_order_ui():
 		var lbl  = Label.new()
 		lbl.text = turn.data.character_name if turn.type == "player" \
 			else turn.data.data.enemy_name
+		
+		# Add shadow for readability against world
+		lbl.add_theme_color_override("font_shadow_color", Color(0,0,0,0.8))
+		lbl.add_theme_constant_override("shadow_offset_x", 1)
+		lbl.add_theme_constant_override("shadow_offset_y", 1)
+			
 		if i == 0: lbl.add_theme_color_override("font_color", Color.YELLOW)
 		turn_order_ui.add_child(lbl)
 
 # ─────────────────────────────────────────────
-#  SP display
+#  SP display (Layout Overlap Fix Added)
 # ─────────────────────────────────────────────
 func _update_sp_display():
 	for child in sp_stars.get_children(): child.queue_free()
+	
+	# Fixes the overlap by dynamically forcing the stars to render below the skill buttons
+	if skill_btn:
+		sp_stars.position = Vector2(skill_btn.position.x, skill_btn.position.y + 160)
+	
 	for i in range(max_sp):
 		var star = Label.new()
 		star.text = "★" if i < current_sp else "☆"
-		star.add_theme_font_size_override("font_size", 20)
+		star.add_theme_font_size_override("font_size", 24)
+		star.add_theme_color_override("font_shadow_color", Color(0,0,0,0.8))
+		star.add_theme_constant_override("shadow_offset_x", 1)
+		star.add_theme_constant_override("shadow_offset_y", 1)
 		star.add_theme_color_override("font_color",
 			Color(1.0,0.85,0.2) if i < current_sp else Color(0.4,0.4,0.4))
+			
+		# If you haven't explicitly set SPStars to an HBoxContainer in your scene,
+		# this ensures they still line up perfectly horizontally instead of stacking
+		if not sp_stars is BoxContainer:
+			star.position = Vector2(i * 22, 0)
+			
 		sp_stars.add_child(star)
 
 # ─────────────────────────────────────────────
@@ -1443,19 +1506,21 @@ func _setup_battle_sprites():
 func _spawn_character(data: CharacterData, idx: int):
 	var scene_path = "res://Characters/" + data.character_name.to_lower() + ".tscn"
 	var scene = load(scene_path) if ResourceLoader.exists(scene_path) else null
-	if scene == null: _create_placeholder(data, idx); return
+	if scene == null: 
+		_create_placeholder(data, idx)
+		return
 	var inst = scene.instantiate()
 	if inst.has_method("setup"): inst.setup(data, "player")
-	inst.scale    = Vector3(2.5, 2.5, 2.5)
-	inst.position = Vector3(-4 + (idx * 2.5), 0, 0)
+	inst.scale    = Vector3(4.0, 4.0, 4.0)
+	inst.position = _get_ally_pos(idx)
 	inst.name     = "player_" + data.character_name
 	$Background.add_child(inst)
 
 func _spawn_enemy_sprite(idx: int):
 	var sprite = AnimatedSprite3D.new()
 	sprite.name     = "enemy_sprite_" + str(idx)
-	sprite.position = Vector3(_enemy_world_x(idx), 0, 0)
-	sprite.scale    = Vector3(3, 3, 1)
+	sprite.position = _get_enemy_pos(idx)
+	sprite.scale    = Vector3(5.0, 5.0, 1)
 	var img = Image.create(64, 64, false, Image.FORMAT_RGBA8)
 	img.fill(Color(0.8, 0.2, 0.2))
 	var frames = SpriteFrames.new()
@@ -1488,6 +1553,6 @@ func _create_placeholder(data: CharacterData, idx: int):
 		frames.add_frame("idle", ImageTexture.create_from_image(img))
 		sprite.sprite_frames = frames
 		sprite.animation     = "idle"
-	sprite.position = Vector3(-4 + (idx * 2.5), 0, 0)
-	sprite.scale    = Vector3(3, 3, 1)
+	sprite.position = _get_ally_pos(idx)
+	sprite.scale    = Vector3(5.0, 5.0, 1)
 	$Background.add_child(sprite)

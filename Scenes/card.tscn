@@ -21,75 +21,91 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ArtContainer" type="Control" parent="." unique_id=1719021143]
-anchors_preset = 0
+[node name="ArtContainer" type="Control" parent="Background" unique_id=1719021143]
+layout_mode = 1
+anchor_left = 0.05
+anchor_top = 0.05
+anchor_right = 0.95
+anchor_bottom = 0.5
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="ArtTexture" type="TextureRect" parent="ArtContainer" unique_id=1280756431]
-layout_mode = 0
-offset_right = 342.0
-offset_bottom = 370.0
+[node name="ArtTexture" type="TextureRect" parent="Background/ArtContainer" unique_id=1280756431]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -0.036000002
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -0.83519745
+offset_top = -3.9500008
+offset_bottom = 136.5
+grow_horizontal = 2
+grow_vertical = 2
 texture = ExtResource("2_wf8id")
-expand_mode = 5
-stretch_mode = 6
+expand_mode = 1
+stretch_mode = 5
 
-[node name="KapampanganLabel" type="Label" parent="." unique_id=1700144540]
+[node name="KapampanganLabel" type="Label" parent="Background" unique_id=1700144540]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -11.5
-offset_right = 20.0
-offset_bottom = 11.5
+anchors_preset = -1
+anchor_top = 0.52
+anchor_right = 1.0
+anchor_bottom = 0.67
+offset_left = -59.0
+offset_top = -111.28
+offset_right = 65.0
+offset_bottom = -88.28
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_font_sizes/font_size = 19
+text = "KAPAMPANGAN"
+horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="EnglishLabel" type="Label" parent="." unique_id=1732330682]
+[node name="EnglishLabel" type="Label" parent="Background" unique_id=1732330682]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -11.5
-offset_right = 20.0
-offset_bottom = 11.5
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = -1
+anchor_top = 0.67
+anchor_right = 1.0
+anchor_bottom = 0.82
+offset_left = -33.0
+offset_top = -170.13
+offset_right = 35.0
+offset_bottom = -147.13
+text = "ENGLISH"
+horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="ExampleLabel" type="Label" parent="." unique_id=39406599]
+[node name="ExampleLabel" type="Label" parent="Background" unique_id=39406599]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -11.5
-offset_right = 20.0
-offset_bottom = 11.5
-grow_horizontal = 2
-grow_vertical = 2
-text = "."
+anchors_preset = -1
+anchor_top = 0.82
+anchor_right = 1.0
+anchor_bottom = 0.97
+offset_left = -74.0
+offset_top = -223.97998
+offset_right = 77.0
+offset_bottom = -168.97998
+theme_override_font_sizes/font_size = 13
+text = "example example example
+example example example
+example example example"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
 
-[node name="TypeLabel" type="Label" parent="." unique_id=523629458]
+[node name="TypeLabel" type="Label" parent="Background" unique_id=523629458]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -11.5
-offset_right = 20.0
-offset_bottom = 11.5
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 0.08
+offset_left = -16.0
+offset_top = 7.0
+offset_right = 25.0
+offset_bottom = 29.999996
+text = "noun"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Button" type="Button" parent="." unique_id=149895591]
 layout_mode = 1

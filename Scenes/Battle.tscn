@@ -1,9 +1,6 @@
 [gd_scene format=3 uid="uid://bp7v2lytbitjs"]
 
 [ext_resource type="Script" uid="uid://c7ydarmawgviy" path="res://Scripts/Battle.gd" id="1_wvl2i"]
-[ext_resource type="Script" uid="uid://cddg1xr5hye1d" path="res://addons/MarchingSquaresTerrain/algorithm/terrain/marching_squares_terrain.gd" id="2_1samx"]
-[ext_resource type="Script" uid="uid://cql4d8s5t5xcx" path="res://addons/MarchingSquaresTerrain/algorithm/terrain/marching_squares_terrain_chunk.gd" id="3_p46lj"]
-[ext_resource type="Script" uid="uid://22l7ysgniux3" path="res://addons/MarchingSquaresTerrain/algorithm/grass/marching_squares_grass_planter.gd" id="4_8teo4"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_wvl2i"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -20,8 +17,24 @@ glow_enabled = true
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_wvl2i"]
 
+[sub_resource type="Gradient" id="Gradient_wvl2i"]
+offsets = PackedFloat32Array(0, 0.8875, 1)
+colors = PackedColorArray(0, 0, 0, 1, 0.69375, 0.69375, 0.69375, 1, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_vr6xi"]
+seed = 2
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_2h7oj"]
+noise = SubResource("FastNoiseLite_vr6xi")
+color_ramp = SubResource("Gradient_wvl2i")
+invert = true
+as_normal_map = true
+normalize = false
+bump_strength = 2.6
+
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wvl2i"]
-albedo_color = Color(0.3254902, 0.84313726, 0.3882353, 1)
+albedo_color = Color(0.16862746, 1, 0.3254902, 1)
+albedo_texture = SubResource("NoiseTexture2D_2h7oj")
 
 [sub_resource type="MultiMesh" id="MultiMesh_wvl2i"]
 
@@ -40,61 +53,20 @@ transform = Transform3D(0.8660254, 0.35355338, -0.35355338, 0, 0.70710677, 0.707
 [node name="Background" type="Node3D" parent="." unique_id=1985196665]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Background" unique_id=2014504972]
-transform = Transform3D(50, 0, 0, 0, 50, 0, 0, 0, 50, 1.7065749, -0.9944763, -16.469984)
+transform = Transform3D(50, 0, 0, 0, 50, 0, 0, 0, 50, 0, 0, 0)
 mesh = SubResource("PlaneMesh_wvl2i")
 surface_material_override/0 = SubResource("StandardMaterial3D_wvl2i")
-
-[node name="MarchingSquaresTerrain" type="Node3D" parent="Background" unique_id=430709026]
-script = ExtResource("2_1samx")
-data_directory = "res://Scenes/Battle_TerrainData/MarchingSquaresTerrain_230cd656"
-_storage_initialized = true
-metadata/_custom_type_script = "uid://cddg1xr5hye1d"
-
-[node name="Chunk (-1, -1)" type="MeshInstance3D" parent="Background/MarchingSquaresTerrain" unique_id=1355177559 node_paths=PackedStringArray("terrain_system")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -64, 0, -64)
-script = ExtResource("3_p46lj")
-terrain_system = NodePath("..")
-chunk_coords = Vector2i(-1, -1)
-
-[node name="GrassPlanter" type="MultiMeshInstance3D" parent="Background/MarchingSquaresTerrain/Chunk (-1, -1)" unique_id=1941248233]
-cast_shadow = 0
-script = ExtResource("4_8teo4")
-
-[node name="Chunk (0, -1)" type="MeshInstance3D" parent="Background/MarchingSquaresTerrain" unique_id=127631048 node_paths=PackedStringArray("terrain_system")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -64)
-script = ExtResource("3_p46lj")
-terrain_system = NodePath("..")
-chunk_coords = Vector2i(0, -1)
-
-[node name="GrassPlanter" type="MultiMeshInstance3D" parent="Background/MarchingSquaresTerrain/Chunk (0, -1)" unique_id=967655510]
-cast_shadow = 0
-script = ExtResource("4_8teo4")
-
-[node name="Chunk (0, 0)" type="MeshInstance3D" parent="Background/MarchingSquaresTerrain" unique_id=4486080 node_paths=PackedStringArray("terrain_system")]
-script = ExtResource("3_p46lj")
-terrain_system = NodePath("..")
-
-[node name="GrassPlanter" type="MultiMeshInstance3D" parent="Background/MarchingSquaresTerrain/Chunk (0, 0)" unique_id=564190317]
-cast_shadow = 0
-script = ExtResource("4_8teo4")
-
-[node name="Chunk (-1, 0)" type="MeshInstance3D" parent="Background/MarchingSquaresTerrain" unique_id=1656037385 node_paths=PackedStringArray("terrain_system")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -64, 0, 0)
-script = ExtResource("3_p46lj")
-terrain_system = NodePath("..")
-chunk_coords = Vector2i(-1, 0)
-
-[node name="GrassPlanter" type="MultiMeshInstance3D" parent="Background/MarchingSquaresTerrain/Chunk (-1, 0)" unique_id=786234045]
-cast_shadow = 0
-script = ExtResource("4_8teo4")
 
 [node name="CharacterArea" type="Node3D" parent="." unique_id=932834410]
 
 [node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="CharacterArea" unique_id=815178013]
+texture_filter = 0
 
 [node name="EnemyArea" type="Node3D" parent="." unique_id=29566007]
 
 [node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="EnemyArea" unique_id=1212458004]
+billboard = 2
+texture_filter = 0
 
 [node name="BattleUI" type="CanvasLayer" parent="." unique_id=718896688]
 
