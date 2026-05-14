@@ -35,3 +35,18 @@ anchor_bottom = 1.0
 offset_top = -3.0
 grow_horizontal = 2
 grow_vertical = 2
+bbcode_enabled = true
+
+[node name="ChoiceContainer" type="VBoxContainer" parent="Control" unique_id=2108425564]
+visible = false
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.83500004
+anchor_top = 0.71900004
+anchor_right = 0.83500004
+anchor_bottom = 0.71900004
+offset_left = -87.920044
+offset_top = -35.912018
+offset_right = 88.079956
+offset_bottom = 36.087982
+alignment = 2

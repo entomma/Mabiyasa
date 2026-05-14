@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="NPCDialogue" format=3 uid="uid://c46eudpn60g1s"]
+
+[ext_resource type="Script" uid="uid://dqgoaflpryikd" path="res://Scripts/npc_dialogue_resource.gd" id="1_d8kk4"]
+
+[resource]
+script = ExtResource("1_d8kk4")
+npc_lines = Array[String](["Mayap a abak David!", "English translation: Good morning David!"])
+quiz_question = "What is \"Mayap a abak\" again?"
+choices = Array[String](["Good morning", "Hello", "How are you?"])
+success_msg = "Istu! Tama!"
+fail_msg = "Mali! "
+metadata/_custom_type_script = "uid://dqgoaflpryikd"

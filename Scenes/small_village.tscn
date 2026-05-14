@@ -18,10 +18,12 @@
 [ext_resource type="Script" uid="uid://fvb3vi413siv" path="res://addons/MarchingSquaresTerrain/editor/tools/scripts/marching_squares_texture_preset.gd" id="9_gim77"]
 [ext_resource type="Script" uid="uid://uw5d14gbouo" path="res://Scripts/Player.gd" id="10_i7xru"]
 [ext_resource type="PackedScene" uid="uid://bkmwek75cw6cr" path="res://terrain/house.tscn" id="11_rkkpx"]
+[ext_resource type="Texture2D" uid="uid://w7rx62ge3ndr" path="res://Assets/wood.jpg" id="19_8lmlf"]
 [ext_resource type="Shader" uid="uid://bk7uccmy2g31n" path="res://water.gdshader" id="19_fdwkt"]
 [ext_resource type="PackedScene" uid="uid://dbobaa6u56rlw" path="res://Scenes/z_1_teleporter.tscn" id="20_72y07"]
 [ext_resource type="PackedScene" uid="uid://bmf06vxipsji" path="res://Scenes/npc.tscn" id="21_d0wvm"]
 [ext_resource type="Texture2D" uid="uid://c4s31ertvkt5e" path="res://Assets/npcgirl.png" id="23_8lmlf"]
+[ext_resource type="Resource" uid="uid://c46eudpn60g1s" path="res://Resources/lessons/lesson1.tres" id="24_gim77"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_i7xru"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -99,7 +101,7 @@ size = Vector2(40, 40)
 size = Vector3(12, 0.5, 30)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8lmlf"]
-albedo_color = Color(0.36578116, 0.1745266, 0.028744936, 1)
+albedo_texture = ExtResource("19_8lmlf")
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_gim77"]
 top_radius = 1.0
@@ -828,5 +830,5 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.195564, 2.5494032, 82.3865
 [node name="NPC" parent="." unique_id=421029325 instance=ExtResource("21_d0wvm")]
 transform = Transform3D(7, 0, 0, 0, 7, 0, 0, 0, 7, -16.213398, 2.1918004, 100.24622)
 npc_frames = SubResource("SpriteFrames_vdljx")
-dialogue_text = "Mengan na ka? |  kantutan tamu dalas!"
+lesson_data = ExtResource("24_gim77")
 can_wander = true

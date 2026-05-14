@@ -9,7 +9,8 @@ extends CharacterBody3D
 		if Engine.is_editor_hint() and has_node("AnimatedSprite3D"):
 			$AnimatedSprite3D.sprite_frames = value
 
-@export_multiline var dialogue_text: String = "Hello!|Mengan na ka?" 
+# --- CHANGED: Now uses the Lesson Card Resource instead of just text ---
+@export var lesson_data: NPCDialogue 
 
 @export_category("NPC Behavior")
 @export var can_wander: bool = false 
@@ -40,10 +41,10 @@ func _physics_process(delta):
 	# --- 1. THE FREEZE CHECK ---
 	var diag = get_node_or_null("/root/DialogueManager")
 	if diag and diag.is_dialogue_active:
-		velocity = Vector3.ZERO # Wipe all speed
-		move_and_slide() # Stick to ground
-		update_animation() # This will force the idle animation
-		return # STOP HERE - do not run wandering logic
+		velocity = Vector3.ZERO 
+		move_and_slide() 
+		update_animation() 
+		return 
 
 	if not is_on_floor():
 		velocity.y -= gravity * delta
@@ -101,7 +102,8 @@ func _on_area_3d_body_exited(body):
 func _input(event):
 	if event.is_action_pressed("interact") and player_in_range:
 		var diag = get_node_or_null("/root/DialogueManager")
-		if diag and not diag.is_dialogue_active:
-			diag.start_dialogue(self, current_player, dialogue_text)
-			# --- 2. THE INPUT STOPPER ---
-			get_viewport().set_input_as_handled() # Prevents dialogue from closing immediately
+		
+		# --- UPDATED: Check for lesson_data and pass it to the manager ---
+		if diag and lesson_data and not diag.is_dialogue_active:
+			diag.start_dialogue(self, current_player, lesson_data)
+			get_viewport().set_input_as_handled()

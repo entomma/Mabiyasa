@@ -49,6 +49,12 @@ func _ready():
 
 
 func _physics_process(delta):
+	# CHECK IF DIALOGUE IS ACTIVE
+	var diag = get_node_or_null("/root/DialogueManager")
+	if diag and diag.is_dialogue_active:
+		velocity = Vector3.ZERO # Stop movement
+		# If you have animations, play "idle" here
+		return # This skips the rest of the movement code
 	# Movement input
 	var input = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 	var direction = (transform.basis * Vector3(input.x, 0, input.y)).normalized()
