@@ -22,6 +22,7 @@ DialogueManager="*uid://metvlw0jlauo"
 GameManager="*uid://dg4m30p0hytuu"
 SupabaseManager="*uid://bms3e5iclmhme"
 GachaManager="*uid://cv0qkm50dk4oa"
+FpsManager="*uid://ehpweucl5f26"
 
 [display]
 

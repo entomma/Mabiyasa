@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://ehpweucl5f26"]
+
+[ext_resource type="Script" uid="uid://b33mv82138f7s" path="res://Scripts/FPSManager.gd" id="1_eqbly"]
+
+[node name="CanvasLayer" type="CanvasLayer" unique_id=1500250840]
+script = ExtResource("1_eqbly")
+
+[node name="Control" type="Control" parent="." unique_id=176973104]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="FPSLabel" type="Label" parent="Control" unique_id=426337338]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
