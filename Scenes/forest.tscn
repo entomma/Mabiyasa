@@ -655,7 +655,8 @@ script = ExtResource("8_vh310")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 115.61504, 49.643284, -187.24371)
 
 [node name="Enemy" parent="." unique_id=1716839156 instance=ExtResource("10_xgdwn")]
-transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 58.44631, 9.598868, -179.06999)
+transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 58.44631, 10.923465, -179.06999)
+enemy_data = null
 
 [node name="TeleporterToVillage" parent="." unique_id=1052377900 instance=ExtResource("11_y1epu")]
 transform = Transform3D(0.09955114, 0, 7.9993806, 0, 8, 0, -7.9993806, 0, 0.09955114, 123.83362, 22.038113, -187.19746)
