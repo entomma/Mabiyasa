@@ -133,7 +133,7 @@ func end_dialogue():
 		cinematic_camera.queue_free()
 	
 	# Optional: If you want to hide mouse again, change to MOUSE_MODE_CAPTURED
-	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 func _input(event):
 	# Don't do anything if dialogue isn't running

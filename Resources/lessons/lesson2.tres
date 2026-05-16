@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="NPCDialogue" format=3 uid="uid://b6rpxkf4ch7dd"]
+
+[ext_resource type="Script" uid="uid://dqgoaflpryikd" path="res://Scripts/npc_dialogue_resource.gd" id="1_5gkqq"]
+
+[resource]
+script = ExtResource("1_5gkqq")
+npc_lines = Array[String](["Nung munta ka gubat mimingat ka!
+
+translation: If you're going to the forest be careful!"])
+quiz_question = "What is gubat?"
+choices = Array[String](["waters", "mountains", "forest"])
+correct_index = 2
+success_msg = "Istu! Tama!"
+fail_msg = "Mali! Try again!"
+metadata/_custom_type_script = "uid://dqgoaflpryikd"

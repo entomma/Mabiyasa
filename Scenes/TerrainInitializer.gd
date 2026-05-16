@@ -10,7 +10,7 @@ func _ready():
 		print("✓ Loaded saved position:", GameManager.saved_player_position)
 
 	# ==================================
-	# NEW USER / TELEPORT SPAWN
+	# TELEPORT SPAWN (From Forest, HubTown, etc.)
 	# ==================================
 	elif GameManager.next_spawn != "" and has_node(GameManager.next_spawn):
 		var spawn = get_node(GameManager.next_spawn)
@@ -19,12 +19,14 @@ func _ready():
 		print("✓ Spawned at:", GameManager.next_spawn)
 
 	# ==================================
-	# DEFAULT FALLBACK
+	# NEW USER / DEFAULT FALLBACK 🚀
 	# ==================================
 	else:
-		$Player.global_position = $SpawnPoint.global_position
-		$Player.global_rotation = $SpawnPoint.global_rotation
-		print("✓ Default spawn used")
+		# Change "$SpawnPoint" to match the exact name of your new Marker3D node
+		# For example, if it's named "NewPlayerSpawnPoint":
+		$Player.global_position = $NewPlayerSpawnPoint.global_position
+		$Player.global_rotation = $NewPlayerSpawnPoint.global_rotation
+		print("✓ New player spawn used!")
 
 	# Clear one-time spawn request
 	GameManager.next_spawn = ""

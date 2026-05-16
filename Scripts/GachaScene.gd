@@ -475,6 +475,7 @@ func _on_back():
 	print("Returning to: ", return_scene)
 	
 	get_tree().change_scene_to_file(return_scene)
+	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 # ─────────────────────────────────────────────
 #  Helpers

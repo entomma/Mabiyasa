@@ -65,6 +65,7 @@ script = ExtResource("1_acqhf")
 billboard = 2
 shaded = true
 double_sided = false
+alpha_cut = 1
 texture_filter = 0
 sprite_frames = SubResource("SpriteFrames_b0k6i")
 animation = &"idle"

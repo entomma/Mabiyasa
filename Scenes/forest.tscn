@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://bdfswoqyr3x6v" path="res://Scenes/Player.tscn" id="7_wo0py"]
 [ext_resource type="Script" uid="uid://uw5d14gbouo" path="res://Scripts/Player.gd" id="8_vh310"]
 [ext_resource type="PackedScene" uid="uid://d027g76unt2h0" path="res://Scenes/Enemy.tscn" id="10_xgdwn"]
+[ext_resource type="PackedScene" uid="uid://dbobaa6u56rlw" path="res://Scenes/z_1_teleporter.tscn" id="11_y1epu"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_qq45g"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -35,6 +36,7 @@ environment = SubResource("Environment_wo0py")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1188591854]
 transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 0, 0)
+light_color = Color(1, 1, 0.84313726, 1)
 shadow_enabled = true
 
 [node name="MarchingSquaresTerrain" type="Node3D" parent="." unique_id=1549349717]
@@ -654,3 +656,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 115.61504, 49.643284, -187.24
 
 [node name="Enemy" parent="." unique_id=1716839156 instance=ExtResource("10_xgdwn")]
 transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 58.44631, 9.598868, -179.06999)
+
+[node name="TeleporterToVillage" parent="." unique_id=1052377900 instance=ExtResource("11_y1epu")]
+transform = Transform3D(0.09955114, 0, 7.9993806, 0, 8, 0, -7.9993806, 0, 0.09955114, 123.83362, 22.038113, -187.19746)
+target_scene = "uid://bvj7hhkac3rqk"
+spawn_name = "from_forest"
