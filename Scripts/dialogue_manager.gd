@@ -4,6 +4,9 @@ extends CanvasLayer
 @onready var text_label = $Control/Panel/RichTextLabel
 @onready var choice_container = get_node_or_null("Control/ChoiceContainer")
 
+# --- Audio References ---
+@onready var voice_player: AudioStreamPlayer = get_node_or_null("VoicePlayer")
+
 # --- Logic States ---
 var is_dialogue_active = false
 var is_waiting_for_choice = false
@@ -18,6 +21,9 @@ var current_lesson: NPCDialogue
 var current_line_index = 0
 var can_advance = false 
 
+# --- Audio Replay Tracking ---
+var current_voice_stream: AudioStream = null
+
 func _ready():
 	# Ensure BBCode is enabled so [color] tags work
 	text_label.bbcode_enabled = true
@@ -26,6 +32,12 @@ func _ready():
 	ui_control.hide()
 	if choice_container:
 		choice_container.hide()
+		
+	# Setup Dialogue Box mouse filter so it detects clicks for voice replays
+	var panel = $Control/Panel
+	if panel:
+		panel.mouse_filter = Control.MOUSE_FILTER_STOP
+		panel.gui_input.connect(_on_dialogue_panel_gui_input)
 
 func start_dialogue(npc: Node3D, player: Node3D, lesson: NPCDialogue):
 	if is_dialogue_active: return
@@ -60,6 +72,20 @@ func update_ui_text():
 	# Phase 1: NPC is talking through the lines in the Resource
 	if current_line_index < current_lesson.npc_lines.size():
 		text_label.text = current_lesson.npc_lines[current_line_index]
+		
+		# Clear old audio stream
+		current_voice_stream = null
+		
+		# Check if your resource line points to a voice path string or an AudioStream object
+		if current_lesson.get("voice_lines") and current_line_index < current_lesson.voice_lines.size():
+			var voice_asset = current_lesson.voice_lines[current_line_index]
+			if voice_asset is String and voice_asset != "":
+				current_voice_stream = load(voice_asset)
+			elif voice_asset is AudioStream:
+				current_voice_stream = voice_asset
+				
+		# Play the audio track immediately for this line
+		replay_voice()
 	
 	# Phase 2: NPC finished lines, now trigger the Quiz
 	elif not is_waiting_for_choice and not is_showing_feedback:
@@ -72,10 +98,19 @@ func update_ui_text():
 func start_quiz():
 	is_waiting_for_choice = true
 	
+	# Load the custom quiz question voice track if it exists
+	if current_lesson.get("quiz_voice"):
+		current_voice_stream = current_lesson.quiz_voice
+	else:
+		current_voice_stream = null
+	
 	# Unlock the mouse so the player can click answers
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	
 	text_label.text = current_lesson.quiz_question
+	
+	# Play quiz question voice instantly
+	replay_voice()
 	
 	if choice_container:
 		choice_container.show()
@@ -107,20 +142,44 @@ func _on_choice_selected(index):
 	if choice_container: 
 		choice_container.hide()
 	
-	# Apply Color and Show Feedback Message
+	# Apply Color, Show Message, and Load Feedback Voice
 	if index == current_lesson.correct_index:
 		text_label.text = "[color=green]" + current_lesson.success_msg + "[/color]"
+		if current_lesson.get("success_voice"):
+			current_voice_stream = current_lesson.success_voice
 	else:
 		text_label.text = "[color=red]" + current_lesson.fail_msg + "[/color]"
+		if current_lesson.get("fail_voice"):
+			current_voice_stream = current_lesson.fail_voice
+			
+	# Play the success or failure voice track instantly
+	replay_voice()
 	
 	# Brief delay before they can press E to exit
 	can_advance = false
 	get_tree().create_timer(0.5).timeout.connect(func(): can_advance = true)
 
+## Replays the voice file associated with the active dialogue sentence
+func replay_voice():
+	if voice_player and current_voice_stream:
+		voice_player.stream = current_voice_stream
+		voice_player.play()
+
+## Detects clicks directly on the Dialogue box area to replay the sound
+func _on_dialogue_panel_gui_input(event: InputEvent):
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		if is_dialogue_active and not is_waiting_for_choice and not is_showing_feedback:
+			print("🔊 Dialogue block clicked! Replaying voice asset...")
+			replay_voice()
+
 func end_dialogue():
 	is_dialogue_active = false
 	is_waiting_for_choice = false
 	is_showing_feedback = false
+	current_voice_stream = null
+	
+	if voice_player and voice_player.is_playing():
+		voice_player.stop()
 	
 	ui_control.hide()
 	if choice_container: 
@@ -132,7 +191,7 @@ func end_dialogue():
 	if cinematic_camera: 
 		cinematic_camera.queue_free()
 	
-	# Optional: If you want to hide mouse again, change to MOUSE_MODE_CAPTURED
+	# Re-lock mouse to center for camera look controls
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 func _input(event):

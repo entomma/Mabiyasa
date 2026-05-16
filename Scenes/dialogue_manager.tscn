@@ -50,3 +50,5 @@ offset_top = -35.912018
 offset_right = 88.079956
 offset_bottom = 36.087982
 alignment = 2
+
+[node name="VoicePlayer" type="AudioStreamPlayer" parent="." unique_id=1167119546]
