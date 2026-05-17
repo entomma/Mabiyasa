@@ -1,8 +1,8 @@
-[gd_scene format=3 uid="uid://cogawfdmo4qwa"]
+[gd_scene load_steps=2 format=3 uid="uid://cogawfdmo4qwa"]
 
 [ext_resource type="Script" uid="uid://d33m65exq11te" path="res://Scripts/PauseMenu.gd" id="1_lj4oq"]
 
-[node name="PauseMenu" type="Control" unique_id=298127998]
+[node name="PauseMenu" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,42 +11,62 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_lj4oq")
 
-[node name="Overlay" type="ColorRect" parent="." unique_id=1613755060]
+[node name="Overlay" type="ColorRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 0.14509805)
+color = Color(0, 0, 0, 0.45)
 
-[node name="MenuPanel" type="PanelContainer" parent="." unique_id=1065295972]
+[node name="MenuPanel" type="PanelContainer" parent="."]
 layout_mode = 1
 anchors_preset = 9
 anchor_bottom = 1.0
-offset_right = 128.0
+offset_right = 260.0
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MenuPanel" unique_id=1044226558]
+[node name="MarginContainer" type="MarginContainer" parent="MenuPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 48
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 48
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MenuPanel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Title" type="Label" parent="MenuPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "PAUSED"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="MenuPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="Title" type="Label" parent="MenuPanel/VBoxContainer" unique_id=1266261045]
+[node name="ResumeButton" type="Button" parent="MenuPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2
+text = "Resume"
 
-[node name="PartyButton" type="Button" parent="MenuPanel/VBoxContainer" unique_id=1810787364]
+[node name="CharactersButton" type="Button" parent="MenuPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2
-text = "Party Button"
+text = "Characters"
 
-[node name="WishButton" type="Button" parent="MenuPanel/VBoxContainer" unique_id=766025808]
+[node name="PartyButton" type="Button" parent="MenuPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2
-text = "Wish Button"
+text = "Party Setup"
 
-[node name="ResumeButton" type="Button" parent="MenuPanel/VBoxContainer" unique_id=1709291685]
+[node name="WishButton" type="Button" parent="MenuPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2
-text = "Resume Button"
+text = "Wish"
 
-[node name="QuitButton" type="Button" parent="MenuPanel/VBoxContainer" unique_id=521190417]
+[node name="Spacer" type="Control" parent="MenuPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2
-text = "Quit Button"
+size_flags_vertical = 3
 
-[connection signal="pressed" from="MenuPanel/VBoxContainer/WishButton" to="." method="_on_wish_pressed"]
+[node name="QuitButton" type="Button" parent="MenuPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Quit to Menu"

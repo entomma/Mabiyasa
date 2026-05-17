@@ -2,13 +2,13 @@ extends Node
 # ═════════════════════════════════════════════════════════════════════════════
 #  GachaManager.gd  —  autoload singleton
 #
-#  Key improvements:
+#  Key improvements over previous version:
 #   • Local collection cache  → zero read-before-write HTTP calls
 #   • randi() % pool.size()   → pools never mutated by shuffle()
 #   • Typed pulls return GachaResultData, not raw Dicts
 #   • Full duplicate resolution: constellation / refinement / overflow
 #   • Single reusable _http_* layer — HTTPRequest nodes always freed
-#   • INSTANT SYNC: Updates GameManager memory on pull for real-time UI
+#   • push_error() replaces print() for real error visibility
 # ═════════════════════════════════════════════════════════════════════════════
 
 # ── Gacha rates ──────────────────────────────────────────────────────────────
@@ -48,7 +48,7 @@ var _card_pool_5star: Array = []
 var _card_pool_4star: Array = []
 var _card_pool_3star: Array = []
 
-signal pull_complete(results: Array)    ## Array[GachaResultData]
+signal pull_complete(results: Array)   ## Array[GachaResultData]
 
 # ═════════════════════════════════════════════════════════════════════════════
 func _ready() -> void:
@@ -91,9 +91,7 @@ func _build_pools() -> void:
 #  INITIALISATION  (call once after login)
 # ═════════════════════════════════════════════════════════════════════════════
 func load_pity_from_profile() -> void:
-	# Note the explicit : Dictionary typing here to prevent parser errors
-	var p: Dictionary = GameManager.player_profile 
-	
+	var p := GameManager.player_profile
 	pity_count          = int(p.get("pity_count", 0))
 	pity_count_4star    = int(p.get("pity_count_4star", 0))
 	guaranteed_featured = bool(p.get("guaranteed_featured", false))
@@ -135,6 +133,7 @@ func do_single_pull_typed() -> Array:
 func do_ten_pull_typed() -> Array:
 	return await _execute_pulls(10)
 
+# Legacy aliases kept for any callers that still use the old names
 func do_single_pull() -> Array: return await do_single_pull_typed()
 func do_ten_pull()   -> Array:  return await do_ten_pull_typed()
 
@@ -196,6 +195,7 @@ func _pick_5star() -> Dictionary:
 	if _char_pool_5star.is_empty():
 		return _pick_5star_card()
 
+	# Featured = index 0 by convention; expand to banner-specific logic later
 	var char_data: CharacterData = \
 		_char_pool_5star[0] if is_featured \
 		else _char_pool_5star[randi() % _char_pool_5star.size()]
@@ -204,7 +204,7 @@ func _pick_5star() -> Dictionary:
 
 func _pick_5star_card() -> Dictionary:
 	if _card_pool_5star.is_empty():
-		return _pick_4star()
+		return _pick_4star()   # graceful fallback
 	return {
 		"rarity":      5,
 		"data":        _card_pool_5star[randi() % _card_pool_5star.size()],
@@ -265,18 +265,8 @@ func _resolve_character(r: GachaResultData) -> void:
 			# ── Constellation up ───────────────────────────────────────────
 			c += 1
 			_owned_characters[cid] = c
-			r.duplicate_outcome    = GachaResultData.DuplicateOutcome.CONSTELLATION
-			r.constellation_level  = c
-			
-			# INSTANT LOCAL SYNC: Update GameManager's constellation data
-			if "player_characters" in GameManager:
-				for char_dict in GameManager.player_characters:
-					if char_dict.get("character_id") == cid:
-						char_dict["constellation"] = c
-						break
-				if GameManager.has_signal("characters_updated"):
-					GameManager.emit_signal("characters_updated")
-
+			r.duplicate_outcome   = GachaResultData.DuplicateOutcome.CONSTELLATION
+			r.constellation_level = c
 			await _db_patch("/rest/v1/player_characters?uid=eq.%d&character_id=eq.%d" % [
 				int(GameManager.player_profile.get("uid", 0)), cid],
 				{"constellation": c})
@@ -291,6 +281,7 @@ func _resolve_card(r: GachaResultData) -> void:
 	var cid: int = r.data.card_item_id
 
 	if cid not in _owned_cards:
+		# ── Brand new ──────────────────────────────────────────────────────
 		r.is_new            = true
 		r.duplicate_outcome = GachaResultData.DuplicateOutcome.NONE
 		r.refinement_rank   = 1
@@ -299,6 +290,7 @@ func _resolve_card(r: GachaResultData) -> void:
 	else:
 		var s: int = _owned_cards[cid]
 		if s < MAX_REFINEMENT:
+			# ── Refinement up ──────────────────────────────────────────────
 			s += 1
 			_owned_cards[cid]   = s
 			r.duplicate_outcome = GachaResultData.DuplicateOutcome.REFINEMENT
@@ -307,6 +299,7 @@ func _resolve_card(r: GachaResultData) -> void:
 				int(GameManager.player_profile.get("uid", 0)), cid],
 				{"stack_count": s})
 		else:
+			# ── R5 overflow → pull refund ───────────────────────────────────
 			r.duplicate_outcome = GachaResultData.DuplicateOutcome.REFINEMENT_MAX
 			r.refinement_rank   = MAX_REFINEMENT
 			r.bonus_currency    = PULLS_ON_R5_DUPE
@@ -317,9 +310,7 @@ func _resolve_card(r: GachaResultData) -> void:
 # ═════════════════════════════════════════════════════════════════════════════
 func _db_insert_character(data: CharacterData) -> void:
 	var uid := int(GameManager.player_profile.get("uid", 0))
-	
-	# 1. Prepare the exact data structure
-	var new_char_data = {
+	await _http_post("/rest/v1/player_characters", {
 		"uid":           uid,
 		"character_id":  data.character_id,
 		"current_level": 1,
@@ -329,16 +320,7 @@ func _db_insert_character(data: CharacterData) -> void:
 		"ult_level":     1,
 		"talent_level":  1,
 		"constellation": 0,
-	}
-	
-	# 2. INSTANT LOCAL SYNC: Add to GameManager immediately
-	if "player_characters" in GameManager:
-		GameManager.player_characters.append(new_char_data.duplicate())
-		if GameManager.has_signal("characters_updated"):
-			GameManager.emit_signal("characters_updated")
-
-	# 3. Send to Supabase
-	await _http_post("/rest/v1/player_characters", new_char_data)
+	})
 
 func _db_insert_card(data: GachaCard) -> void:
 	var uid := int(GameManager.player_profile.get("uid", 0))
@@ -372,6 +354,7 @@ func _db_patch(endpoint: String, payload: Dictionary) -> void:
 
 # ═════════════════════════════════════════════════════════════════════════════
 #  HTTP UTILITY LAYER
+#  One HTTPRequest node per call, always freed — zero leaks.
 # ═════════════════════════════════════════════════════════════════════════════
 class HttpResult:
 	var ok:   bool   = false
