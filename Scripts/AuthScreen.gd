@@ -1,19 +1,83 @@
 extends Control
 
-@onready var status_label = $StatusLabel
-@onready var tab_container = $CenterContainer/PanelContainer/VBoxContainer/TabContainer
+# Custom Tabs
+@onready var login_tab_btn = $CenterContainer/Wrapper/MainPanel/Margin/VBox/CustomTabs/LoginTab
+@onready var register_tab_btn = $CenterContainer/Wrapper/MainPanel/Margin/VBox/CustomTabs/RegisterTab
+
+# Containers
+@onready var login_box = $CenterContainer/Wrapper/MainPanel/Margin/VBox/FormContainer/LoginBox
+@onready var register_box = $CenterContainer/Wrapper/MainPanel/Margin/VBox/FormContainer/RegisterBox
 
 # Login nodes
-@onready var login_email = $CenterContainer/PanelContainer/VBoxContainer/TabContainer/Login/EmailInput
-@onready var login_password = $CenterContainer/PanelContainer/VBoxContainer/TabContainer/Login/PasswordInput
+@onready var login_email = $CenterContainer/Wrapper/MainPanel/Margin/VBox/FormContainer/LoginBox/EmailInput
+@onready var login_password = $CenterContainer/Wrapper/MainPanel/Margin/VBox/FormContainer/LoginBox/PasswordInput
+@onready var login_btn = $CenterContainer/Wrapper/MainPanel/Margin/VBox/FormContainer/LoginBox/LoginButton
 
 # Register nodes
-@onready var reg_username = $CenterContainer/PanelContainer/VBoxContainer/TabContainer/Register/UsernameInput
-@onready var reg_email = $CenterContainer/PanelContainer/VBoxContainer/TabContainer/Register/EmailInput
-@onready var reg_password = $CenterContainer/PanelContainer/VBoxContainer/TabContainer/Register/PasswordInput
+@onready var reg_username = $CenterContainer/Wrapper/MainPanel/Margin/VBox/FormContainer/RegisterBox/UsernameInput
+@onready var reg_email = $CenterContainer/Wrapper/MainPanel/Margin/VBox/FormContainer/RegisterBox/EmailInput
+@onready var reg_password = $CenterContainer/Wrapper/MainPanel/Margin/VBox/FormContainer/RegisterBox/PasswordInput
+@onready var register_btn = $CenterContainer/Wrapper/MainPanel/Margin/VBox/FormContainer/RegisterBox/RegisterButton
+
+# Status
+@onready var status_label = $CenterContainer/Wrapper/MainPanel/Margin/VBox/StatusLabel
 
 const MAIN_SCENE = "res://Scenes/small_village.tscn"
 
+# --- Styling References ---
+var style_active: StyleBoxFlat
+var style_inactive: StyleBoxFlat
+var color_active = Color(0.85, 0.75, 0.45, 1) # Gold
+var color_inactive = Color(0.6, 0.65, 0.75, 1) # Grey
+
+func _ready():
+	set_process_unhandled_input(true)
+	mouse_filter = Control.MOUSE_FILTER_PASS
+	
+	# Extract styles for dynamic switching
+	style_active = login_tab_btn.get_theme_stylebox("normal").duplicate()
+	style_inactive = register_tab_btn.get_theme_stylebox("normal").duplicate()
+	
+	# Connections
+	login_tab_btn.pressed.connect(_show_login)
+	register_tab_btn.pressed.connect(_show_register)
+	login_btn.pressed.connect(_on_login_pressed)
+	register_btn.pressed.connect(_on_register_pressed)
+	
+	_show_login() # Default state
+
+# ═══════════════════════════════════════════════════════
+#  UI Tab Switching
+# ═══════════════════════════════════════════════════════
+func _show_login():
+	login_box.visible = true
+	register_box.visible = false
+	status_label.text = ""
+	
+	login_tab_btn.add_theme_stylebox_override("normal", style_active)
+	login_tab_btn.add_theme_stylebox_override("hover", style_active)
+	login_tab_btn.add_theme_color_override("font_color", color_active)
+	
+	register_tab_btn.add_theme_stylebox_override("normal", style_inactive)
+	register_tab_btn.add_theme_stylebox_override("hover", style_inactive)
+	register_tab_btn.add_theme_color_override("font_color", color_inactive)
+
+func _show_register():
+	login_box.visible = false
+	register_box.visible = true
+	status_label.text = ""
+	
+	register_tab_btn.add_theme_stylebox_override("normal", style_active)
+	register_tab_btn.add_theme_stylebox_override("hover", style_active)
+	register_tab_btn.add_theme_color_override("font_color", color_active)
+	
+	login_tab_btn.add_theme_stylebox_override("normal", style_inactive)
+	login_tab_btn.add_theme_stylebox_override("hover", style_inactive)
+	login_tab_btn.add_theme_color_override("font_color", color_inactive)
+
+# ═══════════════════════════════════════════════════════
+#  Authentication Logic
+# ═══════════════════════════════════════════════════════
 func _on_login_pressed():
 	status_label.text = "Logging in..."
 	var email = login_email.text
@@ -33,31 +97,19 @@ func _on_login_pressed():
 		var has_saved_position = GameManager.has_saved_position
 		
 		print("Login - Saved scene: ", saved_scene)
-		print("Login - Has saved position: ", has_saved_position)
-		print("Login - Player party size: ", GameManager.player_party.size())
+		print("Login - Has saved pos: ", has_saved_position)
 		
-		# Priority 1: If player has no party, go to party select first
-		if GameManager.player_party.size() == 0:
-			print("No party found, going to PartySelect")
-			get_tree().change_scene_to_file("res://Scenes/PartySelect.tscn")
-		# Priority 2: If we have a saved scene AND saved position, go there
-		elif saved_scene != "" and saved_scene != null and has_saved_position:
-			print("Loading saved scene: ", saved_scene)
-			# Clear any pending teleport spawn (use saved position instead)
-			GameManager.next_spawn = ""
+		if saved_scene != "" and has_saved_position:
 			get_tree().change_scene_to_file(saved_scene)
-		# Priority 3: If we have a saved scene but no position, still go there (will use spawn point)
-		elif saved_scene != "" and saved_scene != null:
-			print("Loading saved scene (no position): ", saved_scene)
-			GameManager.next_spawn = ""  # Will use scene's default spawn
-			get_tree().change_scene_to_file(saved_scene)
-		# Priority 4: Fallback to main scene (small village)
 		else:
-			print("No saved scene found, loading default village")
-			GameManager.next_spawn = "VillageSpawn"
 			get_tree().change_scene_to_file(MAIN_SCENE)
 	else:
-		status_label.text = "Login failed! Check your credentials."
+		if result.has("msg"):
+			status_label.text = "Failed: " + result.msg
+		elif result.has("error_description"):
+			status_label.text = "Failed: " + result.error_description
+		else:
+			status_label.text = "Login Failed!"
 
 func _on_register_pressed():
 	status_label.text = "Registering..."
@@ -99,16 +151,3 @@ func _on_register_pressed():
 			status_label.text = "Failed: " + result.message
 		else:
 			status_label.text = "Failed: " + str(result)
-
-func _ready():
-	set_process_unhandled_input(true)
-	mouse_filter = Control.MOUSE_FILTER_PASS
-	for child in get_children():
-		if child is Control:
-			child.mouse_filter = Control.MOUSE_FILTER_PASS
-
-func _unhandled_input(event):
-	if event is InputEventMouseButton:
-		var focused = get_viewport().gui_get_focus_owner()
-		if focused:
-			focused.release_focus()

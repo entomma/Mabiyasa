@@ -1,10 +1,10 @@
-[gd_scene format=3 uid="uid://bp7v2lytbitjs"]
+[gd_scene format=3 uid="uid://dutxuejyqtr04"]
 
 [ext_resource type="Script" uid="uid://c7ydarmawgviy" path="res://Scripts/Battle.gd" id="1_wvl2i"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_wvl2i"]
-sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
-ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+sky_horizon_color = Color(0.662, 0.671, 0.686, 1)
+ground_horizon_color = Color(0.662, 0.671, 0.686, 1)
 
 [sub_resource type="Sky" id="Sky_vr6xi"]
 sky_material = SubResource("ProceduralSkyMaterial_wvl2i")
@@ -16,227 +16,128 @@ tonemap_mode = 2
 glow_enabled = true
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_wvl2i"]
+size = Vector2(90, 90)
 
-[sub_resource type="Gradient" id="Gradient_wvl2i"]
-offsets = PackedFloat32Array(0, 0.8875, 1)
-colors = PackedColorArray(0, 0, 0, 1, 0.69375, 0.69375, 0.69375, 1, 1, 1, 1, 1)
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vr6xi"]
+albedo_color = Color(0.3516246, 0.5197115, 0.2815043, 0.5764706)
 
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_vr6xi"]
-seed = 2
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_2h7oj"]
-noise = SubResource("FastNoiseLite_vr6xi")
-color_ramp = SubResource("Gradient_wvl2i")
-invert = true
-as_normal_map = true
-normalize = false
-bump_strength = 2.6
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wvl2i"]
-albedo_color = Color(0.16862746, 1, 0.3254902, 1)
-albedo_texture = SubResource("NoiseTexture2D_2h7oj")
-
-[sub_resource type="MultiMesh" id="MultiMesh_wvl2i"]
-
-[node name="Battle" type="Node3D" unique_id=968084594]
+[node name="Battle" type="Node3D" unique_id=134390426]
 script = ExtResource("1_wvl2i")
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=2019279693]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1079903709]
 environment = SubResource("Environment_2h7oj")
 
-[node name="Camera3D" type="Camera3D" parent="." unique_id=1245459190]
-transform = Transform3D(1, 0, 0, 0, 0.99026805, 0.1391731, 0, -0.1391731, 0.99026805, 0, 3, 8)
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1508544504]
+transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 0, 0)
+shadow_enabled = true
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=227198224]
-transform = Transform3D(0.8660254, 0.35355338, -0.35355338, 0, 0.70710677, 0.70710677, 0.5, -0.6123724, 0.6123724, 0, 0, 0)
+[node name="Camera3D" type="Camera3D" parent="." unique_id=263957517]
+transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, -5, 3.5, 9)
 
-[node name="Background" type="Node3D" parent="." unique_id=1985196665]
+[node name="Background" type="Node3D" parent="." unique_id=262293076]
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Background" unique_id=2014504972]
-transform = Transform3D(50, 0, 0, 0, 50, 0, 0, 0, 50, 0, 0, 0)
-mesh = SubResource("PlaneMesh_wvl2i")
-surface_material_override/0 = SubResource("StandardMaterial3D_wvl2i")
+[node name="BattleUI" type="CanvasLayer" parent="." unique_id=1541100049]
 
-[node name="CharacterArea" type="Node3D" parent="." unique_id=932834410]
+[node name="TurnOrder" type="VBoxContainer" parent="BattleUI" unique_id=251627338]
+offset_left = 24.0
+offset_top = 24.0
+offset_right = 120.0
+offset_bottom = 500.0
+theme_override_constants/separation = 12
 
-[node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="CharacterArea" unique_id=815178013]
-texture_filter = 0
-
-[node name="EnemyArea" type="Node3D" parent="." unique_id=29566007]
-
-[node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="EnemyArea" unique_id=1212458004]
-billboard = 2
-texture_filter = 0
-
-[node name="BattleUI" type="CanvasLayer" parent="." unique_id=718896688]
-
-[node name="TurnOrder" type="VBoxContainer" parent="BattleUI" unique_id=2110049413]
-offset_left = 4.0
-offset_top = 83.0
-offset_right = 224.0
-offset_bottom = 483.0
-
-[node name="TopRight" type="HBoxContainer" parent="BattleUI" unique_id=281507103]
-offset_left = -400.0
-offset_bottom = 60.0
-grow_horizontal = 0
-
-[node name="EnemyInfoButton" type="Button" parent="BattleUI/TopRight" unique_id=74107088]
-custom_minimum_size = Vector2(60, 0)
-layout_mode = 2
-text = "enemy info  v"
-
-[node name="PauseButton" type="Button" parent="BattleUI/TopRight" unique_id=1907161949]
-custom_minimum_size = Vector2(60, 0)
-layout_mode = 2
-text = "  II  "
-
-[node name="TotalDamage" type="VBoxContainer" parent="BattleUI" unique_id=2142164215]
+[node name="TopRight" type="HBoxContainer" parent="BattleUI" unique_id=45590029]
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -90.0
-offset_bottom = 91.0
+offset_left = -224.0
+offset_top = 24.0
+offset_right = -24.0
+offset_bottom = 64.0
 grow_horizontal = 0
+theme_override_constants/separation = 16
+alignment = 2
 
-[node name="TotalDamageLabel" type="Label" parent="BattleUI/TotalDamage" unique_id=1827020006]
+[node name="TotalDamage" type="VBoxContainer" parent="BattleUI" unique_id=87164293]
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -224.0
+offset_top = -50.0
+offset_right = -24.0
+offset_bottom = 50.0
+grow_horizontal = 0
+grow_vertical = 2
+alignment = 1
+
+[node name="TotalDamageLabel" type="Label" parent="BattleUI/TotalDamage" unique_id=1546175378]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
 theme_override_font_sizes/font_size = 14
-text = "total damage"
+text = "TOTAL DAMAGE"
+horizontal_alignment = 2
 
-[node name="TotalDamageNumber" type="Label" parent="BattleUI/TotalDamage" unique_id=1461802879]
+[node name="TotalDamageNumber" type="Label" parent="BattleUI/TotalDamage" unique_id=995427479]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(1, 0.9, 0.8, 1)
 theme_override_font_sizes/font_size = 48
 text = "0"
 horizontal_alignment = 2
 
-[node name="BottomLeft" type="HBoxContainer" parent="BattleUI" unique_id=815358337]
+[node name="BottomLeft" type="MarginContainer" parent="BattleUI" unique_id=483744371]
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_top = -58.0
-offset_right = 40.0
+offset_top = -160.0
+offset_right = 400.0
 grow_vertical = 0
-pivot_offset = Vector2(-150, 700)
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_bottom = 32
 
-[node name="CharInfoButton" type="Button" parent="BattleUI/BottomLeft" unique_id=1440910584]
-custom_minimum_size = Vector2(80, 100)
+[node name="CharPortraits" type="HBoxContainer" parent="BattleUI/BottomLeft" unique_id=1226782926]
 layout_mode = 2
-text = "char\\ninfo"
+theme_override_constants/separation = 16
 
-[node name="CharPortraits" type="HBoxContainer" parent="BattleUI/BottomLeft" unique_id=1298386236]
-layout_mode = 2
-
-[node name="Portrait1" type="VBoxContainer" parent="BattleUI/BottomLeft/CharPortraits" unique_id=1852541657]
-custom_minimum_size = Vector2(100, 120)
-layout_mode = 2
-
-[node name="PortraitImg1" type="TextureRect" parent="BattleUI/BottomLeft/CharPortraits/Portrait1" unique_id=856818110]
-custom_minimum_size = Vector2(80, 80)
-layout_mode = 2
-stretch_mode = 5
-
-[node name="UltLabel1" type="Label" parent="BattleUI/BottomLeft/CharPortraits/Portrait1" unique_id=968851142]
-layout_mode = 2
-theme_override_font_sizes/font_size = 11
-text = "ult 100%"
-
-[node name="HPBar1" type="ProgressBar" parent="BattleUI/BottomLeft/CharPortraits/Portrait1" unique_id=1700922030]
-layout_mode = 2
-value = 100.0
-
-[node name="Portrait2" type="VBoxContainer" parent="BattleUI/BottomLeft/CharPortraits" unique_id=1060666713]
-custom_minimum_size = Vector2(100, 120)
-layout_mode = 2
-
-[node name="PortraitImg2" type="TextureRect" parent="BattleUI/BottomLeft/CharPortraits/Portrait2" unique_id=217659422]
-custom_minimum_size = Vector2(80, 80)
-layout_mode = 2
-stretch_mode = 5
-
-[node name="UltLabel2" type="Label" parent="BattleUI/BottomLeft/CharPortraits/Portrait2" unique_id=1623224972]
-layout_mode = 2
-theme_override_font_sizes/font_size = 11
-text = "ult 100%"
-
-[node name="HPBar2" type="ProgressBar" parent="BattleUI/BottomLeft/CharPortraits/Portrait2" unique_id=929034228]
-layout_mode = 2
-value = 100.0
-
-[node name="Portrait3" type="VBoxContainer" parent="BattleUI/BottomLeft/CharPortraits" unique_id=118118727]
-custom_minimum_size = Vector2(100, 120)
-layout_mode = 2
-
-[node name="PortraitImg3" type="TextureRect" parent="BattleUI/BottomLeft/CharPortraits/Portrait3" unique_id=1856404083]
-custom_minimum_size = Vector2(80, 80)
-layout_mode = 2
-stretch_mode = 5
-
-[node name="UltLabel3" type="Label" parent="BattleUI/BottomLeft/CharPortraits/Portrait3" unique_id=1158771054]
-layout_mode = 2
-theme_override_font_sizes/font_size = 11
-text = "ult 100%"
-
-[node name="HPBar3" type="ProgressBar" parent="BattleUI/BottomLeft/CharPortraits/Portrait3" unique_id=1414679951]
-layout_mode = 2
-value = 100.0
-
-[node name="Portrait4" type="VBoxContainer" parent="BattleUI/BottomLeft/CharPortraits" unique_id=1618114871]
-custom_minimum_size = Vector2(100, 120)
-layout_mode = 2
-
-[node name="PortraitImg4" type="TextureRect" parent="BattleUI/BottomLeft/CharPortraits/Portrait4" unique_id=1051125569]
-custom_minimum_size = Vector2(80, 80)
-layout_mode = 2
-stretch_mode = 5
-
-[node name="UltLabel4" type="Label" parent="BattleUI/BottomLeft/CharPortraits/Portrait4" unique_id=605040030]
-layout_mode = 2
-theme_override_font_sizes/font_size = 11
-text = "ult 100%"
-
-[node name="HPBar4" type="ProgressBar" parent="BattleUI/BottomLeft/CharPortraits/Portrait4" unique_id=737377712]
-layout_mode = 2
-value = 100.0
-
-[node name="BottomRight" type="Control" parent="BattleUI" unique_id=4640367]
-layout_mode = 3
+[node name="BottomRight" type="MarginContainer" parent="BattleUI" unique_id=1796296036]
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -40.0
-offset_top = -40.0
+offset_left = -300.0
+offset_top = -180.0
 grow_horizontal = 0
 grow_vertical = 0
-pivot_offset = Vector2(-350, -300)
+theme_override_constants/margin_right = 48
+theme_override_constants/margin_bottom = 48
 
-[node name="SPStars" type="HBoxContainer" parent="BattleUI/BottomRight" unique_id=686070030]
-layout_mode = 0
-offset_left = -320.0
-offset_top = -80.0
-offset_right = -280.0
-offset_bottom = -40.0
+[node name="ActionPanel" type="VBoxContainer" parent="BattleUI/BottomRight" unique_id=935360809]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 2
 
-[node name="BasicButton" type="Button" parent="BattleUI/BottomRight" unique_id=1089746063]
-custom_minimum_size = Vector2(180, 180)
-layout_mode = 0
-offset_left = -200.0
-offset_top = -200.0
-offset_right = -20.0
-offset_bottom = -20.0
+[node name="SPStars" type="HBoxContainer" parent="BattleUI/BottomRight/ActionPanel" unique_id=1355992150]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 2
 
-[node name="SkillButton" type="Button" parent="BattleUI/BottomRight" unique_id=2048379260]
-custom_minimum_size = Vector2(130, 130)
-layout_mode = 0
-offset_left = -320.0
-offset_top = -160.0
-offset_right = -190.0
-offset_bottom = -30.0
+[node name="Buttons" type="HBoxContainer" parent="BattleUI/BottomRight/ActionPanel" unique_id=991181449]
+layout_mode = 2
+theme_override_constants/separation = 24
+alignment = 2
 
-[node name="CardPanel" type="Control" parent="BattleUI" unique_id=1758053195]
+[node name="BasicButton" type="Button" parent="BattleUI/BottomRight/ActionPanel/Buttons" unique_id=1510808289]
+custom_minimum_size = Vector2(90, 90)
+layout_mode = 2
+text = "Basic"
+
+[node name="SkillButton" type="Button" parent="BattleUI/BottomRight/ActionPanel/Buttons" unique_id=1492856050]
+custom_minimum_size = Vector2(90, 90)
+layout_mode = 2
+text = "Skill"
+
+[node name="CardPanel" type="Control" parent="BattleUI" unique_id=1412226343]
 visible = false
 layout_mode = 3
 anchors_preset = 15
@@ -245,83 +146,98 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Background" type="ColorRect" parent="BattleUI/CardPanel" unique_id=106126440]
+[node name="Background" type="ColorRect" parent="BattleUI/CardPanel" unique_id=255619645]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 2
-color = Color(0, 0, 0, 0.61960787)
+color = Color(0.05, 0.06, 0.08, 0.8)
 
-[node name="CardGrid" type="GridContainer" parent="BattleUI/CardPanel" unique_id=242609063]
+[node name="CardGrid" type="GridContainer" parent="BattleUI/CardPanel" unique_id=400980195]
 layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.05
-anchor_top = 0.05
-anchor_right = 0.8
-anchor_bottom = 0.85
-offset_right = 40.0
-offset_bottom = 40.0
-columns = 4
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/h_separation = 24
+theme_override_constants/v_separation = 24
+columns = 5
 
-[node name="AffixPanel" type="VBoxContainer" parent="BattleUI/CardPanel" unique_id=1805764374]
+[node name="AffixPanel" type="HBoxContainer" parent="BattleUI/CardPanel" unique_id=2128874590]
 layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.82
-anchor_top = 0.2
-anchor_right = 1.0
-anchor_bottom = 0.8
-offset_right = 40.0
-offset_bottom = 40.0
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -320.0
+offset_top = 40.0
+offset_right = 320.0
+offset_bottom = 100.0
+grow_horizontal = 2
+theme_override_constants/separation = 16
+alignment = 1
 
-[node name="AffixTitle" type="Label" parent="BattleUI/CardPanel/AffixPanel" unique_id=1568356165]
-layout_mode = 2
-text = "Word Tools"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="PrefixBtn" type="Button" parent="BattleUI/CardPanel/AffixPanel" unique_id=1916016335]
-custom_minimum_size = Vector2(150, 60)
+[node name="PrefixBtn" type="Button" parent="BattleUI/CardPanel/AffixPanel" unique_id=535089271]
+custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
 text = "Prefixes"
 
-[node name="SuffixBtn" type="Button" parent="BattleUI/CardPanel/AffixPanel" unique_id=946098944]
-custom_minimum_size = Vector2(150, 60)
+[node name="SuffixBtn" type="Button" parent="BattleUI/CardPanel/AffixPanel" unique_id=805851911]
+custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
 text = "Suffixes"
 
-[node name="ConnectorBtn" type="Button" parent="BattleUI/CardPanel/AffixPanel" unique_id=1419459401]
-custom_minimum_size = Vector2(150, 60)
+[node name="ConnectorBtn" type="Button" parent="BattleUI/CardPanel/AffixPanel" unique_id=1469521227]
+custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
 text = "Connectors"
 
-[node name="OtherBtn" type="Button" parent="BattleUI/CardPanel/AffixPanel" unique_id=737086915]
-custom_minimum_size = Vector2(150, 60)
+[node name="OtherBtn" type="Button" parent="BattleUI/CardPanel/AffixPanel" unique_id=1454777410]
+custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
 text = "Other"
 
-[node name="SentenceBar" type="PanelContainer" parent="BattleUI/CardPanel" unique_id=1003023686]
+[node name="SentenceBar" type="PanelContainer" parent="BattleUI/CardPanel" unique_id=219518914]
 layout_mode = 1
-anchors_preset = -1
-anchor_top = 0.85
-anchor_right = 0.82
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
 anchor_bottom = 1.0
-offset_top = -8.0
-offset_right = 87.19995
-offset_bottom = 17.0
+offset_left = -450.0
+offset_top = -140.0
+offset_right = 450.0
+offset_bottom = -40.0
 grow_horizontal = 2
 grow_vertical = 0
-pivot_offset = Vector2(-80, 0)
 
-[node name="SentenceContainer" type="HBoxContainer" parent="BattleUI/CardPanel/SentenceBar" unique_id=451881915]
+[node name="Margin" type="MarginContainer" parent="BattleUI/CardPanel/SentenceBar" unique_id=1342037972]
 layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 16
 
-[node name="SubmitButton" type="Button" parent="BattleUI/CardPanel/SentenceBar" unique_id=437799997]
-custom_minimum_size = Vector2(120, 0)
+[node name="HBox" type="HBoxContainer" parent="BattleUI/CardPanel/SentenceBar/Margin" unique_id=663424057]
 layout_mode = 2
-text = "Attack"
+theme_override_constants/separation = 24
 
-[node name="MultiMeshInstance3D" type="MultiMeshInstance3D" parent="." unique_id=1781562656]
-multimesh = SubResource("MultiMesh_wvl2i")
+[node name="SentenceContainer" type="HBoxContainer" parent="BattleUI/CardPanel/SentenceBar/Margin/HBox" unique_id=703324325]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="SubmitButton" type="Button" parent="BattleUI/CardPanel/SentenceBar/Margin/HBox" unique_id=114491702]
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.1, 0.1, 0.1, 1)
+theme_override_font_sizes/font_size = 20
+text = "ATTACK!"
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1006673390]
+mesh = SubResource("PlaneMesh_wvl2i")
+surface_material_override/0 = SubResource("StandardMaterial3D_vr6xi")

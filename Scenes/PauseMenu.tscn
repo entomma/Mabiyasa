@@ -1,8 +1,91 @@
-[gd_scene load_steps=2 format=3 uid="uid://cogawfdmo4qwa"]
+[gd_scene format=3 uid="uid://cogawfdmo4qwa"]
 
 [ext_resource type="Script" uid="uid://d33m65exq11te" path="res://Scripts/PauseMenu.gd" id="1_lj4oq"]
 
-[node name="PauseMenu" type="Control"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_RightPanel"]
+bg_color = Color(0.06, 0.07, 0.1, 0.95)
+border_width_left = 2
+border_color = Color(0.4, 0.45, 0.55, 0.4)
+shadow_color = Color(0, 0, 0, 0.5)
+shadow_size = 40
+shadow_offset = Vector2(-10, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_Avatar"]
+bg_color = Color(0.15, 0.18, 0.25, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.85, 0.75, 0.45, 1)
+corner_radius_top_left = 100
+corner_radius_top_right = 100
+corner_radius_bottom_right = 100
+corner_radius_bottom_left = 100
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_GridBtn"]
+bg_color = Color(0.12, 0.14, 0.2, 0.6)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.4, 0.45, 0.55, 0.3)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_GridBtnPressed"]
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_GridBtnHover"]
+bg_color = Color(0.85, 0.85, 0.85, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(1, 1, 1, 0.4)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_SystemBtn"]
+content_margin_left = 16.0
+content_margin_top = 8.0
+content_margin_right = 16.0
+content_margin_bottom = 8.0
+bg_color = Color(0.12, 0.14, 0.2, 0.6)
+corner_radius_top_left = 24
+corner_radius_top_right = 24
+corner_radius_bottom_right = 24
+corner_radius_bottom_left = 24
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_SystemBtnHover"]
+content_margin_left = 16.0
+content_margin_top = 8.0
+content_margin_right = 16.0
+content_margin_bottom = 8.0
+bg_color = Color(0.3, 0.35, 0.45, 1)
+corner_radius_top_left = 24
+corner_radius_top_right = 24
+corner_radius_bottom_right = 24
+corner_radius_bottom_left = 24
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ResumeBtn"]
+content_margin_left = 24.0
+content_margin_top = 8.0
+content_margin_right = 24.0
+content_margin_bottom = 8.0
+bg_color = Color(0.85, 0.75, 0.45, 1)
+corner_radius_top_left = 24
+corner_radius_top_right = 24
+corner_radius_bottom_right = 24
+corner_radius_bottom_left = 24
+shadow_color = Color(0.85, 0.75, 0.45, 0.3)
+shadow_size = 10
+
+[node name="PauseMenu" type="Control" unique_id=68005745]
+process_mode = 3
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,62 +94,183 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_lj4oq")
 
-[node name="Overlay" type="ColorRect" parent="."]
+[node name="Overlay" type="ColorRect" parent="." unique_id=1940983792]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 0.45)
+color = Color(0, 0, 0, 0.6)
 
-[node name="MenuPanel" type="PanelContainer" parent="."]
+[node name="RightPanel" type="PanelContainer" parent="." unique_id=1467814367]
 layout_mode = 1
-anchors_preset = 9
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
 anchor_bottom = 1.0
-offset_right = 260.0
+offset_left = -460.0
+grow_horizontal = 0
 grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_RightPanel")
 
-[node name="MarginContainer" type="MarginContainer" parent="MenuPanel"]
+[node name="Margin" type="MarginContainer" parent="RightPanel" unique_id=300454909]
 layout_mode = 2
-theme_override_constants/margin_left = 24
+theme_override_constants/margin_left = 32
 theme_override_constants/margin_top = 48
-theme_override_constants/margin_right = 24
-theme_override_constants/margin_bottom = 48
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 32
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MenuPanel/MarginContainer"]
+[node name="VBox" type="VBoxContainer" parent="RightPanel/Margin" unique_id=540792453]
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="ProfileSection" type="HBoxContainer" parent="RightPanel/Margin/VBox" unique_id=445236614]
 layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="Title" type="Label" parent="MenuPanel/MarginContainer/VBoxContainer"]
+[node name="Avatar" type="Panel" parent="RightPanel/Margin/VBox/ProfileSection" unique_id=1922103157]
+custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
-theme_override_font_sizes/font_size = 28
-text = "PAUSED"
+theme_override_styles/panel = SubResource("StyleBoxFlat_Avatar")
+
+[node name="Icon" type="Label" parent="RightPanel/Margin/VBox/ProfileSection/Avatar" unique_id=1077559254]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 40
+text = "👤"
 horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="HSeparator" type="HSeparator" parent="MenuPanel/MarginContainer/VBoxContainer"]
+[node name="Info" type="VBoxContainer" parent="RightPanel/Margin/VBox/ProfileSection" unique_id=1588434173]
 layout_mode = 2
+alignment = 1
 
-[node name="ResumeButton" type="Button" parent="MenuPanel/MarginContainer/VBoxContainer"]
+[node name="NameLabel" type="Label" parent="RightPanel/Margin/VBox/ProfileSection/Info" unique_id=1297436815]
 layout_mode = 2
-text = "Resume"
+theme_override_font_sizes/font_size = 24
+text = "Trailblazer"
 
-[node name="CharactersButton" type="Button" parent="MenuPanel/MarginContainer/VBoxContainer"]
+[node name="LevelUID" type="Label" parent="RightPanel/Margin/VBox/ProfileSection/Info" unique_id=1889333320]
 layout_mode = 2
-text = "Characters"
+theme_override_colors/font_color = Color(0.6, 0.65, 0.75, 1)
+theme_override_font_sizes/font_size = 14
+text = "Lv. 60  |  UID: 800012345"
 
-[node name="PartyButton" type="Button" parent="MenuPanel/MarginContainer/VBoxContainer"]
+[node name="HSeparator" type="HSeparator" parent="RightPanel/Margin/VBox" unique_id=401793729]
+modulate = Color(1, 1, 1, 0.2)
 layout_mode = 2
-text = "Party Setup"
+theme_override_constants/separation = 16
 
-[node name="WishButton" type="Button" parent="MenuPanel/MarginContainer/VBoxContainer"]
+[node name="GridMenu" type="GridContainer" parent="RightPanel/Margin/VBox" unique_id=86712178]
 layout_mode = 2
-text = "Wish"
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 12
+columns = 4
 
-[node name="Spacer" type="Control" parent="MenuPanel/MarginContainer/VBoxContainer"]
+[node name="BtnStore" type="Button" parent="RightPanel/Margin/VBox/GridMenu" unique_id=420973864]
+custom_minimum_size = Vector2(86, 86)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_colors/font_hover_color = Color(0.1, 0.1, 0.1, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_GridBtn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_GridBtnPressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_GridBtnHover")
+text = "🏬
+Store"
+
+[node name="BtnFriends" type="Button" parent="RightPanel/Margin/VBox/GridMenu" unique_id=967581723]
+custom_minimum_size = Vector2(86, 86)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_colors/font_hover_color = Color(0.1, 0.1, 0.1, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_GridBtn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_GridBtnPressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_GridBtnHover")
+text = "👥
+Friends"
+
+[node name="BtnCharacters" type="Button" parent="RightPanel/Margin/VBox/GridMenu" unique_id=188675060]
+custom_minimum_size = Vector2(86, 86)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_colors/font_hover_color = Color(0.1, 0.1, 0.1, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_GridBtn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_GridBtnPressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_GridBtnHover")
+text = "👤
+Characters"
+
+[node name="BtnParty" type="Button" parent="RightPanel/Margin/VBox/GridMenu" unique_id=1147277545]
+custom_minimum_size = Vector2(86, 86)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_colors/font_hover_color = Color(0.1, 0.1, 0.1, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_GridBtn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_GridBtnPressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_GridBtnHover")
+text = "🚩
+Team Setup"
+
+[node name="BtnWish" type="Button" parent="RightPanel/Margin/VBox/GridMenu" unique_id=118777040]
+custom_minimum_size = Vector2(86, 86)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_colors/font_hover_color = Color(0.1, 0.1, 0.1, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_GridBtn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_GridBtnPressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_GridBtnHover")
+text = "✦
+Wish"
+
+[node name="BtnMissions" type="Button" parent="RightPanel/Margin/VBox/GridMenu" unique_id=737525669]
+custom_minimum_size = Vector2(86, 86)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_colors/font_hover_color = Color(0.1, 0.1, 0.1, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_GridBtn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_GridBtnPressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_GridBtnHover")
+text = "📜
+Missions"
+
+[node name="BtnInventory" type="Button" parent="RightPanel/Margin/VBox/GridMenu" unique_id=1680595065]
+custom_minimum_size = Vector2(86, 86)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_colors/font_hover_color = Color(0.1, 0.1, 0.1, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_GridBtn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_GridBtnPressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_GridBtnHover")
+text = "🎒
+Inventory"
+
+[node name="Spacer" type="Control" parent="RightPanel/Margin/VBox" unique_id=1330112721]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="QuitButton" type="Button" parent="MenuPanel/MarginContainer/VBoxContainer"]
+[node name="BottomBar" type="HBoxContainer" parent="RightPanel/Margin/VBox" unique_id=105789848]
 layout_mode = 2
-text = "Quit to Menu"
+theme_override_constants/separation = 16
+alignment = 2
+
+[node name="BtnQuit" type="Button" parent="RightPanel/Margin/VBox/BottomBar" unique_id=413817909]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_SystemBtn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_SystemBtn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_SystemBtnHover")
+text = "⏻ Quit"
+
+[node name="BtnResume" type="Button" parent="RightPanel/Margin/VBox/BottomBar" unique_id=558049199]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.1, 0.1, 0.1, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_ResumeBtn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ResumeBtn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ResumeBtn")
+text = "► Resume"

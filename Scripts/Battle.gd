@@ -6,14 +6,14 @@ extends Node3D
 @onready var card_panel         := $BattleUI/CardPanel
 @onready var card_grid          := $BattleUI/CardPanel/CardGrid
 @onready var sentence_bar       := $BattleUI/CardPanel/SentenceBar
-@onready var sentence_container := $BattleUI/CardPanel/SentenceBar/SentenceContainer
-@onready var submit_btn         := $BattleUI/CardPanel/SentenceBar/SubmitButton
+@onready var sentence_container := $BattleUI/CardPanel/SentenceBar/Margin/HBox/SentenceContainer
+@onready var submit_btn         := $BattleUI/CardPanel/SentenceBar/Margin/HBox/SubmitButton
 @onready var turn_order_ui      := $BattleUI/TurnOrder
 @onready var char_portraits     := $BattleUI/BottomLeft/CharPortraits
 @onready var skill_buttons      := $BattleUI/BottomRight
-@onready var basic_btn          := $BattleUI/BottomRight/BasicButton
-@onready var skill_btn          := $BattleUI/BottomRight/SkillButton
-@onready var sp_stars           := $BattleUI/BottomRight/SPStars
+@onready var basic_btn          := $BattleUI/BottomRight/ActionPanel/Buttons/BasicButton
+@onready var skill_btn          := $BattleUI/BottomRight/ActionPanel/Buttons/SkillButton
+@onready var sp_stars           := $BattleUI/BottomRight/ActionPanel/SPStars
 @onready var camera             := $Camera3D
 
 # ═══════════════════════════════════════════════════════
@@ -126,10 +126,11 @@ func _ready() -> void:
 	skill_btn.pressed.connect(_on_skill_btn_pressed)
 	submit_btn.pressed.connect(_on_submit_pressed)
 
+	# Apply Premium Styles
+	_setup_card_panel_bg()
 	_style_circular_button(basic_btn, Color(0.72, 0.58, 0.42))
 	_style_circular_button(skill_btn, Color(0.85, 0.35, 0.28))
-
-	_setup_card_panel_bg()
+	
 	_spawn_enemies_for_zone()
 	_build_turn_queue()
 	_setup_character_portraits()
@@ -295,6 +296,13 @@ func update_sentence_display() -> void:
 #  Input
 # ═══════════════════════════════════════════════════════
 func _input(event: InputEvent) -> void:
+	# Global Input: Pause Menu via Escape
+	if event.is_action_pressed("ui_cancel"):
+		var pause_menu = load("res://Scenes/PauseMenu.tscn").instantiate()
+		get_tree().root.add_child(pause_menu)
+		return
+
+	# Combat Inputs
 	if not (event is InputEventKey and event.pressed and not event.echo):
 		return
 	if not is_player_turn:
@@ -339,7 +347,7 @@ func _refresh_enemy_highlight() -> void:
 		var ui = enemy_ui_nodes[i]
 		if not ui or not is_instance_valid(ui.root):
 			continue
-		ui.root.modulate = Color(1.3, 1.3, 0.6) if i == targeted_enemy_index else Color.WHITE
+		ui.root.modulate = Color(1.5, 1.2, 0.4) if i == targeted_enemy_index else Color.WHITE
 
 # ═══════════════════════════════════════════════════════
 #  Ally targeting
@@ -363,8 +371,8 @@ func _confirm_ally_target() -> void:
 
 func _refresh_ally_highlight() -> void:
 	for i in range(portrait_containers.size()):
-		portrait_containers[i].modulate = \
-			Color(1.3, 1.3, 0.6) if i == targeted_ally_index else Color.WHITE
+		var is_targeted = (i == targeted_ally_index)
+		portrait_containers[i].modulate = Color(1.5, 1.3, 0.5) if is_targeted else Color.WHITE
 
 func _index_of_current_char() -> int:
 	return GameManager.player_party.find(current_character)
@@ -373,8 +381,8 @@ func _pan_camera(to_pos: Vector3, to_target: Vector3, from_target: Vector3) -> v
 	if not camera: return
 	var t := create_tween()
 	t.set_parallel(true)
-	t.tween_property(camera, "position", to_pos, 0.4)
-	t.tween_method(func(v): camera.look_at(v, Vector3.UP), from_target, to_target, 0.4)
+	t.tween_property(camera, "position", to_pos, 0.4).set_trans(Tween.TRANS_QUAD)
+	t.tween_method(func(v): camera.look_at(v, Vector3.UP), from_target, to_target, 0.4).set_trans(Tween.TRANS_QUAD)
 
 func _pan_camera_to_default() -> void:
 	_pan_camera(CAM_DEFAULT_POS, CAM_DEFAULT_TARGET, CAM_ALLY_TARGET)
@@ -392,24 +400,30 @@ func _refresh_skill_highlights() -> void:
 	_restyle_slot_btn(skill_btn, Color(0.85, 0.35, 0.28), selected_skill_slot == "skill")
 
 func _restyle_slot_btn(btn: Button, color: Color, active: bool) -> void:
-	btn.custom_minimum_size = Vector2(180, 180) if active else Vector2(130, 130)
+	var target_size = Vector2(160, 160) if active else Vector2(110, 110)
+	
+	# Smooth size transition
+	var t = create_tween()
+	t.tween_property(btn, "custom_minimum_size", target_size, 0.15).set_trans(Tween.TRANS_SINE)
 
 	var s := _make_rounded_stylebox(color if active else color.darkened(0.45), 999)
-	var bw := 3 if active else 1
+	var bw := 4 if active else 1
 	s.border_width_left   = bw; s.border_width_right = bw
 	s.border_width_top    = bw; s.border_width_bottom = bw
 	s.border_color        = color.lightened(0.5) if active else color.darkened(0.2)
-	s.shadow_color        = Color(0, 0, 0, 0.5)
-	s.shadow_size         = 8 if active else 3
+	s.shadow_color        = color if active else Color(0, 0, 0, 0.5)
+	s.shadow_size         = 15 if active else 3
 	s.shadow_offset       = Vector2(0, 4) if active else Vector2(0, 2)
 	btn.add_theme_stylebox_override("normal", s)
 
 	var h := _make_rounded_stylebox(color.lightened(0.2), 999)
-	h.border_width_left   = 3; h.border_width_right  = 3
-	h.border_width_top    = 3; h.border_width_bottom = 3
+	h.border_width_left   = 4; h.border_width_right  = 4
+	h.border_width_top    = 4; h.border_width_bottom = 4
 	h.border_color        = color.lightened(0.8)
+	h.shadow_color        = color.lightened(0.4)
+	h.shadow_size         = 20
 	btn.add_theme_stylebox_override("hover", h)
-	btn.add_theme_font_size_override("font_size", 16 if active else 13)
+	btn.add_theme_font_size_override("font_size", 18 if active else 14)
 
 func _trigger_ult(idx: int) -> void:
 	if _is_selecting_skill or _is_processing_turn: return
@@ -617,11 +631,14 @@ func _update_enemy_ui(idx: int) -> void:
 	var ui    = enemy_ui_nodes[idx]
 	var enemy = enemies[idx]
 	if not ui or not is_instance_valid(ui.root): return
-	ui.hp_bar.value        = float(max(0, enemy.current_hp))
+	
+	# Smoothly animate HP reduction
+	create_tween().tween_property(ui.hp_bar, "value", float(max(0, enemy.current_hp)), 0.3).set_trans(Tween.TRANS_SINE)
+	
 	ui.hp_label.text       = _hp_text(enemy.current_hp, enemy.data.get_actual_hp())
 	ui.shield_bar.visible  = enemy.is_shield_active
 	if enemy.is_shield_active:
-		ui.shield_bar.value = float(enemy.current_shield_hp)
+		create_tween().tween_property(ui.shield_bar, "value", float(enemy.current_shield_hp), 0.3).set_trans(Tween.TRANS_SINE)
 
 
 func _shatter_shield(idx: int) -> void:
@@ -655,7 +672,8 @@ func _update_portrait_hp(char_idx: int) -> void:
 	var shield: float = character_shields[char_idx]
 
 	if char_idx < portrait_hp_bars.size() and is_instance_valid(portrait_hp_bars[char_idx]):
-		portrait_hp_bars[char_idx].value = max(0.0, cur_hp)
+		# Smooth HP animation
+		create_tween().tween_property(portrait_hp_bars[char_idx], "value", max(0.0, cur_hp), 0.3).set_trans(Tween.TRANS_SINE)
 
 	if char_idx < portrait_hp_labels.size() and is_instance_valid(portrait_hp_labels[char_idx]):
 		portrait_hp_labels[char_idx].text = _hp_text(cur_hp, int(max_hp))
@@ -664,7 +682,7 @@ func _update_portrait_hp(char_idx: int) -> void:
 		var shield_rect: ColorRect = portrait_shields[char_idx]
 		shield_rect.visible = shield > 0.0
 		if shield > 0.0:
-			shield_rect.size.x = 90.0 * clamp(shield / max_hp, 0.0, 1.0)
+			create_tween().tween_property(shield_rect, "size:x", 90.0 * clamp(shield / max_hp, 0.0, 1.0), 0.3).set_trans(Tween.TRANS_SINE)
 
 
 func _update_energy_display(char_idx: int) -> void:
@@ -700,16 +718,33 @@ func _make_rounded_stylebox(color: Color, radius: int) -> StyleBoxFlat:
 	s.set_corner_radius_all(radius)
 	return s
 
-
 func _setup_card_panel_bg() -> void:
-	var s := _make_rounded_stylebox(Color(0.12, 0.12, 0.15, 0.92), 16)
-	s.border_width_left   = 2; s.border_width_right  = 2
-	s.border_width_top    = 2; s.border_width_bottom = 2
-	s.border_color        = Color(0.3, 0.3, 0.4, 0.5)
-	s.shadow_color        = Color(0, 0, 0, 0.6)
-	s.shadow_size         = 10
-	s.shadow_offset       = Vector2(0, 4)
-	card_panel.add_theme_stylebox_override("panel", s)
+	# Add glass panel styling to the sentence bar
+	var glass = StyleBoxFlat.new()
+	glass.bg_color = Color(0.12, 0.14, 0.2, 0.85)
+	glass.border_width_left = 2
+	glass.border_width_top = 2
+	glass.border_width_right = 2
+	glass.border_width_bottom = 2
+	glass.border_color = Color(0.4, 0.5, 0.7, 0.6)
+	glass.set_corner_radius_all(24)
+	glass.shadow_color = Color(0, 0, 0, 0.3)
+	glass.shadow_size = 15
+	if sentence_bar:
+		sentence_bar.add_theme_stylebox_override("panel", glass)
+
+	# Style the Submit Button (Gold HSR style)
+	var submit_style = StyleBoxFlat.new()
+	submit_style.bg_color = Color(0.85, 0.7, 0.3)
+	submit_style.set_corner_radius_all(16)
+	submit_style.shadow_color = Color(0.85, 0.7, 0.3, 0.4)
+	submit_style.shadow_size = 8
+	if submit_btn:
+		submit_btn.add_theme_stylebox_override("normal", submit_style)
+		
+		var submit_hover = submit_style.duplicate()
+		submit_hover.bg_color = Color(0.95, 0.8, 0.4)
+		submit_btn.add_theme_stylebox_override("hover", submit_hover)
 
 
 func _setup_character_portraits() -> void:
@@ -724,7 +759,10 @@ func _setup_character_portraits() -> void:
 		var cd: CharacterData = GameManager.player_party[i]
 
 		var panel := PanelContainer.new()
-		var ps    := _make_rounded_stylebox(Color(0.05, 0.05, 0.08, 0.8), 12)
+		var ps    := _make_rounded_stylebox(Color(0.12, 0.13, 0.18, 0.85), 12)
+		ps.border_width_left = 1; ps.border_width_right = 1
+		ps.border_width_top = 1; ps.border_width_bottom = 1
+		ps.border_color = Color(0.3, 0.35, 0.5, 0.5)
 		ps.content_margin_left   = 6; ps.content_margin_right  = 6
 		ps.content_margin_top    = 8; ps.content_margin_bottom = 8
 		panel.add_theme_stylebox_override("panel", ps)
@@ -822,15 +860,27 @@ func _style_ult_button(btn: Button) -> void:
 
 
 func _style_circular_button(btn: Button, color: Color) -> void:
-	for state in ["normal", "hover"]:
-		var s := _make_rounded_stylebox(color.lightened(0.2) if state == "hover" else color, 999)
-		s.border_width_left   = 2; s.border_width_right  = 2
-		s.border_width_top    = 2; s.border_width_bottom = 2
-		s.border_color        = color.lightened(0.4)
-		s.shadow_color        = Color(0, 0, 0, 0.3)
-		s.shadow_size         = 4
-		s.shadow_offset       = Vector2(0, 3)
-		btn.add_theme_stylebox_override(state, s)
+	btn.custom_minimum_size = Vector2(110, 110)
+	
+	var sb = StyleBoxFlat.new()
+	sb.bg_color = Color(0.1, 0.12, 0.18, 0.9)
+	sb.border_width_left = 4
+	sb.border_width_top = 4
+	sb.border_width_right = 4
+	sb.border_width_bottom = 4
+	sb.border_color = color
+	sb.set_corner_radius_all(100)
+	sb.shadow_color = color.darkened(0.5)
+	sb.shadow_size = 12
+	
+	var sb_hover = sb.duplicate()
+	sb_hover.bg_color = color.darkened(0.6)
+	sb_hover.border_color = color.lightened(0.3)
+	sb_hover.shadow_size = 20
+	
+	btn.add_theme_stylebox_override("normal", sb)
+	btn.add_theme_stylebox_override("hover", sb_hover)
+	btn.add_theme_stylebox_override("pressed", sb)
 
 # ═══════════════════════════════════════════════════════
 #  Turn flow
@@ -892,7 +942,7 @@ func show_skill_buttons() -> void:
 
 	for i in range(portrait_containers.size()):
 		portrait_containers[i].modulate = \
-			Color(1.2, 1.2, 1.2) if GameManager.player_party[i] == current_character \
+			Color(1.3, 1.3, 1.3) if GameManager.player_party[i] == current_character \
 			else Color.WHITE
 
 	_refresh_skill_highlights()
@@ -1066,12 +1116,12 @@ func analyse_sentence_quality() -> Dictionary:
 		if sentence.size() < min_cards:
 			r.feedback_lines.append({"text": "✗ Need %d cards minimum!" % min_cards, "color": RED})
 		elif not has_noun and stype != "basic":
-			r.feedback_lines.append({"text": "✗ Missing a Noun!",                   "color": RED})
+			r.feedback_lines.append({"text": "✗ Missing a Noun!",                    "color": RED})
 		elif not has_pronoun and min_cards >= 3:
 			r.feedback_lines.append({"text": "✗ Missing a Pronoun (Aku/Ika/Ya)!",   "color": RED})
 		else:
 			r.feedback_lines.append({"text": "✗ Wrong sentence structure!",         "color": RED})
-		r.feedback_lines.append({"text": "→ Try: " + r.example_sentence,            "color": YELLOW})
+		r.feedback_lines.append({"text": "→ Try: " + r.example_sentence,             "color": YELLOW})
 	else:
 		match r.focus_type:
 			"Actor":  r.feedback_lines.append({"text": "✓ Actor Focus!  (Verb + Pronoun + Noun)", "color": GREEN})
@@ -1263,16 +1313,24 @@ func _show_floating_text(text: String, color: Color, pos: Vector2) -> void:
 	var lbl := Label.new()
 	lbl.text     = text
 	lbl.position = pos
-	lbl.add_theme_font_size_override("font_size", 22)
+	lbl.scale = Vector2(0.5, 0.5) # Start small for juice
+	lbl.add_theme_font_size_override("font_size", 28)
 	lbl.add_theme_color_override("font_color",        color)
 	lbl.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.8))
-	lbl.add_theme_constant_override("shadow_offset_x", 1)
-	lbl.add_theme_constant_override("shadow_offset_y", 1)
+	lbl.add_theme_constant_override("shadow_offset_x", 2)
+	lbl.add_theme_constant_override("shadow_offset_y", 2)
 	$BattleUI.add_child(lbl)
+	
 	var t := create_tween()
 	t.set_parallel(true)
-	t.tween_property(lbl, "position:y", pos.y - 80, 1.0)
-	t.tween_property(lbl, "modulate:a", 0.0,        1.0)
+	# HSR style damage pop
+	t.tween_property(lbl, "scale", Vector2(1.2, 1.2), 0.1).set_trans(Tween.TRANS_BOUNCE)
+	t.tween_property(lbl, "position:y", pos.y - 80, 1.0).set_ease(Tween.EASE_OUT)
+	
+	var fade_tween = create_tween()
+	fade_tween.tween_interval(0.6)
+	fade_tween.tween_property(lbl, "modulate:a", 0.0, 0.4)
+	
 	await t.finished
 	if is_instance_valid(lbl): lbl.queue_free()
 
@@ -1284,15 +1342,15 @@ func _show_turn_damage(amount: int) -> void:
 	var lbl := Label.new()
 	lbl.name = "TurnDmgLabel"
 	lbl.text = "%d DMG" % amount
-	lbl.add_theme_font_size_override("font_size", 36)
+	lbl.add_theme_font_size_override("font_size", 42)
 	lbl.add_theme_color_override("font_color",        Color(1.0, 0.95, 0.3))
 	lbl.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.8))
-	lbl.add_theme_constant_override("shadow_offset_x", 2)
-	lbl.add_theme_constant_override("shadow_offset_y", 2)
+	lbl.add_theme_constant_override("shadow_offset_x", 3)
+	lbl.add_theme_constant_override("shadow_offset_y", 3)
 	lbl.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
-	lbl.offset_left              = -200.0
+	lbl.offset_left              = -250.0
 	lbl.offset_top               = 60.0
-	lbl.offset_right             = -10.0
+	lbl.offset_right             = -30.0
 	lbl.offset_bottom            = 110.0
 	lbl.horizontal_alignment     = HORIZONTAL_ALIGNMENT_RIGHT
 	$BattleUI.add_child(lbl)
@@ -1313,22 +1371,22 @@ func show_feedback_popup(damage: int, quality: Dictionary) -> void:
 
 	var popup := PanelContainer.new()
 	popup.name = "FeedbackPopup"
-	var s := _make_rounded_stylebox(Color(0.05, 0.05, 0.08, 0.92), 12)
+	var s := _make_rounded_stylebox(Color(0.08, 0.1, 0.15, 0.95), 16)
 	s.border_width_left   = 2; s.border_width_right  = 2
 	s.border_width_top    = 2; s.border_width_bottom = 2
-	s.border_color        = Color(0.4, 0.4, 0.6)
+	s.border_color        = Color(0.4, 0.5, 0.7, 0.8)
 	s.shadow_color        = Color(0, 0, 0, 0.5)
-	s.shadow_size         = 6
+	s.shadow_size         = 10
 	popup.add_theme_stylebox_override("panel", s)
 	popup.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
-	popup.size = Vector2(280, 0)
+	popup.size = Vector2(300, 0)
 
 	var vbox := VBoxContainer.new()
-	vbox.add_theme_constant_override("separation", 6)
+	vbox.add_theme_constant_override("separation", 8)
 
 	for cfg in [
-		{"text": "⚔  Attack Result", "size": 16, "color": Color.WHITE},
-		{"text": "%d DMG" % damage,   "size": 28, "color": Color(1.0, 0.95, 0.3)},
+		{"text": "⚔  Attack Result", "size": 18, "color": Color.WHITE},
+		{"text": "%d DMG" % damage,   "size": 32, "color": Color(1.0, 0.95, 0.3)},
 	]:
 		var lbl := Label.new()
 		lbl.text                 = cfg.text
@@ -1342,7 +1400,7 @@ func show_feedback_popup(damage: int, quality: Dictionary) -> void:
 		var lbl := Label.new()
 		lbl.text                 = line.text
 		lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		lbl.add_theme_font_size_override("font_size", 13)
+		lbl.add_theme_font_size_override("font_size", 14)
 		lbl.add_theme_color_override("font_color", line.color)
 		vbox.add_child(lbl)
 	vbox.add_child(HSeparator.new())
@@ -1350,11 +1408,14 @@ func show_feedback_popup(damage: int, quality: Dictionary) -> void:
 	var ml := Label.new()
 	ml.text                 = "Sentence quality: %d%%" % int(quality.total_multiplier * 100)
 	ml.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	ml.add_theme_font_size_override("font_size", 12)
+	ml.add_theme_font_size_override("font_size", 13)
 	ml.add_theme_color_override("font_color", Color(0.7, 0.7, 0.9))
 	vbox.add_child(ml)
 	popup.add_child(vbox)
+	
+	popup.scale = Vector2(0.8, 0.8)
 	$BattleUI.add_child(popup)
+	create_tween().tween_property(popup, "scale", Vector2.ONE, 0.2).set_trans(Tween.TRANS_BACK)
 
 	await get_tree().create_timer(2.0).timeout
 	if not is_instance_valid(popup): return
@@ -1389,6 +1450,14 @@ func enemy_turn(entry: Dictionary) -> void:
 		character_hp[target_idx] = max(0.0, character_hp[target_idx] - float(raw_dmg))
 		_give_energy_hit_taken(cd)
 		_show_floating_text(str(raw_dmg), Color(1.0, 0.3, 0.3), _ally_screen_pos(target_idx))
+		
+		# Screen shake on player hit
+		if camera:
+			var shake = create_tween()
+			var og_pos = camera.position
+			shake.tween_property(camera, "position", og_pos + Vector3(0.1, 0.1, 0), 0.05)
+			shake.tween_property(camera, "position", og_pos - Vector3(0.1, 0.1, 0), 0.05)
+			shake.tween_property(camera, "position", og_pos, 0.05)
 
 	_update_portrait_hp(target_idx)
 
@@ -1430,7 +1499,28 @@ func check_battle_end() -> void:
 #  Turn order UI
 # ═══════════════════════════════════════════════════════
 func update_turn_order_ui() -> void:
-	for child in turn_order_ui.get_children(): child.queue_free()
+	for child in turn_order_ui.get_children(): 
+		child.queue_free()
+	
+	var panel = PanelContainer.new()
+	var ps = _make_rounded_stylebox(Color(0.12, 0.13, 0.18, 0.85), 8)
+	ps.border_width_left = 1; ps.border_width_right = 1
+	ps.border_width_top = 1; ps.border_width_bottom = 1
+	ps.border_color = Color(0.3, 0.35, 0.5, 0.5)
+	ps.content_margin_left = 12; ps.content_margin_right = 12
+	ps.content_margin_top = 8; ps.content_margin_bottom = 8
+	panel.add_theme_stylebox_override("panel", ps)
+	
+	var vbox = VBoxContainer.new()
+	panel.add_child(vbox)
+	
+	var title = Label.new()
+	title.text = "TURN ORDER"
+	title.add_theme_font_size_override("font_size", 12)
+	title.add_theme_color_override("font_color", Color(0.6, 0.65, 0.75))
+	vbox.add_child(title)
+	vbox.add_child(HSeparator.new())
+	
 	for i in range(min(5, turn_queue.size())):
 		var idx  := (current_turn_index + i) % turn_queue.size()
 		var turn: Dictionary = turn_queue[idx]
@@ -1441,9 +1531,12 @@ func update_turn_order_ui() -> void:
 		lbl.add_theme_constant_override("shadow_offset_x", 1)
 		lbl.add_theme_constant_override("shadow_offset_y", 1)
 		if i == 0:
-			lbl.add_theme_color_override("font_color", Color.YELLOW)
-		turn_order_ui.add_child(lbl)
-
+			lbl.add_theme_color_override("font_color", Color(0.85, 0.75, 0.45)) # HSR Gold
+			
+		# FIX: Only add to the vbox, not to both!
+		vbox.add_child(lbl)
+		
+	turn_order_ui.add_child(panel)
 # ═══════════════════════════════════════════════════════
 #  SP display
 # ═══════════════════════════════════════════════════════
@@ -1452,12 +1545,12 @@ func _update_sp_display() -> void:
 	for i in range(max_sp):
 		var star := Label.new()
 		star.text = "★" if i < current_sp else "☆"
-		star.add_theme_font_size_override("font_size", 24)
+		star.add_theme_font_size_override("font_size", 28)
 		star.add_theme_color_override("font_color",
-			Color(1.0, 0.85, 0.2) if i < current_sp else Color(0.4, 0.4, 0.4))
+			Color(0.85, 0.75, 0.45) if i < current_sp else Color(0.4, 0.4, 0.4))
 		star.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.8))
-		star.add_theme_constant_override("shadow_offset_x", 1)
-		star.add_theme_constant_override("shadow_offset_y", 1)
+		star.add_theme_constant_override("shadow_offset_x", 2)
+		star.add_theme_constant_override("shadow_offset_y", 2)
 		if not sp_stars is BoxContainer:
 			star.position = Vector2(i * 22, 0)
 		sp_stars.add_child(star)
@@ -1504,7 +1597,6 @@ func _spawn_enemy_sprite(idx: int) -> void:
 	if data.sprite_frames:
 		sprite.sprite_frames = data.sprite_frames
 	else:
-		# Fallback: red square so any missing sprites are obvious
 		var img := Image.create(64, 64, false, Image.FORMAT_RGBA8)
 		img.fill(Color(0.8, 0.2, 0.2))
 		var frames := SpriteFrames.new()

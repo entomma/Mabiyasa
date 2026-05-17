@@ -9,39 +9,38 @@ signal card_selected(card_data: WordCard)
 		if is_node_ready():
 			update_display()
 
-# Don't use @onready with direct paths - use find_child instead
-var background: TextureRect
-var art_texture: TextureRect
-var kapampangan_label: Label
-var english_label: Label
-var example_label: Label
-var type_label: Label
-var button: Button
+# ═══════════════════════════════════════════════════════
+#  UI References
+# ═══════════════════════════════════════════════════════
+@onready var bg_panel = $CardBg
+@onready var active_outline = $ActiveOutline
+@onready var type_panel = $CardBg/Margin/VBox/Header/TypePanel
+@onready var type_label = $CardBg/Margin/VBox/Header/TypePanel/Margin/TypeLabel
+@onready var art_texture = $CardBg/Margin/VBox/ArtTexture
+@onready var kapampangan_label = $CardBg/Margin/VBox/Titles/KapampanganLabel
+@onready var english_label = $CardBg/Margin/VBox/Titles/EnglishLabel
+@onready var example_label = $CardBg/Margin/VBox/ExampleLabel
+@onready var click_btn = $ClickButton
+
+var is_selected := false
+
+# Matches the colors used in your Battle.gd UI
+const TYPE_COLORS = {
+	"Action": Color(0.85, 0.35, 0.28),
+	"Noun": Color(0.20, 0.50, 0.85),
+	"Number": Color(0.20, 0.75, 0.40),
+	"Adjective": Color(0.75, 0.50, 0.85),
+	"Pronoun": Color(0.90, 0.60, 0.10)
+}
 
 func _ready():
-	# Find nodes by name (works even if they're nested)
-	background = find_child("Background", true, false)
-	art_texture = find_child("ArtTexture", true, false)
-	kapampangan_label = find_child("KapampanganLabel", true, false)
-	english_label = find_child("EnglishLabel", true, false)
-	example_label = find_child("ExampleLabel", true, false)
-	type_label = find_child("TypeLabel", true, false)
-	button = find_child("Button", true, false)
+	# Connect interaction signals
+	click_btn.pressed.connect(_on_button_pressed)
+	click_btn.mouse_entered.connect(_on_hover.bind(true))
+	click_btn.mouse_exited.connect(_on_hover.bind(false))
 	
-	# Debug: print what we found
-	print("Card nodes found:")
-	print("  Background: ", background)
-	print("  ArtTexture: ", art_texture)
-	print("  KapampanganLabel: ", kapampangan_label)
-	print("  EnglishLabel: ", english_label)
-	print("  ExampleLabel: ", example_label)
-	print("  TypeLabel: ", type_label)
-	print("  Button: ", button)
-	
-	if button:
-		button.pressed.connect(_on_button_pressed)
-		button.flat = true
-		button.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	# Hide the glow outline by default
+	active_outline.modulate.a = 0.0
 	
 	update_display()
 
@@ -49,39 +48,60 @@ func update_display():
 	if not card_data:
 		return
 	
-	# Safety checks for missing nodes
-	if not background:
-		print("ERROR: Background node not found")
-		return
+	# 1. Update Text
+	kapampangan_label.text = card_data.kapampangan_text
+	english_label.text = card_data.english_hint
+	type_label.text = card_data.card_type.to_upper()
 	
-	var bg_path = ""
-	match card_data.card_type:
-		"Noun":
-			bg_path = "res://assets/cards/noun_bg.png"
-		"Action":
-			bg_path = "res://assets/cards/verb_bg.png"
-		"Adjective":
-			bg_path = "res://assets/cards/adjective_bg.png"
-		_:
-			bg_path = "res://assets/cards/default_bg.png"
+	# If your WordCard resource has an example variable, you can assign it here:
+	# example_label.text = '\"' + card_data.example_sentence + '\"'
+	example_label.text = "" # Default to empty if none exists
 	
-	if ResourceLoader.exists(bg_path):
-		background.texture = load(bg_path)
-	
-	if art_texture and card_data.texture:
+	# 2. Update Art
+	if "texture" in card_data and card_data.texture:
 		art_texture.texture = card_data.texture
+	else:
+		art_texture.texture = null
+		
+	# 3. Dynamic Coloring based on Card Type
+	var type_color = TYPE_COLORS.get(card_data.card_type, Color(0.5, 0.5, 0.5))
 	
-	if kapampangan_label:
-		kapampangan_label.text = card_data.kapampangan_text
-	if english_label:
-		english_label.text = card_data.english_hint
-	if example_label:
-		example_label.text = card_data.example_sentence
-	if type_label:
-		type_label.text = card_data.card_type
+	# Color the top-right Pill shape
+	var pill_style = type_panel.get_theme_stylebox("panel").duplicate()
+	pill_style.bg_color = type_color
+	type_panel.add_theme_stylebox_override("panel", pill_style)
+	
+	# Color the Selection Glow
+	var outline_style = active_outline.get_theme_stylebox("panel").duplicate()
+	outline_style.border_color = type_color.lightened(0.3)
+	outline_style.shadow_color = type_color
+	active_outline.add_theme_stylebox_override("panel", outline_style)
+
+# ═══════════════════════════════════════════════════════
+#  Animations & Interactions
+# ═══════════════════════════════════════════════════════
+func _on_hover(is_hovered: bool):
+	if is_selected:
+		return # Don't shrink if it's currently selected in the sentence
+		
+	var t = create_tween().set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	if is_hovered:
+		t.tween_property(self, "scale", Vector2(1.05, 1.05), 0.15)
+	else:
+		t.tween_property(self, "scale", Vector2(1.0, 1.0), 0.15)
+
+func set_highlight(active: bool):
+	is_selected = active
+	var t = create_tween().set_parallel(true).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	
+	if active:
+		# Pop up and turn on the colored glow
+		t.tween_property(self, "scale", Vector2(1.08, 1.08), 0.2)
+		t.tween_property(active_outline, "modulate:a", 1.0, 0.15)
+	else:
+		# Return to normal
+		t.tween_property(self, "scale", Vector2(1.0, 1.0), 0.2)
+		t.tween_property(active_outline, "modulate:a", 0.0, 0.15)
 
 func _on_button_pressed():
 	card_selected.emit(card_data)
-
-func set_highlight(enabled: bool):
-	modulate = Color(1.2, 1.2, 0.8) if enabled else Color(1, 1, 1)
