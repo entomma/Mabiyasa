@@ -5,7 +5,7 @@ class_name EnemyData
 @export var enemy_id: int
 @export var enemy_name: String
 @export var english_name: String
-@export var sprite: Texture2D
+@export var sprite_frames: SpriteFrames
 
 # Level
 @export var current_level: int = 1

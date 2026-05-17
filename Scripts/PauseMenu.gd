@@ -11,7 +11,7 @@ func _ready():
 	resume_btn.pressed.connect(_on_resume_pressed)
 	party_btn.pressed.connect(_on_party_pressed)
 	quit_btn.pressed.connect(_on_quit_pressed)
-	wish_btn.pressed.connect(_on_wish_pressed)
+	wish_btn.pressed.connect(_on_wish_pressed, CONNECT_ONE_SHOT)
 	get_tree().paused = true
 
 func _input(event):

@@ -1,453 +1,428 @@
 extends Node
-# ─────────────────────────────────────────────
-#  GachaManager — autoload singleton
-#  Handles pull logic, pity, rates, DB sync
-# ─────────────────────────────────────────────
+# ═════════════════════════════════════════════════════════════════════════════
+#  GachaManager.gd  —  autoload singleton
+#
+#  Key improvements:
+#   • Local collection cache  → zero read-before-write HTTP calls
+#   • randi() % pool.size()   → pools never mutated by shuffle()
+#   • Typed pulls return GachaResultData, not raw Dicts
+#   • Full duplicate resolution: constellation / refinement / overflow
+#   • Single reusable _http_* layer — HTTPRequest nodes always freed
+#   • INSTANT SYNC: Updates GameManager memory on pull for real-time UI
+# ═════════════════════════════════════════════════════════════════════════════
 
-# ── Rates ─────────────────────────────────────
-const BASE_RATE_5STAR    = 0.020   # 2%
-const BASE_RATE_4STAR    = 0.130   # 13% (top up to guarantee every 10)
-const SOFT_PITY_START    = 65      # rate starts climbing here
-const HARD_PITY_5STAR    = 80      # guaranteed 5-star
-const HARD_PITY_4STAR    = 10      # guaranteed 4-star every 10
+# ── Gacha rates ──────────────────────────────────────────────────────────────
+const BASE_RATE_5STAR  := 0.020
+const BASE_RATE_4STAR  := 0.130
+const SOFT_PITY_START  := 65
+const HARD_PITY_5STAR  := 80
+const HARD_PITY_4STAR  := 10
 
-# ── Pool paths ────────────────────────────────
-const CHAR_POOL_PATH     = "res://Resources/Characters/"
-const CARD_POOL_PATH     = "res://Resources/GachaCards/"
+# ── Duplicate caps ───────────────────────────────────────────────────────────
+const MAX_CONSTELLATION := 6
+const MAX_REFINEMENT    := 5
+const SHARD_ON_C6_DUPE  := 5   ## Stella Fortuna shards given at C6 overflow
+const PULLS_ON_R5_DUPE  := 1   ## Pull refund on R5 overflow
 
-# ── State (loaded from player_profile) ────────
-var pity_count:           int  = 0
-var pity_count_4star:     int  = 0
-var guaranteed_featured:  bool = false
+# ── Resource paths ───────────────────────────────────────────────────────────
+const CHAR_POOL_PATH := "res://Resources/Characters/"
+const CARD_POOL_PATH := "res://Resources/GachaCards/"
 
-# ── Cached pools ──────────────────────────────
+# ── Preload result type ───────────────────────────────────────────────────────
+const GachaResultData := preload("res://Scripts/GachaResultData.gd")
+
+# ── Pity state (synced to DB after every batch) ──────────────────────────────
+var pity_count:          int  = 0
+var pity_count_4star:    int  = 0
+var guaranteed_featured: bool = false
+
+# ── Local collection cache (loaded once on login, written-to on pull) ─────────
+#    Avoids read-before-write on every duplicate check.
+var _owned_characters: Dictionary = {}  ## { character_id(int): constellation(int) }
+var _owned_cards:      Dictionary = {}  ## { card_item_id(int): stack_count(int)   }
+
+# ── Immutable pull pools (never shuffled) ────────────────────────────────────
 var _char_pool_5star: Array = []
 var _char_pool_4star: Array = []
-var _card_pool_3star: Array = []
-var _card_pool_4star: Array = []
 var _card_pool_5star: Array = []
+var _card_pool_4star: Array = []
+var _card_pool_3star: Array = []
 
-signal pull_complete(results: Array)   # Array of pull result Dicts
+signal pull_complete(results: Array)    ## Array[GachaResultData]
 
-func _ready():
+# ═════════════════════════════════════════════════════════════════════════════
+func _ready() -> void:
 	_build_pools()
 
-# ─────────────────────────────────────────────
-#  Pool builder
-# ─────────────────────────────────────────────
-func _build_pools():
-	_char_pool_5star.clear()
-	_char_pool_4star.clear()
-	_card_pool_3star.clear()
-	_card_pool_4star.clear()
-	_card_pool_5star.clear()
+# ═════════════════════════════════════════════════════════════════════════════
+#  POOL BUILDER
+# ═════════════════════════════════════════════════════════════════════════════
+func _build_pools() -> void:
+	_char_pool_5star.clear(); _char_pool_4star.clear()
+	_card_pool_5star.clear(); _card_pool_4star.clear(); _card_pool_3star.clear()
 
-	# Characters
-	var dir = DirAccess.open(CHAR_POOL_PATH)
+	var dir := DirAccess.open(CHAR_POOL_PATH)
 	if dir:
 		for f in dir.get_files():
 			if not f.ends_with(".tres"): continue
-			var res = load(CHAR_POOL_PATH + f)
+			var res := load(CHAR_POOL_PATH + f)
 			if res is CharacterData:
-				if res.star_rating == 5:
-					_char_pool_5star.append(res)
-				elif res.star_rating == 4:
-					_char_pool_4star.append(res)
+				match res.star_rating:
+					5: _char_pool_5star.append(res)
+					4: _char_pool_4star.append(res)
 
-	# Gacha cards
 	if DirAccess.dir_exists_absolute(CARD_POOL_PATH):
-		var card_dir = DirAccess.open(CARD_POOL_PATH)
-		if card_dir:
-			for f in card_dir.get_files():
+		var cdir := DirAccess.open(CARD_POOL_PATH)
+		if cdir:
+			for f in cdir.get_files():
 				if not f.ends_with(".tres"): continue
-				var res = load(CARD_POOL_PATH + f)
+				var res := load(CARD_POOL_PATH + f)
 				if res is GachaCard:
 					match res.star_rating:
 						5: _card_pool_5star.append(res)
 						4: _card_pool_4star.append(res)
 						_: _card_pool_3star.append(res)
 
-	print("GachaManager pools — 5★ chars:", _char_pool_5star.size(),
-		" 4★ chars:", _char_pool_4star.size(),
-		" 5★ cards:", _card_pool_5star.size(),
-		" 4★ cards:", _card_pool_4star.size(),
-		" 3★ cards:", _card_pool_3star.size())
+	print("GachaManager pools | 5★chr:%d  4★chr:%d  5★card:%d  4★card:%d  3★card:%d" % [
+		_char_pool_5star.size(), _char_pool_4star.size(),
+		_card_pool_5star.size(), _card_pool_4star.size(), _card_pool_3star.size()])
 
-# ─────────────────────────────────────────────
-#  Load pity from profile
-# ─────────────────────────────────────────────
-func load_pity_from_profile():
-	var p = GameManager.player_profile
+# ═════════════════════════════════════════════════════════════════════════════
+#  INITIALISATION  (call once after login)
+# ═════════════════════════════════════════════════════════════════════════════
+func load_pity_from_profile() -> void:
+	# Note the explicit : Dictionary typing here to prevent parser errors
+	var p: Dictionary = GameManager.player_profile 
+	
 	pity_count          = int(p.get("pity_count", 0))
 	pity_count_4star    = int(p.get("pity_count_4star", 0))
 	guaranteed_featured = bool(p.get("guaranteed_featured", false))
-	print("Pity loaded — 5★:", pity_count, " 4★:", pity_count_4star,
-		" guaranteed:", guaranteed_featured)
+	await _load_collection_cache()
+	print("GachaManager ready | 5★pity:%d  4★pity:%d  guaranteed:%s" % [
+		pity_count, pity_count_4star, guaranteed_featured])
 
-# ─────────────────────────────────────────────
-#  Pull entry points
-# ─────────────────────────────────────────────
-func do_single_pull() -> Array:
+func _load_collection_cache() -> void:
+	var uid := int(GameManager.player_profile.get("uid", 0))
+	if uid == 0: return
+
+	# Characters
+	var cr := await _http_get(
+		"/rest/v1/player_characters?uid=eq.%d&select=character_id,constellation" % uid)
+	if cr.ok:
+		var arr = JSON.parse_string(cr.body)
+		if arr is Array:
+			for row in arr:
+				_owned_characters[int(row.get("character_id", 0))] = int(row.get("constellation", 0))
+
+	# Cards
+	var ca := await _http_get(
+		"/rest/v1/player_cards_owned?uid=eq.%d&select=card_item_id,stack_count" % uid)
+	if ca.ok:
+		var arr = JSON.parse_string(ca.body)
+		if arr is Array:
+			for row in arr:
+				_owned_cards[int(row.get("card_item_id", 0))] = int(row.get("stack_count", 1))
+
+	print("Collection cache loaded | chars:%d  cards:%d" % [
+		_owned_characters.size(), _owned_cards.size()])
+
+# ═════════════════════════════════════════════════════════════════════════════
+#  PUBLIC PULL API
+# ═════════════════════════════════════════════════════════════════════════════
+func do_single_pull_typed() -> Array:
 	return await _execute_pulls(1)
 
-func do_ten_pull() -> Array:
+func do_ten_pull_typed() -> Array:
 	return await _execute_pulls(10)
 
+func do_single_pull() -> Array: return await do_single_pull_typed()
+func do_ten_pull()   -> Array:  return await do_ten_pull_typed()
+
+func can_pull(count: int) -> bool:
+	return int(GameManager.player_profile.get("pulls", 0)) >= count
+
+func deduct_pulls(count: int) -> void:
+	var new_val := maxi(0, int(GameManager.player_profile.get("pulls", 0)) - count)
+	GameManager.player_profile["pulls"] = new_val
+	var uid := int(GameManager.player_profile.get("uid", 0))
+	if uid == 0: return
+	await _http_patch("/rest/v1/player_profile?uid=eq.%d" % uid, {"pulls": new_val})
+
+# ═════════════════════════════════════════════════════════════════════════════
+#  PULL EXECUTION
+# ═════════════════════════════════════════════════════════════════════════════
 func _execute_pulls(count: int) -> Array:
 	var results: Array = []
-	for i in range(count):
-		results.append(await _single_pull())
+	for _i in count:
+		var raw  := _roll_rarity()
+		var item := _pick_item(raw)
+		var resolved: GachaResultData = await _resolve_duplicate(item)
+		results.append(resolved)
 	await _save_pity_to_db()
-	emit_signal("pull_complete", results)
+	pull_complete.emit(results)
 	return results
 
-# ─────────────────────────────────────────────
-#  Core single pull logic
-# ─────────────────────────────────────────────
-func _single_pull() -> Dictionary:
-	pity_count        += 1
-	pity_count_4star  += 1
+# ─── Step 1: roll rarity ─────────────────────────────────────────────────────
+func _roll_rarity() -> int:
+	pity_count       += 1
+	pity_count_4star += 1
 
-	# ── Hard pity ──────────────────────────────
-	if pity_count >= HARD_PITY_5STAR:
-		return await _give_5star()
+	if pity_count       >= HARD_PITY_5STAR: return 5
+	if pity_count_4star >= HARD_PITY_4STAR: return 4
 
-	if pity_count_4star >= HARD_PITY_4STAR:
-		return await _give_4star()
-
-	# ── Soft pity ──────────────────────────────
-	var rate_5 = BASE_RATE_5STAR
+	var rate5 := BASE_RATE_5STAR
 	if pity_count >= SOFT_PITY_START:
-		# +6% per pull after soft pity start
-		rate_5 += 0.06 * (pity_count - SOFT_PITY_START + 1)
-		rate_5  = min(rate_5, 1.0)
+		rate5 = minf(rate5 + 0.06 * float(pity_count - SOFT_PITY_START + 1), 1.0)
 
-	var roll = randf()
-	if roll < rate_5:
-		return await _give_5star()
-	elif roll < rate_5 + BASE_RATE_4STAR:
-		return await _give_4star()
-	else:
-		return await _give_3star()
+	var roll := randf()
+	if roll < rate5:                   return 5
+	if roll < rate5 + BASE_RATE_4STAR: return 4
+	return 3
 
-# ─────────────────────────────────────────────
-#  Rarity resolvers
-# ─────────────────────────────────────────────
-func _give_5star() -> Dictionary:
+# ─── Step 2: pick item from pool (no pool mutation) ──────────────────────────
+func _pick_item(rarity: int) -> Dictionary:
+	match rarity:
+		5: return _pick_5star()
+		4: return _pick_4star()
+		_: return _pick_3star()
+
+func _pick_5star() -> Dictionary:
 	pity_count       = 0
 	pity_count_4star = 0
 
-	# 50/50 system
-	var is_featured = guaranteed_featured or (randf() < 0.5)
-	guaranteed_featured = not is_featured   # lost 50/50 → guarantee next
+	var is_featured := guaranteed_featured or (randf() < 0.5)
+	guaranteed_featured = not is_featured   # lost 50/50 → bank the guarantee
 
-	# Pick character (50/50 between featured or random standard)
-	var char_data: CharacterData = null
-	if is_featured and _char_pool_5star.size() > 0:
-		# Featured = first 5-star in pool (expand later per banner)
-		char_data = _char_pool_5star[0]
-	elif _char_pool_5star.size() > 0:
-		_char_pool_5star.shuffle()
-		char_data = _char_pool_5star[0]
+	if _char_pool_5star.is_empty():
+		return _pick_5star_card()
 
-	if char_data == null:
-		# Fallback to 5-star card
-		return await _give_5star_card()
+	var char_data: CharacterData = \
+		_char_pool_5star[0] if is_featured \
+		else _char_pool_5star[randi() % _char_pool_5star.size()]
 
-	var success = await _add_character_to_db(char_data)
-	if not success:
-		print("ERROR: Failed to add 5-star character to database!")
-	
-	return {
-		"type":      "character",
-		"rarity":    5,
-		"data":      char_data,
-		"is_new":    true,
-		"is_featured": is_featured,
-		"success":   success
-	}
+	return {"rarity": 5, "data": char_data, "is_featured": is_featured}
 
-func _give_5star_card() -> Dictionary:
+func _pick_5star_card() -> Dictionary:
 	if _card_pool_5star.is_empty():
-		return await _give_4star()
-	
-	_card_pool_5star.shuffle()
-	var card: GachaCard = _card_pool_5star[0]
-	var success = await _add_card_to_db(card)
-	
+		return _pick_4star()
 	return {
-		"type":   "card",
-		"rarity": 5,
-		"data":   card,
-		"is_new": true,
-		"success": success
+		"rarity":      5,
+		"data":        _card_pool_5star[randi() % _card_pool_5star.size()],
+		"is_featured": false,
 	}
 
-func _give_4star() -> Dictionary:
+func _pick_4star() -> Dictionary:
 	pity_count_4star = 0
-
-	# Mix of 4-star chars and 4-star cards
 	var pool: Array = []
 	pool.append_array(_char_pool_4star)
 	pool.append_array(_card_pool_4star)
+	if pool.is_empty(): return _pick_3star()
+	return {
+		"rarity":      4,
+		"data":        pool[randi() % pool.size()],
+		"is_featured": false,
+	}
 
-	if pool.is_empty():
-		return await _give_3star()
+func _pick_3star() -> Dictionary:
+	return {
+		"rarity":      3,
+		"data":        _card_pool_3star[randi() % _card_pool_3star.size()] \
+					   if not _card_pool_3star.is_empty() else null,
+		"is_featured": false,
+	}
 
-	pool.shuffle()
-	var item = pool[0]
+# ═════════════════════════════════════════════════════════════════════════════
+#  DUPLICATE RESOLUTION  (local cache → single DB write, no read)
+# ═════════════════════════════════════════════════════════════════════════════
+func _resolve_duplicate(raw: Dictionary) -> GachaResultData:
+	var r          := GachaResultData.new()
+	r.rarity       = raw.get("rarity", 3)
+	r.data         = raw.get("data")
+	r.is_featured  = raw.get("is_featured", false)
 
-	if item is CharacterData:
-		var success = await _add_character_to_db(item)
-		return {"type": "character", "rarity": 4, "data": item, "is_new": true, "success": success}
+	if r.data is CharacterData:
+		await _resolve_character(r)
+	elif r.data is GachaCard:
+		await _resolve_card(r)
 	else:
-		var success = await _add_card_to_db(item)
-		return {"type": "card", "rarity": 4, "data": item, "is_new": true, "success": success}
+		r.is_new = true
 
-func _give_3star() -> Dictionary:
-	if _card_pool_3star.is_empty():
-		# Fallback — make a dummy result
-		return {"type": "card", "rarity": 3, "data": null, "is_new": false, "success": false}
+	return r
 
-	_card_pool_3star.shuffle()
-	var card: GachaCard = _card_pool_3star[0]
-	var success = await _add_card_to_db(card)
-	return {"type": "card", "rarity": 3, "data": card, "is_new": true, "success": success}
+func _resolve_character(r: GachaResultData) -> void:
+	var cid: int = r.data.character_id
 
-# ─────────────────────────────────────────────
-#  Database writes - FIXED VERSIONS
-# ─────────────────────────────────────────────
-func _add_character_to_db(char_data: CharacterData) -> bool:
-	var uid = GameManager.player_profile.get("uid", 0)
-	if uid == 0:
-		print("ERROR: No UID found in player profile!")
-		return false
+	if cid not in _owned_characters:
+		# ── Brand new ──────────────────────────────────────────────────────
+		r.is_new              = true
+		r.duplicate_outcome   = GachaResultData.DuplicateOutcome.NONE
+		r.constellation_level = 0
+		_owned_characters[cid] = 0
+		await _db_insert_character(r.data)
+	else:
+		var c: int = _owned_characters[cid]
+		if c < MAX_CONSTELLATION:
+			# ── Constellation up ───────────────────────────────────────────
+			c += 1
+			_owned_characters[cid] = c
+			r.duplicate_outcome    = GachaResultData.DuplicateOutcome.CONSTELLATION
+			r.constellation_level  = c
+			
+			# INSTANT LOCAL SYNC: Update GameManager's constellation data
+			if "player_characters" in GameManager:
+				for char_dict in GameManager.player_characters:
+					if char_dict.get("character_id") == cid:
+						char_dict["constellation"] = c
+						break
+				if GameManager.has_signal("characters_updated"):
+					GameManager.emit_signal("characters_updated")
+
+			await _db_patch("/rest/v1/player_characters?uid=eq.%d&character_id=eq.%d" % [
+				int(GameManager.player_profile.get("uid", 0)), cid],
+				{"constellation": c})
+		else:
+			# ── C6 overflow → Stella Fortuna shards ────────────────────────
+			r.duplicate_outcome   = GachaResultData.DuplicateOutcome.CONSTELLATION_MAX
+			r.constellation_level = MAX_CONSTELLATION
+			r.bonus_currency      = SHARD_ON_C6_DUPE
+			await _add_currency("stella_shards", SHARD_ON_C6_DUPE)
+
+func _resolve_card(r: GachaResultData) -> void:
+	var cid: int = r.data.card_item_id
+
+	if cid not in _owned_cards:
+		r.is_new            = true
+		r.duplicate_outcome = GachaResultData.DuplicateOutcome.NONE
+		r.refinement_rank   = 1
+		_owned_cards[cid]  = 1
+		await _db_insert_card(r.data)
+	else:
+		var s: int = _owned_cards[cid]
+		if s < MAX_REFINEMENT:
+			s += 1
+			_owned_cards[cid]   = s
+			r.duplicate_outcome = GachaResultData.DuplicateOutcome.REFINEMENT
+			r.refinement_rank   = s
+			await _db_patch("/rest/v1/player_cards_owned?uid=eq.%d&card_item_id=eq.%d" % [
+				int(GameManager.player_profile.get("uid", 0)), cid],
+				{"stack_count": s})
+		else:
+			r.duplicate_outcome = GachaResultData.DuplicateOutcome.REFINEMENT_MAX
+			r.refinement_rank   = MAX_REFINEMENT
+			r.bonus_currency    = PULLS_ON_R5_DUPE
+			await _add_currency("pulls", PULLS_ON_R5_DUPE)
+
+# ═════════════════════════════════════════════════════════════════════════════
+#  DB WRITE HELPERS
+# ═════════════════════════════════════════════════════════════════════════════
+func _db_insert_character(data: CharacterData) -> void:
+	var uid := int(GameManager.player_profile.get("uid", 0))
 	
-	if char_data == null:
-		print("ERROR: Character data is null!")
-		return false
-	
-	print("Adding character to DB: ", char_data.character_name, " (ID: ", char_data.character_id, ") for UID: ", uid)
-	
-	var http = HTTPRequest.new()
-	SupabaseManager.add_child(http)
-	
-	var headers = [
-		"Content-Type: application/json",
-		"apikey: " + SupabaseManager.SUPABASE_ANON_KEY,
-		"Authorization: Bearer " + SupabaseManager.auth_token
-	]
-	
-	var body = JSON.stringify({
-		"uid":           int(uid),
-		"character_id":  char_data.character_id,
+	# 1. Prepare the exact data structure
+	var new_char_data = {
+		"uid":           uid,
+		"character_id":  data.character_id,
 		"current_level": 1,
 		"current_exp":   0,
 		"basic_level":   1,
 		"skill_level":   1,
 		"ult_level":     1,
-		"talent_level":  1
+		"talent_level":  1,
+		"constellation": 0,
+	}
+	
+	# 2. INSTANT LOCAL SYNC: Add to GameManager immediately
+	if "player_characters" in GameManager:
+		GameManager.player_characters.append(new_char_data.duplicate())
+		if GameManager.has_signal("characters_updated"):
+			GameManager.emit_signal("characters_updated")
+
+	# 3. Send to Supabase
+	await _http_post("/rest/v1/player_characters", new_char_data)
+
+func _db_insert_card(data: GachaCard) -> void:
+	var uid := int(GameManager.player_profile.get("uid", 0))
+	await _http_post("/rest/v1/player_cards_owned", {
+		"uid":          uid,
+		"card_item_id": data.card_item_id,
+		"stack_count":  1,
 	})
-	
-	# Use POST with ignore-duplicates to avoid errors if already owned
-	var error = http.request(
-		SupabaseManager.SUPABASE_URL + "/rest/v1/player_characters",
-		headers + ["Prefer: resolution=ignore-duplicates"],
-		HTTPClient.METHOD_POST, 
-		body
-	)
-	
-	if error != OK:
-		print("ERROR: HTTP request failed to send!")
-		http.queue_free()
-		return false
-	
-	var response = await http.request_completed
-	http.queue_free()
-	
-	var response_code = response[1]
-	var response_body = response[3].get_string_from_utf8()
-	
-	if response_code >= 200 and response_code < 300:
-		print("SUCCESS: Character ", char_data.character_name, " added to DB!")
-		return true
-	else:
-		print("ERROR: Failed to add character. Code: ", response_code, " Body: ", response_body)
-		return false
 
-func _add_card_to_db(card: GachaCard) -> bool:
-	if card == null:
-		print("ERROR: Card data is null!")
-		return false
-	
-	var uid = GameManager.player_profile.get("uid", 0)
-	if uid == 0:
-		print("ERROR: No UID found in player profile!")
-		return false
-	
-	print("Adding card to DB: ", card.card_name, " (ID: ", card.card_item_id, ") for UID: ", uid)
-	
-	var http = HTTPRequest.new()
-	SupabaseManager.add_child(http)
-	
-	var headers = [
-		"Content-Type: application/json",
-		"apikey: " + SupabaseManager.SUPABASE_ANON_KEY,
-		"Authorization: Bearer " + SupabaseManager.auth_token
-	]
-	
-	# First, check if the card is already owned
-	var check_http = HTTPRequest.new()
-	SupabaseManager.add_child(check_http)
-	
-	var check_url = SupabaseManager.SUPABASE_URL + "/rest/v1/player_cards_owned?uid=eq." + str(int(uid)) + "&card_item_id=eq." + str(card.card_item_id)
-	var check_error = check_http.request(check_url, headers, HTTPClient.METHOD_GET, "")
-	
-	if check_error != OK:
-		print("ERROR: Check request failed to send!")
-		check_http.queue_free()
-		http.queue_free()
-		return false
-	
-	var check_response = await check_http.request_completed
-	check_http.queue_free()
-	
-	var check_response_code = check_response[1]
-	var check_body = check_response[3].get_string_from_utf8()
-	
-	if check_response_code >= 200 and check_response_code < 300:
-		var existing = JSON.parse_string(check_body)
-		
-		if existing is Array and existing.size() > 0:
-			# Card exists, increment stack count
-			var current_stack = existing[0].get("stack_count", 1)
-			var patch_http = HTTPRequest.new()
-			SupabaseManager.add_child(patch_http)
-			
-			var patch_url = SupabaseManager.SUPABASE_URL + "/rest/v1/player_cards_owned?uid=eq." + str(int(uid)) + "&card_item_id=eq." + str(card.card_item_id)
-			var patch_body = JSON.stringify({"stack_count": current_stack + 1})
-			
-			var patch_error = patch_http.request(patch_url, headers, HTTPClient.METHOD_PATCH, patch_body)
-			
-			if patch_error != OK:
-				print("ERROR: Patch request failed to send!")
-				patch_http.queue_free()
-				http.queue_free()
-				return false
-			
-			var patch_response = await patch_http.request_completed
-			patch_http.queue_free()
-			
-			var patch_code = patch_response[1]
-			if patch_code >= 200 and patch_code < 300:
-				print("SUCCESS: Card stack incremented for ", card.card_name, " (now ", current_stack + 1, ")")
-				return true
-			else:
-				print("ERROR: Failed to increment card stack. Code: ", patch_code)
-				return false
-		else:
-			# New card, insert it
-			var insert_body = JSON.stringify({
-				"uid":          int(uid),
-				"card_item_id": card.card_item_id,
-				"stack_count":  1
-			})
-			
-			var insert_error = http.request(
-				SupabaseManager.SUPABASE_URL + "/rest/v1/player_cards_owned",
-				headers,
-				HTTPClient.METHOD_POST,
-				insert_body
-			)
-			
-			if insert_error != OK:
-				print("ERROR: Insert request failed to send!")
-				http.queue_free()
-				return false
-			
-			var insert_response = await http.request_completed
-			http.queue_free()
-			
-			var insert_code = insert_response[1]
-			if insert_code >= 200 and insert_code < 300:
-				print("SUCCESS: New card added to DB: ", card.card_name)
-				return true
-			else:
-				var insert_body_text = insert_response[3].get_string_from_utf8()
-				print("ERROR: Failed to add new card. Code: ", insert_code, " Body: ", insert_body_text)
-				return false
-	else:
-		print("ERROR: Failed to check existing card. Code: ", check_response_code)
-		http.queue_free()
-		return false
-
-func _save_pity_to_db():
-	var uid = GameManager.player_profile.get("uid", 0)
-	if uid == 0:
-		print("ERROR: Cannot save pity - no UID found!")
-		return
-
-	var http = HTTPRequest.new()
-	SupabaseManager.add_child(http)
-	var headers = [
-		"Content-Type: application/json",
-		"apikey: " + SupabaseManager.SUPABASE_ANON_KEY,
-		"Authorization: Bearer " + SupabaseManager.auth_token
-	]
-	var body = JSON.stringify({
+func _save_pity_to_db() -> void:
+	var uid := int(GameManager.player_profile.get("uid", 0))
+	if uid == 0: return
+	await _db_patch("/rest/v1/player_profile?uid=eq.%d" % uid, {
 		"pity_count":          pity_count,
 		"pity_count_4star":    pity_count_4star,
-		"guaranteed_featured": guaranteed_featured
+		"guaranteed_featured": guaranteed_featured,
 	})
-	
-	var error = http.request(
-		SupabaseManager.SUPABASE_URL + "/rest/v1/player_profile?uid=eq." + str(int(uid)),
-		headers, 
-		HTTPClient.METHOD_PATCH, 
-		body
-	)
-	
-	if error != OK:
-		print("ERROR: Failed to send pity save request!")
-		http.queue_free()
-		return
-	
-	var r = await http.request_completed
-	http.queue_free()
-
-	# Update local profile cache
 	GameManager.player_profile["pity_count"]          = pity_count
 	GameManager.player_profile["pity_count_4star"]    = pity_count_4star
 	GameManager.player_profile["guaranteed_featured"] = guaranteed_featured
-	print("Pity saved — 5★:", pity_count, " 4★:", pity_count_4star)
 
-# ─────────────────────────────────────────────
-#  Cost deduction helper (called from GachaScene)
-# ─────────────────────────────────────────────
-func can_pull(count: int) -> bool:
-	return int(GameManager.player_profile.get("pulls", 0)) >= count
-
-func deduct_pulls(count: int):
-	var current = int(GameManager.player_profile.get("pulls", 0))
-	var new_val  = max(0, current - count)
-	GameManager.player_profile["pulls"] = new_val
-	# Persist immediately
-	_patch_pulls(new_val)
-
-func _patch_pulls(new_val: int):
-	var uid = GameManager.player_profile.get("uid", 0)
+func _add_currency(key: String, amount: int) -> void:
+	var new_val := int(GameManager.player_profile.get(key, 0)) + amount
+	GameManager.player_profile[key] = new_val
+	var uid := int(GameManager.player_profile.get("uid", 0))
 	if uid == 0: return
-	var http = HTTPRequest.new()
-	SupabaseManager.add_child(http)
-	var headers = [
+	await _db_patch("/rest/v1/player_profile?uid=eq.%d" % uid, {key: new_val})
+
+func _db_patch(endpoint: String, payload: Dictionary) -> void:
+	await _http_patch(endpoint, payload)
+
+# ═════════════════════════════════════════════════════════════════════════════
+#  HTTP UTILITY LAYER
+# ═════════════════════════════════════════════════════════════════════════════
+class HttpResult:
+	var ok:   bool   = false
+	var code: int    = 0
+	var body: String = ""
+
+func _make_headers(extra: Array = []) -> Array:
+	var h := [
 		"Content-Type: application/json",
-		"apikey: " + SupabaseManager.SUPABASE_ANON_KEY,
-		"Authorization: Bearer " + SupabaseManager.auth_token
+		"apikey: "        + SupabaseManager.SUPABASE_ANON_KEY,
+		"Authorization: Bearer " + SupabaseManager.auth_token,
 	]
-	http.request(
-		SupabaseManager.SUPABASE_URL
-		+ "/rest/v1/player_profile?uid=eq." + str(int(uid)),
-		headers, HTTPClient.METHOD_PATCH,
-		JSON.stringify({"pulls": new_val}))
-	await http.request_completed
+	h.append_array(extra)
+	return h
+
+func _http_get(endpoint: String) -> HttpResult:
+	return await _request(HTTPClient.METHOD_GET, endpoint, {})
+
+func _http_post(endpoint: String, payload: Dictionary,
+		extra_headers: Array = []) -> HttpResult:
+	return await _request(HTTPClient.METHOD_POST, endpoint, payload, extra_headers)
+
+func _http_patch(endpoint: String, payload: Dictionary) -> HttpResult:
+	return await _request(HTTPClient.METHOD_PATCH, endpoint, payload)
+
+func _request(method: int, endpoint: String, payload: Dictionary,
+		extra_headers: Array = []) -> HttpResult:
+	var result := HttpResult.new()
+	var http   := HTTPRequest.new()
+	SupabaseManager.add_child(http)
+
+	var err := http.request(
+		SupabaseManager.SUPABASE_URL + endpoint,
+		_make_headers(extra_headers),
+		method,
+		"" if payload.is_empty() else JSON.stringify(payload)
+	)
+
+	if err != OK:
+		push_error("GachaManager: request failed (err %d) → %s" % [err, endpoint])
+		http.queue_free()
+		return result
+
+	var response        = await http.request_completed
 	http.queue_free()
+
+	result.code = response[1]
+	result.body = response[3].get_string_from_utf8()
+	result.ok   = result.code >= 200 and result.code < 300
+
+	if not result.ok:
+		push_error("GachaManager: HTTP %d from %s\n%s" % [result.code, endpoint, result.body])
+
+	return result

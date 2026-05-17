@@ -1,5 +1,5 @@
 extends Node
-
+signal characters_updated
 var next_spawn: String = "default"
 var player_profile: Dictionary = {}
 var player_characters: Array = []

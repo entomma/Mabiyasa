@@ -1,12 +1,128 @@
 [gd_resource type="Resource" script_class="EnemyData" format=3 uid="uid://dqhgq5sc2nqyu"]
 
 [ext_resource type="Script" uid="uid://b50fh8nq7j0g2" path="res://Scripts/EnemyData.gd" id="1_khwgk"]
+[ext_resource type="Texture2D" uid="uid://cugdcc181diuu" path="res://Assets/mouse.png" id="2_ckkr2"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ov6tu"]
+atlas = ExtResource("2_ckkr2")
+region = Rect2(0, 1152, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_60skc"]
+atlas = ExtResource("2_ckkr2")
+region = Rect2(64, 1152, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_psoo1"]
+atlas = ExtResource("2_ckkr2")
+region = Rect2(128, 1152, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4sidh"]
+atlas = ExtResource("2_ckkr2")
+region = Rect2(192, 1152, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x0jqv"]
+atlas = ExtResource("2_ckkr2")
+region = Rect2(256, 1152, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cu68p"]
+atlas = ExtResource("2_ckkr2")
+region = Rect2(320, 1152, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x585g"]
+atlas = ExtResource("2_ckkr2")
+region = Rect2(384, 1152, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oiblx"]
+atlas = ExtResource("2_ckkr2")
+region = Rect2(448, 1152, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_olgcf"]
+atlas = ExtResource("2_ckkr2")
+region = Rect2(512, 1152, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cfqau"]
+atlas = ExtResource("2_ckkr2")
+region = Rect2(576, 1152, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_71l3c"]
+atlas = ExtResource("2_ckkr2")
+region = Rect2(640, 1152, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vkhtc"]
+atlas = ExtResource("2_ckkr2")
+region = Rect2(704, 1152, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j23bt"]
+atlas = ExtResource("2_ckkr2")
+region = Rect2(768, 1152, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_khwgk"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ov6tu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_60skc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_psoo1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4sidh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x0jqv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cu68p")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x585g")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_oiblx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_olgcf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cfqau")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_71l3c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vkhtc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_j23bt")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"idle_back",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"idle_left",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"idle_right",
+"speed": 5.0
+}]
 
 [resource]
 script = ExtResource("1_khwgk")
 enemy_id = 3
 enemy_name = "Dagis"
 english_name = "Mouse"
+sprite_frames = SubResource("SpriteFrames_khwgk")
 max_hp = 1300
 base_attack = 180
 base_defense = 120
