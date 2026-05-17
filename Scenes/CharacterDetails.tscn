@@ -1,60 +1,140 @@
-[gd_scene load_steps=9 format=3 uid="uid://bcvk7hyc6k113"]
+[gd_scene load_steps=14 format=3 uid="uid://bcvk7hyc6k113"]
 
 [ext_resource type="Script" path="res://Scripts/CharacterDetails.gd" id="1_script"]
 
+; ─── Full-screen background ───────────────────────────────────────────────────
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_Background"]
-bg_color = Color(0.0862745, 0.109804, 0.160784, 1)
+bg_color = Color(0.04, 0.05, 0.09, 1)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_NavBtn"]
-content_margin_left = 16.0
-content_margin_top = 12.0
-content_margin_bottom = 12.0
-bg_color = Color(0.6, 0.6, 0.6, 0)
-border_width_left = 4
-border_color = Color(0.8, 0.8, 0.8, 0)
+; ─── Right stats panel (PauseMenu-consistent: gold left border + shadow) ──────
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_RightPanel"]
+bg_color = Color(0.05, 0.06, 0.10, 0.97)
+border_width_left = 3
+border_color = Color(0.85, 0.75, 0.45, 0.80)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+shadow_color = Color(0, 0, 0, 0.50)
+shadow_size = 24
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_NavBtnHover"]
-content_margin_left = 16.0
-content_margin_top = 12.0
-content_margin_bottom = 12.0
-bg_color = Color(0.2, 0.25, 0.35, 0.8)
-border_width_left = 4
-border_color = Color(0.85, 0.75, 0.45, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_Panel"]
-bg_color = Color(0.141176, 0.180392, 0.258824, 0.45)
+; ─── Left nav panel ───────────────────────────────────────────────────────────
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_LeftPanel"]
+bg_color = Color(0.06, 0.08, 0.13, 0.70)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.4, 0.5, 0.7, 0.5)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-shadow_color = Color(0, 0, 0, 0.2)
-shadow_size = 10
+border_color = Color(0.30, 0.35, 0.48, 0.20)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
 
+; ─── Nav button – normal (transparent, left-padded) ──────────────────────────
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_NavBtn"]
+content_margin_left = 16.0
+content_margin_top = 11.0
+content_margin_right = 12.0
+content_margin_bottom = 11.0
+bg_color = Color(0, 0, 0, 0)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+; ─── Nav button – hover ───────────────────────────────────────────────────────
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_NavBtnHover"]
+content_margin_left = 16.0
+content_margin_top = 11.0
+content_margin_right = 12.0
+content_margin_bottom = 11.0
+bg_color = Color(0.12, 0.15, 0.22, 0.75)
+border_width_left = 3
+border_color = Color(0.85, 0.75, 0.45, 0.70)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+; ─── Nav button – active (always-on for current section) ─────────────────────
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_NavBtnActive"]
+content_margin_left = 16.0
+content_margin_top = 11.0
+content_margin_right = 12.0
+content_margin_bottom = 11.0
+bg_color = Color(0.14, 0.18, 0.28, 0.90)
+border_width_left = 3
+border_color = Color(0.85, 0.75, 0.45, 1.0)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0.85, 0.75, 0.45, 0.15)
+shadow_size = 6
+
+; ─── EXP bar background ───────────────────────────────────────────────────────
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ExpBg"]
-bg_color = Color(0.05, 0.06, 0.1, 0.8)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
+bg_color = Color(0.05, 0.06, 0.10, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
 
+; ─── EXP bar fill ─────────────────────────────────────────────────────────────
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ExpFill"]
-bg_color = Color(0.85, 0.7, 0.35, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
+bg_color = Color(0.85, 0.72, 0.35, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+shadow_color = Color(0.85, 0.72, 0.35, 0.40)
+shadow_size = 6
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_LeftPanel"]
-bg_color = Color(0.141176, 0.180392, 0.258824, 0.25)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
+; ─── Gold separator line ──────────────────────────────────────────────────────
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_GoldSep"]
+color = Color(0.85, 0.75, 0.45, 0.22)
+thickness = 1
+
+; ─── Return button – normal ───────────────────────────────────────────────────
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ReturnBtn"]
+content_margin_left = 20.0
+content_margin_top = 9.0
+content_margin_right = 20.0
+content_margin_bottom = 9.0
+bg_color = Color(0.09, 0.11, 0.17, 0.80)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.38, 0.42, 0.55, 0.30)
+corner_radius_top_left = 24
+corner_radius_top_right = 24
+corner_radius_bottom_right = 24
+corner_radius_bottom_left = 24
+
+; ─── Return button – hover ────────────────────────────────────────────────────
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ReturnBtnHover"]
+content_margin_left = 20.0
+content_margin_top = 9.0
+content_margin_right = 20.0
+content_margin_bottom = 9.0
+bg_color = Color(0.85, 0.75, 0.45, 0.12)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.85, 0.75, 0.45, 0.60)
+corner_radius_top_left = 24
+corner_radius_top_right = 24
+corner_radius_bottom_right = 24
+corner_radius_bottom_left = 24
+shadow_color = Color(0.85, 0.75, 0.45, 0.18)
+shadow_size = 8
+
+; ═════════════════════════════════════════════════════════════════════════════
+; Scene Tree
+; ═════════════════════════════════════════════════════════════════════════════
 
 [node name="CharacterDetails" type="Control"]
 layout_mode = 3
@@ -65,6 +145,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_script")
 
+; ─── Full-screen background ───────────────────────────────────────────────────
 [node name="Background" type="Panel" parent="."]
 layout_mode = 1
 anchors_preset = 15
@@ -74,6 +155,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_Background")
 
+; ─── Root margin ─────────────────────────────────────────────────────────────
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
@@ -82,103 +164,158 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/margin_left = 32
-theme_override_constants/margin_top = 24
+theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 32
 theme_override_constants/margin_bottom = 24
 
 [node name="MainLayout" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
-theme_override_constants/separation = 24
+theme_override_constants/separation = 18
 
-[node name="TopBar" type="HBoxContainer" parent="MarginContainer/MainLayout"]
+; ─── Top bar (title row + roster row) ────────────────────────────────────────
+[node name="TopBar" type="VBoxContainer" parent="MarginContainer/MainLayout"]
 layout_mode = 2
+theme_override_constants/separation = 14
 
-[node name="SpacerLeft" type="Control" parent="MarginContainer/MainLayout/TopBar"]
+; Title row
+[node name="TitleRow" type="HBoxContainer" parent="MarginContainer/MainLayout/TopBar"]
 layout_mode = 2
-size_flags_horizontal = 3
+theme_override_constants/separation = 12
 
-[node name="RosterScroll" type="ScrollContainer" parent="MarginContainer/MainLayout/TopBar"]
-layout_mode = 2
-custom_minimum_size = Vector2(400, 0)
-vertical_scroll_mode = 0
-horizontal_scroll_mode = 3
-
-[node name="CharacterRoster" type="HBoxContainer" parent="MarginContainer/MainLayout/TopBar/RosterScroll"]
+[node name="TitleLineLeft" type="HSeparator" parent="MarginContainer/MainLayout/TopBar/TitleRow"]
 layout_mode = 2
 size_flags_horizontal = 3
-alignment = 1
-theme_override_constants/separation = 16
+theme_override_styles/separator = SubResource("StyleBoxLine_GoldSep")
 
-[node name="SpacerRight" type="Control" parent="MarginContainer/MainLayout/TopBar"]
+[node name="PageTitle" type="Label" parent="MarginContainer/MainLayout/TopBar/TitleRow"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.75, 0.45, 0.80)
+theme_override_font_sizes/font_size = 11
+text = "C H A R A C T E R S"
+
+[node name="TitleLineRight" type="HSeparator" parent="MarginContainer/MainLayout/TopBar/TitleRow"]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_styles/separator = SubResource("StyleBoxLine_GoldSep")
 
-[node name="CloseButton" type="Button" parent="MarginContainer/MainLayout/TopBar"]
-custom_minimum_size = Vector2(48, 48)
+[node name="CloseButton" type="Button" parent="MarginContainer/MainLayout/TopBar/TitleRow"]
+custom_minimum_size = Vector2(36, 36)
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
-theme_override_colors/font_color = Color(0.6, 0.6, 0.6, 1)
-theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.45, 0.48, 0.58, 1)
+theme_override_colors/font_hover_color = Color(1.0, 0.55, 0.55, 1)
 text = "✕"
 flat = true
 
+; Roster row
+[node name="RosterRow" type="HBoxContainer" parent="MarginContainer/MainLayout/TopBar"]
+layout_mode = 2
+
+[node name="SpacerLeft" type="Control" parent="MarginContainer/MainLayout/TopBar/RosterRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RosterScroll" type="ScrollContainer" parent="MarginContainer/MainLayout/TopBar/RosterRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(440, 0)
+vertical_scroll_mode = 0
+horizontal_scroll_mode = 3
+
+[node name="CharacterRoster" type="HBoxContainer" parent="MarginContainer/MainLayout/TopBar/RosterRow/RosterScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+theme_override_constants/separation = 12
+
+[node name="SpacerRight" type="Control" parent="MarginContainer/MainLayout/TopBar/RosterRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+; ─── Content split (Left nav | Center art | Right stats) ─────────────────────
 [node name="ContentSplit" type="HBoxContainer" parent="MarginContainer/MainLayout"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/separation = 24
+theme_override_constants/separation = 20
 
+; ── Left navigation panel ─────────────────────────────────────────────────────
 [node name="LeftNavBG" type="PanelContainer" parent="MarginContainer/MainLayout/ContentSplit"]
-custom_minimum_size = Vector2(220, 0)
+custom_minimum_size = Vector2(210, 0)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_LeftPanel")
 
 [node name="LeftNavMargin" type="MarginContainer" parent="MarginContainer/MainLayout/ContentSplit/LeftNavBG"]
 layout_mode = 2
 theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 24
+theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 12
-theme_override_constants/margin_bottom = 24
+theme_override_constants/margin_bottom = 20
 
 [node name="LeftNav" type="VBoxContainer" parent="MarginContainer/MainLayout/ContentSplit/LeftNavBG/LeftNavMargin"]
 layout_mode = 2
-theme_override_constants/separation = 12
+theme_override_constants/separation = 4
 
-[node name="Label" type="Label" parent="MarginContainer/MainLayout/ContentSplit/LeftNavBG/LeftNavMargin/LeftNav"]
+[node name="NavTitle" type="Label" parent="MarginContainer/MainLayout/ContentSplit/LeftNavBG/LeftNavMargin/LeftNav"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.6, 0.65, 0.75, 1)
-theme_override_font_sizes/font_size = 14
-text = "MENU"
+theme_override_colors/font_color = Color(0.45, 0.50, 0.62, 1)
+theme_override_font_sizes/font_size = 11
+text = "N A V I G A T E"
 horizontal_alignment = 1
+
+[node name="NavSep" type="HSeparator" parent="MarginContainer/MainLayout/ContentSplit/LeftNavBG/LeftNavMargin/LeftNav"]
+layout_mode = 2
+modulate = Color(1, 1, 1, 0.5)
+theme_override_styles/separator = SubResource("StyleBoxLine_GoldSep")
+theme_override_constants/separation = 8
 
 [node name="DetailsBtn" type="Button" parent="MarginContainer/MainLayout/ContentSplit/LeftNavBG/LeftNavMargin/LeftNav"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.75, 0.45, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_NavBtnHover")
-theme_override_styles/hover = SubResource("StyleBoxFlat_NavBtnHover")
-text = "👤 Details"
+theme_override_colors/font_hover_color = Color(0.95, 0.88, 0.58, 1)
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("StyleBoxFlat_NavBtnActive")
+theme_override_styles/hover = SubResource("StyleBoxFlat_NavBtnActive")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_NavBtnActive")
+text = "👤  Details"
 alignment = 0
 
 [node name="EquipmentBtn" type="Button" parent="MarginContainer/MainLayout/ContentSplit/LeftNavBG/LeftNavMargin/LeftNav"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.78, 0.88, 1)
+theme_override_colors/font_hover_color = Color(0.95, 0.88, 0.58, 1)
+theme_override_font_sizes/font_size = 14
 theme_override_styles/normal = SubResource("StyleBoxFlat_NavBtn")
 theme_override_styles/hover = SubResource("StyleBoxFlat_NavBtnHover")
-text = "✦ Equipment"
+theme_override_styles/pressed = SubResource("StyleBoxFlat_NavBtnHover")
+text = "✦  Equipment"
 alignment = 0
 
 [node name="TracesBtn" type="Button" parent="MarginContainer/MainLayout/ContentSplit/LeftNavBG/LeftNavMargin/LeftNav"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.78, 0.88, 1)
+theme_override_colors/font_hover_color = Color(0.95, 0.88, 0.58, 1)
+theme_override_font_sizes/font_size = 14
 theme_override_styles/normal = SubResource("StyleBoxFlat_NavBtn")
 theme_override_styles/hover = SubResource("StyleBoxFlat_NavBtnHover")
-text = "► Skills/Traces"
+theme_override_styles/pressed = SubResource("StyleBoxFlat_NavBtnHover")
+text = "►  Skills / Traces"
 alignment = 0
 
 [node name="RelicsBtn" type="Button" parent="MarginContainer/MainLayout/ContentSplit/LeftNavBG/LeftNavMargin/LeftNav"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.78, 0.88, 1)
+theme_override_colors/font_hover_color = Color(0.95, 0.88, 0.58, 1)
+theme_override_font_sizes/font_size = 14
 theme_override_styles/normal = SubResource("StyleBoxFlat_NavBtn")
 theme_override_styles/hover = SubResource("StyleBoxFlat_NavBtnHover")
-text = "☗ Relics"
+theme_override_styles/pressed = SubResource("StyleBoxFlat_NavBtnHover")
+text = "☗  Relics"
 alignment = 0
 
+[node name="NavBottomSpacer" type="Control" parent="MarginContainer/MainLayout/ContentSplit/LeftNavBG/LeftNavMargin/LeftNav"]
+layout_mode = 2
+size_flags_vertical = 3
+
+; ── Center art area ───────────────────────────────────────────────────────────
 [node name="CenterArt" type="Control" parent="MarginContainer/MainLayout/ContentSplit"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -193,38 +330,48 @@ grow_vertical = 2
 expand_mode = 1
 stretch_mode = 5
 
+; ── Right stats panel ─────────────────────────────────────────────────────────
 [node name="RightStats" type="PanelContainer" parent="MarginContainer/MainLayout/ContentSplit"]
-custom_minimum_size = Vector2(380, 0)
+custom_minimum_size = Vector2(370, 0)
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_Panel")
+theme_override_styles/panel = SubResource("StyleBoxFlat_RightPanel")
 
 [node name="Margin" type="MarginContainer" parent="MarginContainer/MainLayout/ContentSplit/RightStats"]
 layout_mode = 2
-theme_override_constants/margin_left = 32
-theme_override_constants/margin_top = 32
-theme_override_constants/margin_right = 32
-theme_override_constants/margin_bottom = 32
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_bottom = 24
 
 [node name="VBox" type="VBoxContainer" parent="MarginContainer/MainLayout/ContentSplit/RightStats/Margin"]
 layout_mode = 2
-theme_override_constants/separation = 16
+theme_override_constants/separation = 12
+
+; Element-colored accent stripe (updated dynamically by script)
+[node name="ElementAccent" type="ColorRect" parent="MarginContainer/MainLayout/ContentSplit/RightStats/Margin/VBox"]
+custom_minimum_size = Vector2(0, 3)
+layout_mode = 2
+size_flags_horizontal = 3
+color = Color(0.85, 0.75, 0.45, 1)
 
 [node name="NameLabel" type="Label" parent="MarginContainer/MainLayout/ContentSplit/RightStats/Margin/VBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 36
+theme_override_colors/font_color = Color(0.95, 0.94, 1.0, 1)
+theme_override_font_sizes/font_size = 34
 text = "Character Name"
 
 [node name="PathElement" type="Label" parent="MarginContainer/MainLayout/ContentSplit/RightStats/Margin/VBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.75, 0.8, 0.9, 1)
-text = "Element / Path"
+theme_override_colors/font_color = Color(0.60, 0.75, 0.90, 1)
+theme_override_font_sizes/font_size = 15
+text = "Element  ·  Path"
 
+; Level + EXP
 [node name="LevelLabel" type="Label" parent="MarginContainer/MainLayout/ContentSplit/RightStats/Margin/VBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.75, 0.45, 1)
-theme_override_font_sizes/font_size = 20
-text = "Lv. 1/80"
-horizontal_alignment = 2
+theme_override_font_sizes/font_size = 18
+text = "Lv. 1 / 80"
 
 [node name="ExpBar" type="ProgressBar" parent="MarginContainer/MainLayout/ContentSplit/RightStats/Margin/VBox"]
 custom_minimum_size = Vector2(0, 8)
@@ -234,84 +381,138 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_ExpFill")
 value = 50.0
 show_percentage = false
 
-[node name="HSeparator" type="HSeparator" parent="MarginContainer/MainLayout/ContentSplit/RightStats/Margin/VBox"]
-modulate = Color(1, 1, 1, 0.2)
+[node name="ExpValueLabel" type="Label" parent="MarginContainer/MainLayout/ContentSplit/RightStats/Margin/VBox"]
 layout_mode = 2
-theme_override_constants/separation = 24
+theme_override_colors/font_color = Color(0.50, 0.55, 0.65, 1)
+theme_override_font_sizes/font_size = 11
+text = "0 / 1000 EXP"
+horizontal_alignment = 2
+
+; Stats section
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/MainLayout/ContentSplit/RightStats/Margin/VBox"]
+layout_mode = 2
+theme_override_styles/separator = SubResource("StyleBoxLine_GoldSep")
+theme_override_constants/separation = 4
 
 [node name="StatsTitle" type="Label" parent="MarginContainer/MainLayout/ContentSplit/RightStats/Margin/VBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.6, 0.65, 0.75, 1)
-text = "COMBAT STATS"
+theme_override_colors/font_color = Color(0.50, 0.55, 0.65, 1)
+theme_override_font_sizes/font_size = 11
+text = "C O M B A T   S T A T S"
 
 [node name="StatATK" type="HBoxContainer" parent="MarginContainer/MainLayout/ContentSplit/RightStats/Margin/VBox"]
 layout_mode = 2
+theme_override_constants/separation = 8
 
 [node name="Label" type="Label" parent="MarginContainer/MainLayout/ContentSplit/RightStats/Margin/VBox/StatATK"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "⚔ Attack"
+theme_override_colors/font_color = Color(0.65, 0.68, 0.78, 1)
+theme_override_font_sizes/font_size = 14
+text = "⚔  Attack"
 
 [node name="Value" type="Label" parent="MarginContainer/MainLayout/ContentSplit/RightStats/Margin/VBox/StatATK"]
 layout_mode = 2
-text = "+ 0"
+theme_override_colors/font_color = Color(0.95, 0.60, 0.30, 1)
+theme_override_font_sizes/font_size = 14
+text = "0"
 
 [node name="StatHP" type="HBoxContainer" parent="MarginContainer/MainLayout/ContentSplit/RightStats/Margin/VBox"]
 layout_mode = 2
+theme_override_constants/separation = 8
 
 [node name="Label" type="Label" parent="MarginContainer/MainLayout/ContentSplit/RightStats/Margin/VBox/StatHP"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "♥ Max HP"
+theme_override_colors/font_color = Color(0.65, 0.68, 0.78, 1)
+theme_override_font_sizes/font_size = 14
+text = "♥  Max HP"
 
 [node name="Value" type="Label" parent="MarginContainer/MainLayout/ContentSplit/RightStats/Margin/VBox/StatHP"]
 layout_mode = 2
-text = "+ 0"
+theme_override_colors/font_color = Color(0.85, 0.40, 0.45, 1)
+theme_override_font_sizes/font_size = 14
+text = "0"
 
 [node name="StatDEF" type="HBoxContainer" parent="MarginContainer/MainLayout/ContentSplit/RightStats/Margin/VBox"]
 layout_mode = 2
+theme_override_constants/separation = 8
 
 [node name="Label" type="Label" parent="MarginContainer/MainLayout/ContentSplit/RightStats/Margin/VBox/StatDEF"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "☗ DEF"
+theme_override_colors/font_color = Color(0.65, 0.68, 0.78, 1)
+theme_override_font_sizes/font_size = 14
+text = "☗  DEF"
 
 [node name="Value" type="Label" parent="MarginContainer/MainLayout/ContentSplit/RightStats/Margin/VBox/StatDEF"]
 layout_mode = 2
-text = "+ 0"
+theme_override_colors/font_color = Color(0.40, 0.65, 0.95, 1)
+theme_override_font_sizes/font_size = 14
+text = "0"
 
 [node name="StatSPD" type="HBoxContainer" parent="MarginContainer/MainLayout/ContentSplit/RightStats/Margin/VBox"]
 layout_mode = 2
+theme_override_constants/separation = 8
 
 [node name="Label" type="Label" parent="MarginContainer/MainLayout/ContentSplit/RightStats/Margin/VBox/StatSPD"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "➦ SPD"
+theme_override_colors/font_color = Color(0.65, 0.68, 0.78, 1)
+theme_override_font_sizes/font_size = 14
+text = "➦  SPD"
 
 [node name="Value" type="Label" parent="MarginContainer/MainLayout/ContentSplit/RightStats/Margin/VBox/StatSPD"]
 layout_mode = 2
-text = "  0"
+theme_override_colors/font_color = Color(0.35, 0.88, 0.65, 1)
+theme_override_font_sizes/font_size = 14
+text = "0"
 
 [node name="StatCRIT" type="HBoxContainer" parent="MarginContainer/MainLayout/ContentSplit/RightStats/Margin/VBox"]
 layout_mode = 2
+theme_override_constants/separation = 8
 
 [node name="Label" type="Label" parent="MarginContainer/MainLayout/ContentSplit/RightStats/Margin/VBox/StatCRIT"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "⚡ Crit Rate"
+theme_override_colors/font_color = Color(0.65, 0.68, 0.78, 1)
+theme_override_font_sizes/font_size = 14
+text = "⚡  Crit Rate"
 
 [node name="Value" type="Label" parent="MarginContainer/MainLayout/ContentSplit/RightStats/Margin/VBox/StatCRIT"]
 layout_mode = 2
-text = "+ 0%"
+theme_override_colors/font_color = Color(0.95, 0.85, 0.30, 1)
+theme_override_font_sizes/font_size = 14
+text = "0%"
 
 [node name="StatCRITDMG" type="HBoxContainer" parent="MarginContainer/MainLayout/ContentSplit/RightStats/Margin/VBox"]
 layout_mode = 2
+theme_override_constants/separation = 8
 
 [node name="Label" type="Label" parent="MarginContainer/MainLayout/ContentSplit/RightStats/Margin/VBox/StatCRITDMG"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "💥 Crit DMG"
+theme_override_colors/font_color = Color(0.65, 0.68, 0.78, 1)
+theme_override_font_sizes/font_size = 14
+text = "💥  Crit DMG"
 
 [node name="Value" type="Label" parent="MarginContainer/MainLayout/ContentSplit/RightStats/Margin/VBox/StatCRITDMG"]
 layout_mode = 2
-text = "+ 0%"
+theme_override_colors/font_color = Color(0.95, 0.62, 0.20, 1)
+theme_override_font_sizes/font_size = 14
+text = "0%"
+
+; Bottom spacer + return button
+[node name="BottomSpacer" type="Control" parent="MarginContainer/MainLayout/ContentSplit/RightStats/Margin/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ReturnBtn" type="Button" parent="MarginContainer/MainLayout/ContentSplit/RightStats/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.78, 0.88, 1)
+theme_override_colors/font_hover_color = Color(0.95, 0.88, 0.58, 1)
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("StyleBoxFlat_ReturnBtn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ReturnBtnHover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ReturnBtn")
+text = "← Return"
