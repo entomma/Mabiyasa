@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://dutxuejyqtr04"]
 
 [ext_resource type="Script" uid="uid://c7ydarmawgviy" path="res://Scripts/Battle.gd" id="1_wvl2i"]
+[ext_resource type="PackedScene" uid="uid://cy72jmgrsmn18" path="res://Scenes/trees.tscn" id="2_vr6xi"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_wvl2i"]
 sky_horizon_color = Color(0.662, 0.671, 0.686, 1)
@@ -241,3 +242,26 @@ text = "ATTACK!"
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1006673390]
 mesh = SubResource("PlaneMesh_wvl2i")
 surface_material_override/0 = SubResource("StandardMaterial3D_vr6xi")
+
+[node name="props" type="Node3D" parent="." unique_id=499504336]
+
+[node name="ManyTrees" parent="props" unique_id=1264127976 instance=ExtResource("2_vr6xi")]
+transform = Transform3D(4.0810175, 0, 5.6872926, 0, 7, 0, -5.6872926, 0, 4.0810175, 9.724892, 0, -28.673164)
+
+[node name="ManyTrees2" parent="props" unique_id=1486956036 instance=ExtResource("2_vr6xi")]
+transform = Transform3D(3.5841942, 0, 6.012782, 0, 7, 0, -6.012782, 0, 3.5841942, 24.215004, 0, -22.469213)
+
+[node name="ManyTrees3" parent="props" unique_id=1515711094 instance=ExtResource("2_vr6xi")]
+transform = Transform3D(6.3283167, 0, -2.9920566, 0, 7, 0, 2.9920566, 0, 6.3283167, -7.592409, 0, -31.601204)
+
+[node name="ManyTrees7" parent="props" unique_id=711761833 instance=ExtResource("2_vr6xi")]
+transform = Transform3D(6.3283167, 0, -2.9920566, 0, 7, 0, 2.9920566, 0, 6.3283167, 11.596792, 0, -21.841309)
+
+[node name="ManyTrees4" parent="props" unique_id=118069188 instance=ExtResource("2_vr6xi")]
+transform = Transform3D(6.3283167, 0, -2.9920566, 0, 7, 0, 2.9920566, 0, 6.3283167, -21.997768, 0, -24.82772)
+
+[node name="ManyTrees6" parent="props" unique_id=536959247 instance=ExtResource("2_vr6xi")]
+transform = Transform3D(-3.6075695, 0, -5.9987864, 0, 7, 0, 5.9987864, 0, -3.6075695, 34.44268, 0, -2.7203064)
+
+[node name="ManyTrees5" parent="props" unique_id=546388799 instance=ExtResource("2_vr6xi")]
+transform = Transform3D(-6.942075, 0, -0.8986623, 0, 7, 0, 0.8986623, 0, -6.942075, 36.99411, 0, -14.455999)

@@ -333,8 +333,13 @@ func _input(event: InputEvent) -> void:
 		KEY_D: _navigate_enemy(1)
 
 # ═══════════════════════════════════════════════════════
-#  Enemy targeting
+#  Enemy targeting & UI Toggles
 # ═══════════════════════════════════════════════════════
+func _set_enemy_ui_visible(is_visible: bool) -> void:
+	for ui in enemy_ui_nodes:
+		if ui and is_instance_valid(ui.root):
+			ui.root.visible = is_visible
+
 func _navigate_enemy(dir: int) -> void:
 	_set_enemy_target(targeted_enemy_index + dir)
 
@@ -621,7 +626,8 @@ func _hp_text(current: float, maximum: int) -> String:
 func _process(_delta: float) -> void:
 	if not camera: return
 	for ui in enemy_ui_nodes:
-		if not ui or not is_instance_valid(ui.root): continue
+		# OPTIMIZATION: Do not calculate screen positions if the UI is hidden or invalid!
+		if not ui or not is_instance_valid(ui.root) or not ui.root.visible: continue
 		var sp: Vector2 = camera.unproject_position(ui.world_pos + Vector3(0, 2.8, 0))
 		ui.root.position = sp - Vector2(75, 0)
 
@@ -926,6 +932,7 @@ func show_skill_buttons() -> void:
 	skill_buttons.visible = true
 	card_panel.visible    = false
 	is_targeting_ally     = false
+	_set_enemy_ui_visible(true) # <-- Toggles the enemy bars back ON
 
 	var bd := current_character.basic_attack as SkillData
 	var sd := current_character.skill as SkillData
@@ -983,6 +990,8 @@ func show_card_panel() -> void:
 	skill_buttons.visible = false
 	card_panel.visible    = true
 	sentence_bar.visible  = true
+	_set_enemy_ui_visible(false) # <-- Toggles the enemy bars OFF
+
 
 # ═══════════════════════════════════════════════════════
 #  Submit / resolve turn
@@ -1116,7 +1125,7 @@ func analyse_sentence_quality() -> Dictionary:
 		if sentence.size() < min_cards:
 			r.feedback_lines.append({"text": "✗ Need %d cards minimum!" % min_cards, "color": RED})
 		elif not has_noun and stype != "basic":
-			r.feedback_lines.append({"text": "✗ Missing a Noun!",                    "color": RED})
+			r.feedback_lines.append({"text": "✗ Missing a Noun!",                     "color": RED})
 		elif not has_pronoun and min_cards >= 3:
 			r.feedback_lines.append({"text": "✗ Missing a Pronoun (Aku/Ika/Ya)!",   "color": RED})
 		else:
@@ -1315,7 +1324,7 @@ func _show_floating_text(text: String, color: Color, pos: Vector2) -> void:
 	lbl.position = pos
 	lbl.scale = Vector2(0.5, 0.5) # Start small for juice
 	lbl.add_theme_font_size_override("font_size", 28)
-	lbl.add_theme_color_override("font_color",        color)
+	lbl.add_theme_color_override("font_color",         color)
 	lbl.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.8))
 	lbl.add_theme_constant_override("shadow_offset_x", 2)
 	lbl.add_theme_constant_override("shadow_offset_y", 2)
@@ -1343,7 +1352,7 @@ func _show_turn_damage(amount: int) -> void:
 	lbl.name = "TurnDmgLabel"
 	lbl.text = "%d DMG" % amount
 	lbl.add_theme_font_size_override("font_size", 42)
-	lbl.add_theme_color_override("font_color",        Color(1.0, 0.95, 0.3))
+	lbl.add_theme_color_override("font_color",         Color(1.0, 0.95, 0.3))
 	lbl.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.8))
 	lbl.add_theme_constant_override("shadow_offset_x", 3)
 	lbl.add_theme_constant_override("shadow_offset_y", 3)
@@ -1533,27 +1542,36 @@ func update_turn_order_ui() -> void:
 		if i == 0:
 			lbl.add_theme_color_override("font_color", Color(0.85, 0.75, 0.45)) # HSR Gold
 			
-		# FIX: Only add to the vbox, not to both!
 		vbox.add_child(lbl)
 		
 	turn_order_ui.add_child(panel)
+
 # ═══════════════════════════════════════════════════════
 #  SP display
 # ═══════════════════════════════════════════════════════
 func _update_sp_display() -> void:
-	for child in sp_stars.get_children(): child.queue_free()
-	for i in range(max_sp):
-		var star := Label.new()
-		star.text = "★" if i < current_sp else "☆"
-		star.add_theme_font_size_override("font_size", 28)
-		star.add_theme_color_override("font_color",
-			Color(0.85, 0.75, 0.45) if i < current_sp else Color(0.4, 0.4, 0.4))
-		star.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.8))
-		star.add_theme_constant_override("shadow_offset_x", 2)
-		star.add_theme_constant_override("shadow_offset_y", 2)
-		if not sp_stars is BoxContainer:
-			star.position = Vector2(i * 22, 0)
-		sp_stars.add_child(star)
+	# OPTIMIZED: Initialize the star nodes only if they don't exist yet to prevent node-recreation lag spikes
+	if sp_stars.get_child_count() == 0:
+		for i in range(max_sp):
+			var star := Label.new()
+			star.add_theme_font_size_override("font_size", 28)
+			star.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.8))
+			star.add_theme_constant_override("shadow_offset_x", 2)
+			star.add_theme_constant_override("shadow_offset_y", 2)
+			if not sp_stars is BoxContainer:
+				star.position = Vector2(i * 22, 0)
+			sp_stars.add_child(star)
+
+	# Update the state of the existing stars
+	var index = 0
+	for star in sp_stars.get_children():
+		if index < current_sp:
+			star.text = "★"
+			star.add_theme_color_override("font_color", Color(0.85, 0.75, 0.45))
+		else:
+			star.text = "☆"
+			star.add_theme_color_override("font_color", Color(0.4, 0.4, 0.4))
+		index += 1
 
 # ═══════════════════════════════════════════════════════
 #  Battle sprites
@@ -1571,6 +1589,13 @@ func _setup_battle_sprites() -> void:
 	targeted_enemy_index = 0
 	_refresh_enemy_highlight()
 
+func _enable_shadows(node: Node) -> void:
+	if node is GeometryInstance3D:
+		node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+	if node is SpriteBase3D: # Ensure Sprites with transparency have shadows that trace their shapes properly
+		node.alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD
+	for child in node.get_children():
+		_enable_shadows(child)
 
 func _spawn_character(data: CharacterData, idx: int) -> void:
 	var scene_path := "res://Characters/%s.tscn" % data.character_name.to_lower()
@@ -1583,8 +1608,11 @@ func _spawn_character(data: CharacterData, idx: int) -> void:
 	inst.scale    = Vector3(4.0, 4.0, 4.0)
 	inst.position = _get_ally_pos(idx)
 	inst.name     = "player_" + data.character_name
+	
+	# Enable shadows recursively for the character mesh or sprites inside the instantiated scene
+	_enable_shadows(inst)
+	
 	$Background.add_child(inst)
-
 
 func _spawn_enemy_sprite(idx: int) -> void:
 	var data: EnemyData = enemies[idx].data
@@ -1593,6 +1621,10 @@ func _spawn_enemy_sprite(idx: int) -> void:
 	sprite.position     = _get_enemy_pos(idx)
 	sprite.scale        = Vector3(5.0, 5.0, 1.0)
 	sprite.pixel_size   = 0.01
+
+	# Shadows enabled for 2D sprites in 3D 
+	sprite.cast_shadow  = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+	sprite.alpha_cut    = SpriteBase3D.ALPHA_CUT_DISCARD
 
 	if data.sprite_frames:
 		sprite.sprite_frames = data.sprite_frames
@@ -1615,6 +1647,10 @@ func _create_placeholder(data: CharacterData, idx: int) -> void:
 	sprite.position = _get_ally_pos(idx)
 	sprite.scale    = Vector3(5.0, 5.0, 1.0)
 	sprite.pixel_size = 0.01
+	
+	# Shadows enabled for 2D sprites in 3D
+	sprite.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+	sprite.alpha_cut   = SpriteBase3D.ALPHA_CUT_DISCARD
 
 	if data.splash_art:
 		var frames := SpriteFrames.new()
