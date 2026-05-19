@@ -397,3 +397,5 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_ResumeBtn")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ResumeBtn")
 theme_override_styles/hover = SubResource("StyleBoxFlat_ResumeBtnHover")
 text = "▶  Resume"
+
+[connection signal="pressed" from="RightPanel/Margin/VBox/GridMenu/BtnInventory" to="." method="_on_inventory_pressed"]

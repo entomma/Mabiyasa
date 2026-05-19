@@ -58,7 +58,6 @@ func _connect_buttons() -> void:
 	btn_store.pressed.connect(func(): print("Store (WIP)"))
 	btn_friends.pressed.connect(func(): print("Friends (WIP)"))
 	btn_missions.pressed.connect(func(): print("Missions (WIP)"))
-	btn_inventory.pressed.connect(func(): print("Inventory (WIP)"))
 	btn_settings.pressed.connect(func(): print("Settings (WIP)"))
 
 # ─── Profile data ─────────────────────────────────────────────────────────────
@@ -142,6 +141,12 @@ func _on_party_pressed() -> void:
 		_save_current_state()
 		get_tree().paused = false
 		get_tree().change_scene_to_file("res://Scenes/PartySelect.tscn")
+	)
+func _on_inventory_pressed() -> void:
+	_close(func():
+		_save_current_state()
+		get_tree().paused = false
+		get_tree().change_scene_to_file("res://Scenes/InventoryUI.tscn")
 	)
 
 func _on_wish_pressed() -> void:

@@ -1,0 +1,111 @@
+[gd_scene format=3 uid="uid://7d4lhclqua04"]
+
+[ext_resource type="Script" uid="uid://b2xse51dxac7o" path="res://Scripts/InvetoryUI.gd" id="1_lm8dl"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_MainPanel"]
+bg_color = Color(0.04, 0.05, 0.09, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.85, 0.75, 0.45, 0.85)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+shadow_color = Color(0, 0, 0, 0.65)
+shadow_size = 60
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_CloseBtn"]
+bg_color = Color(0.1, 0.13, 0.2, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.85, 0.75, 0.45, 1)
+corner_radius_top_left = 100
+corner_radius_top_right = 100
+corner_radius_bottom_right = 100
+corner_radius_bottom_left = 100
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_GoldSep"]
+color = Color(0.85, 0.75, 0.45, 0.25)
+thickness = 2
+
+[node name="InventoryUI" type="Control" unique_id=189447454]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_lm8dl")
+
+[node name="Overlay" type="ColorRect" parent="." unique_id=1290948114]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.5)
+
+[node name="Panel" type="PanelContainer" parent="." unique_id=275454219]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -380.0
+offset_top = -240.0
+offset_right = 380.0
+offset_bottom = 240.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_MainPanel")
+
+[node name="Margin" type="MarginContainer" parent="Panel" unique_id=2017880620]
+layout_mode = 2
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_bottom = 28
+
+[node name="VBox" type="VBoxContainer" parent="Panel/Margin" unique_id=1857009468]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Header" type="HBoxContainer" parent="Panel/Margin/VBox" unique_id=573307573]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Panel/Margin/VBox/Header" unique_id=897404255]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.85, 0.75, 0.45, 1)
+theme_override_font_sizes/font_size = 28
+text = "Backpack"
+
+[node name="CloseBtn" type="Button" parent="Panel/Margin/VBox/Header" unique_id=1782240064]
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.75, 0.45, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_CloseBtn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_CloseBtn")
+text = "X"
+
+[node name="HSeparator" type="HSeparator" parent="Panel/Margin/VBox" unique_id=343906330]
+layout_mode = 2
+theme_override_styles/separator = SubResource("StyleBoxLine_GoldSep")
+
+[node name="Scroll" type="ScrollContainer" parent="Panel/Margin/VBox" unique_id=948013106]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Grid" type="GridContainer" parent="Panel/Margin/VBox/Scroll" unique_id=2059056307]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/h_separation = 14
+theme_override_constants/v_separation = 14
+columns = 7

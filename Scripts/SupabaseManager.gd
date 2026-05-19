@@ -597,7 +597,60 @@ func save_current_scene_and_position():
 # Keep old function name for compatibility
 func auto_save_player_state():
 	await save_current_scene_and_position()
+func fetch_inventory_items(callback: Callable) -> void:
+	if GameManager.player_profile == null or not GameManager.player_profile.has("uid"):
+		return
 
+	var uid = GameManager.player_profile.uid
+	
+	# Filter explicitly by uid AND item_type = 'item'
+	var url = SUPABASE_URL + "/rest/v1/player_inventory?uid=eq." + str(uid) + "&item_type=eq.item&select=item_id,quantity"
+	
+	var http = HTTPRequest.new()
+	add_child(http)
+	
+	var headers = [
+		"apikey: " + SUPABASE_ANON_KEY,
+		"Authorization: Bearer " + auth_token
+	]
+	
+	http.request(url, headers, HTTPClient.METHOD_GET)
+	var response = await http.request_completed
+	http.queue_free()
+	
+	if response[1] == 200:
+		var result = JSON.parse_string(response[3].get_string_from_utf8())
+		if result is Array:
+			callback.call(result)
+
+
+# Function to easily add or update an item in the database
+func add_item(item_id: int, quantity: int = 1) -> void:
+	if GameManager.player_profile == null or not GameManager.player_profile.has("uid"):
+		return
+		
+	var uid = GameManager.player_profile.uid
+	var url = SUPABASE_URL + "/rest/v1/player_inventory"
+	
+	var headers = [
+		"apikey: " + SUPABASE_ANON_KEY,
+		"Authorization: Bearer " + auth_token,
+		"Content-Type: application/json",
+		"Prefer: resolution=merge-duplicates" # This triggers the UPSERT using the UNIQUE constraint
+	]
+	
+	var body = JSON.stringify({
+		"uid": int(uid),
+		"item_type": "item",
+		"item_id": item_id,
+		"quantity": quantity
+	})
+	
+	var http = HTTPRequest.new()
+	add_child(http)
+	http.request(url, headers, HTTPClient.METHOD_POST, body)
+	await http.request_completed
+	http.queue_free()
 # Debug function to check characters
 func debug_check_characters():
 	print("=== DEBUG: Checking characters in database ===")
