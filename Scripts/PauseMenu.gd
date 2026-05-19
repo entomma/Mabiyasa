@@ -32,6 +32,9 @@ const PANEL_WIDTH := 480.0
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	get_tree().paused = true
+	
+	# --- FIX: FREE THE MOUSE WHEN PAUSED ---
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
 	_load_profile_data()
 	_connect_buttons()
@@ -121,6 +124,10 @@ func _close(callback: Callable) -> void:
 
 func _unpause_and_free() -> void:
 	get_tree().paused = false
+	
+	# --- FIX: RE-CAPTURE THE MOUSE WHEN RESUMING ---
+	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	
 	queue_free()
 
 func _on_characters_pressed() -> void:

@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" uid="uid://d33m65exq11te" path="res://Scripts/PauseMenu.gd" id="1_lj4oq"]
 
-; ─── Panel Background ────────────────────────────────────────────────────────
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_RightPanel"]
 bg_color = Color(0.04, 0.05, 0.09, 0.98)
 border_width_left = 3
@@ -11,9 +10,11 @@ shadow_color = Color(0, 0, 0, 0.65)
 shadow_size = 60
 shadow_offset = Vector2(-12, 0)
 
-; ─── Avatar Circle ───────────────────────────────────────────────────────────
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_GoldSep"]
+color = Color(0.85, 0.75, 0.45, 0.25)
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_Avatar"]
-bg_color = Color(0.10, 0.13, 0.20, 1)
+bg_color = Color(0.1, 0.13, 0.2, 1)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
@@ -26,15 +27,13 @@ corner_radius_bottom_left = 100
 shadow_color = Color(0.85, 0.75, 0.45, 0.2)
 shadow_size = 8
 
-; ─── XP Bar Background ───────────────────────────────────────────────────────
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_XPBg"]
-bg_color = Color(0.10, 0.12, 0.18, 1)
+bg_color = Color(0.1, 0.12, 0.18, 1)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
-; ─── XP Bar Fill ─────────────────────────────────────────────────────────────
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_XPFill"]
 bg_color = Color(0.85, 0.75, 0.45, 1)
 corner_radius_top_left = 4
@@ -44,25 +43,30 @@ corner_radius_bottom_left = 4
 shadow_color = Color(0.85, 0.75, 0.45, 0.35)
 shadow_size = 4
 
-; ─── Gold Separator Line ─────────────────────────────────────────────────────
-[sub_resource type="StyleBoxLine" id="StyleBoxLine_GoldSep"]
-color = Color(0.85, 0.75, 0.45, 0.25)
-thickness = 1
-
-; ─── Grid Button – Normal ────────────────────────────────────────────────────
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_GridBtn"]
 bg_color = Color(0.09, 0.11, 0.17, 0.75)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.35, 0.40, 0.52, 0.22)
+border_color = Color(0.35, 0.4, 0.52, 0.22)
 corner_radius_top_left = 14
 corner_radius_top_right = 14
 corner_radius_bottom_right = 14
 corner_radius_bottom_left = 14
 
-; ─── Grid Button – Hover (gold tint) ─────────────────────────────────────────
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_GridBtnPressed"]
+bg_color = Color(0.06, 0.07, 0.11, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.85, 0.75, 0.45, 0.35)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_GridBtnHover"]
 bg_color = Color(0.85, 0.75, 0.45, 0.12)
 border_width_left = 1
@@ -77,20 +81,6 @@ corner_radius_bottom_left = 14
 shadow_color = Color(0.85, 0.75, 0.45, 0.2)
 shadow_size = 8
 
-; ─── Grid Button – Pressed ───────────────────────────────────────────────────
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_GridBtnPressed"]
-bg_color = Color(0.06, 0.07, 0.11, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.85, 0.75, 0.45, 0.35)
-corner_radius_top_left = 14
-corner_radius_top_right = 14
-corner_radius_bottom_right = 14
-corner_radius_bottom_left = 14
-
-; ─── Quit Button – Normal ────────────────────────────────────────────────────
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_SystemBtn"]
 content_margin_left = 18.0
 content_margin_top = 9.0
@@ -101,24 +91,23 @@ border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.40, 0.43, 0.55, 0.28)
+border_color = Color(0.4, 0.43, 0.55, 0.28)
 corner_radius_top_left = 24
 corner_radius_top_right = 24
 corner_radius_bottom_right = 24
 corner_radius_bottom_left = 24
 
-; ─── Quit Button – Hover (red danger) ───────────────────────────────────────
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_SystemBtnHover"]
 content_margin_left = 18.0
 content_margin_top = 9.0
 content_margin_right = 18.0
 content_margin_bottom = 9.0
-bg_color = Color(0.50, 0.10, 0.10, 0.90)
+bg_color = Color(0.5, 0.1, 0.1, 0.9)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.80, 0.25, 0.25, 0.55)
+border_color = Color(0.8, 0.25, 0.25, 0.55)
 corner_radius_top_left = 24
 corner_radius_top_right = 24
 corner_radius_bottom_right = 24
@@ -126,7 +115,6 @@ corner_radius_bottom_left = 24
 shadow_color = Color(0.7, 0.1, 0.1, 0.25)
 shadow_size = 8
 
-; ─── Resume Button – Normal (gold) ───────────────────────────────────────────
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ResumeBtn"]
 content_margin_left = 26.0
 content_margin_top = 9.0
@@ -140,7 +128,6 @@ corner_radius_bottom_left = 24
 shadow_color = Color(0.85, 0.75, 0.45, 0.35)
 shadow_size = 12
 
-; ─── Resume Button – Hover (brighter gold) ───────────────────────────────────
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ResumeBtnHover"]
 content_margin_left = 26.0
 content_margin_top = 9.0
@@ -154,10 +141,6 @@ corner_radius_bottom_left = 24
 shadow_color = Color(0.95, 0.88, 0.58, 0.5)
 shadow_size = 18
 
-; ═════════════════════════════════════════════════════════════════════════════
-; Scene Tree
-; ═════════════════════════════════════════════════════════════════════════════
-
 [node name="PauseMenu" type="Control" unique_id=68005745]
 process_mode = 3
 layout_mode = 3
@@ -168,7 +151,6 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_lj4oq")
 
-; ─── Darkened overlay ────────────────────────────────────────────────────────
 [node name="Overlay" type="ColorRect" parent="." unique_id=1940983792]
 layout_mode = 1
 anchors_preset = 15
@@ -176,9 +158,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 0.0)
+color = Color(0, 0, 0, 0)
 
-; ─── Right slide panel ───────────────────────────────────────────────────────
 [node name="RightPanel" type="PanelContainer" parent="." unique_id=1467814367]
 layout_mode = 1
 anchors_preset = 11
@@ -201,7 +182,6 @@ theme_override_constants/margin_bottom = 32
 layout_mode = 2
 theme_override_constants/separation = 20
 
-; ─── Header row ──────────────────────────────────────────────────────────────
 [node name="HeaderRow" type="HBoxContainer" parent="RightPanel/Margin/VBox" unique_id=111111001]
 layout_mode = 2
 theme_override_constants/separation = 10
@@ -223,7 +203,6 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/separator = SubResource("StyleBoxLine_GoldSep")
 
-; ─── Profile section ─────────────────────────────────────────────────────────
 [node name="ProfileSection" type="HBoxContainer" parent="RightPanel/Margin/VBox" unique_id=445236614]
 layout_mode = 2
 theme_override_constants/separation = 18
@@ -248,22 +227,21 @@ vertical_alignment = 1
 [node name="Info" type="VBoxContainer" parent="RightPanel/Margin/VBox/ProfileSection" unique_id=1588434173]
 layout_mode = 2
 size_flags_vertical = 4
-alignment = 1
 theme_override_constants/separation = 4
+alignment = 1
 
 [node name="NameLabel" type="Label" parent="RightPanel/Margin/VBox/ProfileSection/Info" unique_id=1297436815]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.95, 0.94, 1.0, 1)
+theme_override_colors/font_color = Color(0.95, 0.94, 1, 1)
 theme_override_font_sizes/font_size = 22
 text = "Trailblazer"
 
 [node name="LevelUID" type="Label" parent="RightPanel/Margin/VBox/ProfileSection/Info" unique_id=1889333320]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.55, 0.60, 0.72, 1)
+theme_override_colors/font_color = Color(0.55, 0.6, 0.72, 1)
 theme_override_font_sizes/font_size = 13
 text = "Lv. 60  |  UID: 800012345"
 
-; ─── XP bar ──────────────────────────────────────────────────────────────────
 [node name="XPBarBG" type="Panel" parent="RightPanel/Margin/VBox/ProfileSection/Info" unique_id=111111005]
 custom_minimum_size = Vector2(0, 5)
 layout_mode = 2
@@ -272,6 +250,7 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_XPBg")
 
 [node name="XPBarFill" type="Panel" parent="RightPanel/Margin/VBox/ProfileSection/Info/XPBarBG" unique_id=111111006]
 layout_mode = 1
+anchors_preset = -1
 anchor_right = 0.65
 anchor_bottom = 1.0
 grow_horizontal = 2
@@ -284,13 +263,10 @@ theme_override_colors/font_color = Color(0.85, 0.75, 0.45, 0.55)
 theme_override_font_sizes/font_size = 10
 text = "EXP  6500 / 10000"
 
-; ─── Separator ───────────────────────────────────────────────────────────────
 [node name="HSeparator" type="HSeparator" parent="RightPanel/Margin/VBox" unique_id=401793729]
-modulate = Color(1, 1, 1, 1)
 layout_mode = 2
 theme_override_styles/separator = SubResource("StyleBoxLine_GoldSep")
 
-; ─── Grid menu ───────────────────────────────────────────────────────────────
 [node name="GridMenu" type="GridContainer" parent="RightPanel/Margin/VBox" unique_id=86712178]
 layout_mode = 2
 theme_override_constants/h_separation = 10
@@ -393,12 +369,10 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_GridBtnHover")
 text = "⚙
 Settings"
 
-; ─── Flexible spacer ─────────────────────────────────────────────────────────
 [node name="Spacer" type="Control" parent="RightPanel/Margin/VBox" unique_id=1330112721]
 layout_mode = 2
 size_flags_vertical = 3
 
-; ─── Bottom action bar ───────────────────────────────────────────────────────
 [node name="BottomBar" type="HBoxContainer" parent="RightPanel/Margin/VBox" unique_id=105789848]
 layout_mode = 2
 theme_override_constants/separation = 12
@@ -406,8 +380,8 @@ alignment = 2
 
 [node name="BtnQuit" type="Button" parent="RightPanel/Margin/VBox/BottomBar" unique_id=413817909]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.80, 0.80, 0.88, 1)
-theme_override_colors/font_hover_color = Color(1.0, 0.60, 0.60, 1)
+theme_override_colors/font_color = Color(0.8, 0.8, 0.88, 1)
+theme_override_colors/font_hover_color = Color(1, 0.6, 0.6, 1)
 theme_override_font_sizes/font_size = 14
 theme_override_styles/normal = SubResource("StyleBoxFlat_SystemBtn")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_SystemBtn")

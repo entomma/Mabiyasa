@@ -27,6 +27,7 @@
 [ext_resource type="Texture2D" uid="uid://dom6yammb7rht" path="res://Assets/childnpc.png" id="25_htv3o"]
 [ext_resource type="Texture2D" uid="uid://48whcg8eu3vv" path="res://Assets/knight.png" id="26_rc433"]
 [ext_resource type="Resource" uid="uid://b6rpxkf4ch7dd" path="res://Resources/lessons/lesson2.tres" id="27_joktk"]
+[ext_resource type="PackedScene" uid="uid://b3htx74bdqrtu" path="res://Scenes/HUD.tscn" id="28_ivykw"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_i7xru"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -1496,3 +1497,5 @@ transform = Transform3D(7, 0, 0, 0, 7, 0, 0, 0, 7, -32.711212, 0.8157613, -62.69
 npc_frames = SubResource("SpriteFrames_cla81")
 lesson_data = ExtResource("27_joktk")
 can_wander = true
+
+[node name="HUD" parent="." unique_id=131330266 instance=ExtResource("28_ivykw")]
