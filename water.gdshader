@@ -1,7 +1,7 @@
 shader_type spatial;
 render_mode cull_disabled, blend_mix, depth_draw_opaque;
 
-uniform vec4 water_color : source_color = vec4(0.10, 0.50, 0.80, 0.55);
+uniform vec4 water_color : source_color = vec4(10.10, 0.50, 0.1, 0.55);
 uniform float move_speed = 0.35;
 
 void vertex() {
@@ -14,7 +14,7 @@ void fragment() {
 
 	// stronger visible movement
 	float flow1 = sin((UV.x * 20.0) + TIME * move_speed * 3.0);
-	float flow2 = cos((UV.y * 55.0) + TIME * move_speed * 2.5);
+	float flow2 = cos((UV.y * 195.0) + TIME * move_speed * 2.5);
 	float flow3 = sin(((UV.x + UV.y) * 100.0) + TIME * move_speed * 2.0);
 
 	float flow = (flow1 + flow2 + flow3) / 3.0;
@@ -24,6 +24,6 @@ void fragment() {
 	ALPHA = water_color.a;
 
 	ROUGHNESS = 0.1;
-	SPECULAR = 0.5;
+	SPECULAR = 0.1;
 	METALLIC = 0.0;
 }

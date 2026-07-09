@@ -57,6 +57,7 @@ func _on_start_pressed():
 			get_tree().change_scene_to_file(last_scene)
 			return
 		else:
+				
 			print("⚠ Saved scene file does not exist: ", last_scene)
 	
 	# Fallback to village

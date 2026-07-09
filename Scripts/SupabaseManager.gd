@@ -1,7 +1,7 @@
 extends Node
 
-const SUPABASE_URL = "http://127.0.0.1:54321"
-const SUPABASE_ANON_KEY = "sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH"
+const SUPABASE_URL = "https://xddbcsqttnlutaguglvb.supabase.co"
+const SUPABASE_ANON_KEY = "sb_publishable_BrdZ4VGozBCbdtZ1vuDnuA_pudGiuXQ"
 
 var auth_token: String = ""
 var current_uid: int = 0
