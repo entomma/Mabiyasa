@@ -1,92 +1,141 @@
-extends Node2D
+extends Control
 
-## EDIT THIS: path to whatever scene should load after the cutscene ends
-const NEXT_SCENE := "res://Scenes/MainMenu.tscn"
+# Core cinematic processing phases
+enum State { TYPING, SHOWING_TEXT, FADING_OUT_TEXT, FADING_IN_IMAGE, SHOWING_IMAGE, FADING_OUT_IMAGE }
+var current_state: State = State.TYPING
 
-## EDIT THIS: your panels — one entry per beat of the cutscene.
-## "image" can be null if you don't have art yet; it'll just show black.
-var panels := [
+# --- CONFIGURATION ---
+@export var intro_slides: Array[Dictionary] = [
 	{
-		"image": null, # preload("res://Assets/Cutscene/panel_01.png"),
-		"text": "Deng Kapampangan, mekeni la ring amanu da...",
+		"text": "[center]Beyond the mist-shrouded valleys lies the ancient cradle of life...\n[color=gold]The Great Bundok[/color].[/center]"
 	},
 	{
-		"image": null, # preload("res://Assets/Cutscene/panel_02.png"),
-		"text": "At atsu ing salitang mengalub keng panaun...",
+		"image_path": "res://Assets/BUNDOK.png"
 	},
+	{
+		"text": "[center]Here, the ancestors thrived by the rivers, passing down the sacred art of [color=cyan]Fishing[/color] and survival.[/center]"
+	},
+	{
+		"image_path": "res://Assets/FISHING.png"
+	}
 ]
 
-@onready var bg: TextureRect = $CanvasLayer/Background
-@onready var dialogue_label: RichTextLabel = $CanvasLayer/DialoguePanel/DialogueLabel
-@onready var color_rect: ColorRect = $CanvasLayer/ColorRect
-@onready var anim: AnimationPlayer = $CanvasLayer/AnimationPlayer
+@export var next_scene_path: String = "res://Scenes/MainMenu.tscn"
+@export var typewriter_speed: float = 0.04
+@export var fade_speed: float = 0.6
 
-var current_panel := 0
-var can_advance := false
-var is_typing := false
+# --- NODE REFERENCES ---
+@onready var story_label: RichTextLabel = $TextMargin/StoryLabel
+@onready var story_image: TextureRect = $StoryImage
 
+# --- INTERNAL STATE ---
+var current_index: int = 0
+var active_tween: Tween = null
 
 func _ready() -> void:
-	anim.animation_finished.connect(_on_animation_finished)
-	show_panel(0)
-
-
-func show_panel(index: int) -> void:
-	can_advance = false
-	var panel: Dictionary = panels[index]
-	bg.texture = panel.get("image")
-	dialogue_label.text = panel.get("text", "")
-	dialogue_label.visible_ratio = 0.0
-	anim.play("fade_in")
-
-
-func _on_animation_finished(anim_name: StringName) -> void:
-	if anim_name == "fade_in":
-		_type_text()
-
-
-func _type_text() -> void:
-	is_typing = true
-	var tween := create_tween()
-	var text_len := dialogue_label.get_total_character_count()
-	var duration: float = clamp(text_len * 0.03, 0.5, 3.0)
-	tween.tween_property(dialogue_label, "visible_ratio", 1.0, duration)
-	tween.tween_callback(func():
-		is_typing = false
-		can_advance = true
-	)
-
-
-func _unhandled_input(event: InputEvent) -> void:
-	var pressed: bool = event.is_action_pressed("ui_accept") \
-		or event.is_action_pressed("ui_select") \
-		or (event is InputEventMouseButton and (event as InputEventMouseButton).pressed)
-
-	if not pressed:
+	if intro_slides.is_empty():
+		_transition_to_game()
 		return
+		
+	# Ensure scene elements start completely hidden
+	story_label.text = ""
+	story_label.modulate.a = 0.0
+	story_image.texture = null
+	story_image.modulate.a = 0.0
+	
+	_load_current_step()
 
-	if is_typing:
-		# Skip the typewriter effect, reveal full text instantly
-		get_viewport().set_input_as_handled()
-		dialogue_label.visible_ratio = 1.0
-		is_typing = false
-		can_advance = true
-	elif can_advance:
-		get_viewport().set_input_as_handled()
-		advance()
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_accept") or (event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT):
+		_handle_player_click()
 
+func _load_current_step() -> void:
+	var data = intro_slides[current_index]
+	
+	# Handle a TEXT timeline block
+	if data.has("text") and data["text"] != "":
+		story_label.text = data["text"]
+		story_label.visible_characters = 0
+		story_label.modulate.a = 1.0
+		current_state = State.TYPING
+		
+		var raw_text_length = story_label.get_parsed_text().length()
+		var duration = raw_text_length * typewriter_speed
+		
+		if active_tween: active_tween.kill()
+		active_tween = create_tween()
+		active_tween.tween_property(story_label, "visible_characters", raw_text_length, duration)
+		active_tween.finished.connect(func():
+			if current_state == State.TYPING:
+				current_state = State.SHOWING_TEXT
+		)
+		
+	# Handle an IMAGE timeline block
+	elif data.has("image_path") and data["image_path"] != "":
+		story_image.texture = load(data["image_path"])
+		story_image.modulate.a = 0.0
+		current_state = State.FADING_IN_IMAGE
+		
+		if active_tween: active_tween.kill()
+		active_tween = create_tween()
+		active_tween.tween_property(story_image, "modulate:a", 1.0, fade_speed)
+		active_tween.finished.connect(func():
+			if current_state == State.FADING_IN_IMAGE:
+				current_state = State.SHOWING_IMAGE
+		)
+	else:
+		# Fallback safety handler for misformatted steps
+		_advance_timeline()
 
-func advance() -> void:
-	current_panel += 1
-	if current_panel >= panels.size():
-		finish()
-		return
-	anim.play_backwards("fade_in") # fades to black between panels
-	await anim.animation_finished
-	show_panel(current_panel)
+func _handle_player_click() -> void:
+	match current_state:
+		State.TYPING:
+			# [Case 1 Intercept] Dialogue is crawl-typing -> stop animation and present all text to read
+			if active_tween: active_tween.kill()
+			story_label.visible_characters = story_label.get_parsed_text().length()
+			current_state = State.SHOWING_TEXT
+			
+		State.SHOWING_TEXT:
+			# [Case 2 / Follow-up click] Text is finished -> transition cleanly out to black
+			current_state = State.FADING_OUT_TEXT
+			if active_tween: active_tween.kill()
+			active_tween = create_tween()
+			active_tween.tween_property(story_label, "modulate:a", 0.0, fade_speed)
+			active_tween.finished.connect(_advance_timeline)
+			
+		State.FADING_OUT_TEXT:
+			# Catch rapid player input during fade -> clear instantly and execute next stage
+			if active_tween: active_tween.kill()
+			story_label.modulate.a = 0.0
+			_advance_timeline()
+			
+		State.FADING_IN_IMAGE:
+			# Bypass image blend animation -> force maximum opacity view instantly
+			if active_tween: active_tween.kill()
+			story_image.modulate.a = 1.0
+			current_state = State.SHOWING_IMAGE
+			
+		State.SHOWING_IMAGE:
+			# Image inspection over -> clear layout background cleanly
+			current_state = State.FADING_OUT_IMAGE
+			if active_tween: active_tween.kill()
+			active_tween = create_tween()
+			active_tween.tween_property(story_image, "modulate:a", 0.0, fade_speed)
+			active_tween.finished.connect(_advance_timeline)
+			
+		State.FADING_OUT_IMAGE:
+			# Catch rapid input during asset fade down
+			if active_tween: active_tween.kill()
+			story_image.modulate.a = 0.0
+			_advance_timeline()
 
+func _advance_timeline() -> void:
+	current_index += 1
+	if current_index >= intro_slides.size():
+		_transition_to_game()
+	else:
+		_load_current_step()
 
-func finish() -> void:
-	anim.play_backwards("fade_in")
-	await anim.animation_finished
-	get_tree().change_scene_to_file(NEXT_SCENE)
+func _transition_to_game() -> void:
+	set_process_input(false)
+	get_tree().change_scene_to_file(next_scene_path)

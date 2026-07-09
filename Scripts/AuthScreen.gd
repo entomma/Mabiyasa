@@ -141,7 +141,7 @@ func _on_register_pressed():
 			
 			status_label.text = "Account created!"
 			# New accounts go to MainMenu first
-			get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
+			get_tree().change_scene_to_file("res://Scenes/IntroCutscene.tscn")
 		else:
 			status_label.text = "Login after register failed!"
 	else:
