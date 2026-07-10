@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://b5jd1ofyjspxn" path="res://Scripts/IntroCutscene.gd" id="1_mabiyasa_script"]
 
-[node name="IntroCutscene" type="Control" unique_id=2031803559]
+[node name="IntroCutscene" type="Control" unique_id=1956091222]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -10,9 +10,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_mabiyasa_script")
-next_scene_path = "res://Scenes/small_village.tscn"
 
-[node name="Background" type="ColorRect" parent="." unique_id=1155404141]
+[node name="Background" type="ColorRect" parent="." unique_id=837635961]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -21,7 +20,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 1)
 
-[node name="StoryImage" type="TextureRect" parent="." unique_id=334103822]
+[node name="StoryImage" type="TextureRect" parent="." unique_id=985724295]
 texture_filter = 1
 layout_mode = 1
 anchors_preset = 15
@@ -30,9 +29,18 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 expand_mode = 1
-stretch_mode = 5
+stretch_mode = 6
 
-[node name="TextMargin" type="MarginContainer" parent="." unique_id=1923100092]
+[node name="StoryVideo" type="VideoStreamPlayer" parent="." unique_id=1463376244]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand = true
+
+[node name="TextMargin" type="MarginContainer" parent="." unique_id=416466781]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -44,7 +52,7 @@ theme_override_constants/margin_top = 80
 theme_override_constants/margin_right = 120
 theme_override_constants/margin_bottom = 80
 
-[node name="StoryLabel" type="RichTextLabel" parent="TextMargin" unique_id=1406732068]
+[node name="StoryLabel" type="RichTextLabel" parent="TextMargin" unique_id=1108476275]
 layout_mode = 2
 size_flags_vertical = 4
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.85)
@@ -52,6 +60,13 @@ theme_override_constants/line_separation = 8
 theme_override_constants/shadow_outline_size = 4
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/normal_font_size = 20
+theme_override_font_sizes/bold_font_size = 20
+theme_override_font_sizes/bold_italics_font_size = 20
+theme_override_font_sizes/italics_font_size = 20
+theme_override_font_sizes/mono_font_size = 20
 bbcode_enabled = true
 text = "[center]Placeholder story text tracking...[/center]"
 fit_content = true
+
+[node name="BGMPlayer" type="AudioStreamPlayer" parent="." unique_id=615633299]

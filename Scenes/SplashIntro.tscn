@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://cd0d5yupy4cxu"]
+
+[ext_resource type="Script" uid="uid://nejk0spt68k5" path="res://Scripts/SplashIntro.gd" id="1_splash_script"]
+
+[node name="SplashIntro" type="Control" unique_id=676704356]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_splash_script")
+
+[node name="Background" type="ColorRect" parent="." unique_id=1847997876]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=1907503101]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
