@@ -92,6 +92,12 @@ func _on_login_pressed():
 	if result.has("access_token"):
 		status_label.text = "Login successful!"
 		
+		# --- FEED USER ID TO TUTORIAL MANAGER ---
+		var user_id = ""
+		if result.has("user") and result["user"] != null:
+			user_id = result["user"].get("id", "")
+		TutorialManager.load_tutorial_status(user_id)
+		
 		# Check if we have a saved scene in the profile
 		var saved_scene = GameManager.player_profile.get("current_scene", "")
 		var has_saved_position = GameManager.has_saved_position
@@ -138,6 +144,12 @@ func _on_register_pressed():
 			
 			await SupabaseManager.fetch_player_profile()
 			print("Profile after fetch: ", GameManager.player_profile)
+			
+			# --- FEED NEW USER ID TO TUTORIAL MANAGER ---
+			var user_id = ""
+			if login_result.has("user") and login_result["user"] != null:
+				user_id = login_result["user"].get("id", "")
+			TutorialManager.load_tutorial_status(user_id)
 			
 			status_label.text = "Account created!"
 			# New accounts go to MainMenu first

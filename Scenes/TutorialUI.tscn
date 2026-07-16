@@ -1,0 +1,72 @@
+[gd_scene format=3 uid="uid://b8x2k8m4y3q6p"]
+
+[ext_resource type="Script" uid="uid://caqc0v5d7pjxf" path="res://Scripts/TutorialUI.gd" id="1_script"]
+
+[node name="TutorialUI" type="CanvasLayer" unique_id=1733265328]
+script = ExtResource("1_script")
+
+[node name="WelcomeBox" type="CenterContainer" parent="." unique_id=2073991925]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="WelcomeBox" unique_id=361300803]
+custom_minimum_size = Vector2(400, 250)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="WelcomeBox/PanelContainer" unique_id=231174767]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="Title" type="Label" parent="WelcomeBox/PanelContainer/VBoxContainer" unique_id=1341274984]
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "System Calibration"
+horizontal_alignment = 1
+
+[node name="Desc" type="Label" parent="WelcomeBox/PanelContainer/VBoxContainer" unique_id=386590872]
+layout_mode = 2
+text = "Welcome to the simulation. Let's calibrate your movement and operational configurations before launching."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="StartButton" type="Button" parent="WelcomeBox/PanelContainer/VBoxContainer" unique_id=1764053046]
+custom_minimum_size = Vector2(160, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Start Tutorial"
+
+[node name="SidebarBox" type="PanelContainer" parent="." unique_id=704470843]
+visible = false
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_right = 320.0
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="SidebarBox" unique_id=995064205]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="SidebarBox/MarginContainer" unique_id=463267198]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="TaskTitle" type="Label" parent="SidebarBox/MarginContainer/VBoxContainer" unique_id=687015]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Objective"
+
+[node name="TaskDesc" type="Label" parent="SidebarBox/MarginContainer/VBoxContainer" unique_id=1483143005]
+layout_mode = 2
+text = "Perform task..."
+autowrap_mode = 2
+
+[node name="ProgressBar" type="ProgressBar" parent="SidebarBox/MarginContainer/VBoxContainer" unique_id=62124525]
+layout_mode = 2
+show_percentage = false

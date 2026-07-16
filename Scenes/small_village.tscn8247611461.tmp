@@ -29,7 +29,6 @@
 [ext_resource type="Resource" uid="uid://b6rpxkf4ch7dd" path="res://Resources/lessons/lesson2.tres" id="27_joktk"]
 [ext_resource type="PackedScene" uid="uid://b3htx74bdqrtu" path="res://Scenes/HUD.tscn" id="28_ivykw"]
 [ext_resource type="PackedScene" uid="uid://d1qpmrj6vid8d" path="res://Scenes/tutorial_overlay.tscn" id="29_jnab0"]
-[ext_resource type="PackedScene" uid="uid://b8x2k8m4y3q6p" path="res://Scenes/TutorialUI.tscn" id="30_y8wv4"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_i7xru"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -1503,5 +1502,3 @@ can_wander = true
 [node name="HUD" parent="." unique_id=131330266 instance=ExtResource("28_ivykw")]
 
 [node name="TutorialOverlay" parent="." unique_id=1979575331 instance=ExtResource("29_jnab0")]
-
-[node name="TutorialUI" parent="." unique_id=974069123 instance=ExtResource("30_y8wv4")]

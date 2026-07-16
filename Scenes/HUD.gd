@@ -13,6 +13,11 @@ func _ready():
 	btn_chars.pressed.connect(_on_characters_pressed)
 	btn_party.pressed.connect(_on_party_pressed)
 	btn_wish.pressed.connect(_on_wish_pressed)
+	# Connect to the manager
+	TutorialManager.tutorial_visibility_changed.connect(_on_tutorial_visibility_changed)
+
+func _on_tutorial_visibility_changed(is_tutorial_active: bool):
+	self.visible = !is_tutorial_active
 	
 	print("HUD Loaded: All buttons connected successfully.")
 
