@@ -3,7 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://db8r3raxvypja" path="res://Assets/low_poly_fishermans_hut.glb" id="1_b8t04"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_fn0f6"]
-size = Vector3(3.4805298, 1.5756836, 2.6526413)
+size = Vector3(3.4805298, 3.0598145, 2.6526413)
 
 [node name="house" type="StaticBody3D" unique_id=1015821474]
 transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0)
@@ -12,5 +12,5 @@ disable_mode = 1
 [node name="Sketchfab_Scene" parent="." unique_id=69787102 instance=ExtResource("1_b8t04")]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1331829602]
-transform = Transform3D(100.000046, 0, 0, 0, 100.000046, 0, 0, 0, 100.000046, -4.4003806, 118.6002, 2.642013)
+transform = Transform3D(100.000046, 0, 0, 0, 100.000046, 0, 0, 0, 100.000046, -4.4003806, 192.80678, 2.642013)
 shape = SubResource("BoxShape3D_fn0f6")

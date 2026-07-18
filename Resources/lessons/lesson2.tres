@@ -4,12 +4,11 @@
 
 [resource]
 script = ExtResource("1_5gkqq")
-npc_lines = Array[String](["Nung munta ka gubat mimingat ka!
+npc_lines = Array[String](["O! Komusta na ka david?
 
-translation: If you're going to the forest be careful!"])
-quiz_question = "What is gubat?"
-choices = Array[String](["waters", "mountains", "forest"])
-correct_index = 2
-success_msg = "Istu! Tama!"
-fail_msg = "Mali! Try again!"
+[color=yellow][i]Oh! How are you, David?[/i][/color]"])
+quiz_question = "What type of word is komusta?"
+choices = Array[String](["A greeting", "An action word"])
+success_msg = "Aydamo ka"
+fail_msg = "Bolang ka yata e"
 metadata/_custom_type_script = "uid://dqgoaflpryikd"

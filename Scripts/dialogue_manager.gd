@@ -186,13 +186,13 @@ func _show_feedback(is_correct: bool):
 	
 	# Handle Text and Voice based on Correct/Incorrect
 	if is_correct:
-		feedback_text = "[color=#5cdb5c]Correct![/color] " + (s_msg if s_msg != null else "")
+		feedback_text = "[color=#5cdb5c][i]Correct![/i][/color] " + (s_msg if s_msg != null else "")
 		if current_lesson.get("success_voice") != null:
 			current_voice_stream = current_lesson.success_voice
 			voice_player.stream = current_voice_stream
 			voice_player.play()
 	else:
-		feedback_text = "[color=#ff5c5c]Incorrect.[/color] " + (f_msg if f_msg != null else "")
+		feedback_text = "[color=#ff5c5c][i]Incorrect.[/i][/color] " + (f_msg if f_msg != null else "")
 		if current_lesson.get("fail_voice") != null:
 			current_voice_stream = current_lesson.fail_voice
 			voice_player.stream = current_voice_stream

@@ -2,6 +2,12 @@
 
 [ext_resource type="Texture2D" uid="uid://dodygl0aphd5n" path="res://Assets/character-spritesheet.png" id="1_rpqav"]
 
+[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_kyqiw"]
+dof_blur_far_enabled = true
+dof_blur_far_distance = 140.0
+dof_blur_far_transition = 100.0
+dof_blur_amount = 0.07
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_rpqav"]
 atlas = ExtResource("1_rpqav")
 region = Rect2(0, 512, 64, 64)
@@ -331,6 +337,8 @@ height = 0.83898926
 
 [node name="Player" type="CharacterBody3D" unique_id=1607055564 groups=["player"]]
 transform = Transform3D(1.3, 0, 0, 0, 1.3, 0, 0, 0, 1.3, 0, 0, 0)
+collision_layer = 3
+collision_mask = 3
 
 [node name="Head" type="Node3D" parent="." unique_id=965889351]
 
@@ -339,10 +347,10 @@ spring_length = 3.0
 
 [node name="Camera3D" type="Camera3D" parent="Head/SpringArm3D" unique_id=789676081 groups=["camera"]]
 transform = Transform3D(0.0952381, 0, 0, 0, 0.087004334, 0.038736824, 0, -0.038736824, 0.087004334, 0, 0.8820001, 2.3)
+attributes = SubResource("CameraAttributesPractical_kyqiw")
 current = true
-fov = 60.0
-near = 0.5
-far = 500.0
+fov = 37.849285
+size = 3.5
 
 [node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="." unique_id=762640094]
 transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 0, 0, 0)
