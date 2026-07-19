@@ -1,119 +1,148 @@
 [gd_scene format=3 uid="uid://cbvrdx8tilurg"]
 
 [ext_resource type="Script" uid="uid://d33m65exq11te" path="res://Scripts/PauseMenu.gd" id="1_lj4oq"]
-[ext_resource type="Texture2D" uid="uid://cc84myi1mwhko" path="res://Assets/UIBundleFree/freefantasy.png" id="2_5w4ur"]
-[ext_resource type="Texture2D" uid="uid://cjmejjayq52vi" path="res://Assets/UIBundleFree/MediavelFree.png" id="3_ey1tb"]
+[ext_resource type="Texture2D" uid="uid://e56mdxrbu748" path="res://Assets/UIBundleFree/UiCozyFree.png" id="2_5w4ur"]
+[ext_resource type="Texture2D" uid="uid://msr8w5hrnsrg" path="res://Assets/UIIcons_1 (2).png" id="3_ey1tb"]
+[ext_resource type="Texture2D" uid="uid://dc4qx73rogyvq" path="res://Assets/UIIcons_1 (1).png" id="4_siy43"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_panel_bg"]
 atlas = ExtResource("2_5w4ur")
-region = Rect2(92, 70, 55, 90)
+region = Rect2(102, 167, 57, 81)
 
 [sub_resource type="StyleBoxLine" id="StyleBoxLine_GoldSep"]
 color = Color(0.85, 0.75, 0.45, 0.25)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_avatar_frame"]
 atlas = ExtResource("2_5w4ur")
-region = Rect2(96, 2, 32, 29)
+region = Rect2(8, 167, 87, 81)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_xp_bg"]
 region = Rect2(384, 800, 120, 16)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_siy43"]
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_xp_fill"]
-atlas = ExtResource("2_5w4ur")
-region = Rect2(5, 3, 68, 21)
+atlas = SubResource("AtlasTexture_siy43")
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_store_n"]
 atlas = ExtResource("3_ey1tb")
-region = Rect2(177, 49, 14, 14)
+region = Rect2(17, 112, 14, 15)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_store_p"]
-atlas = ExtResource("3_ey1tb")
-region = Rect2(193, 50, 14, 13)
+atlas = ExtResource("4_siy43")
+region = Rect2(17, 112, 14, 15)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_store_h"]
-atlas = ExtResource("3_ey1tb")
-region = Rect2(193, 50, 14, 13)
+atlas = ExtResource("4_siy43")
+region = Rect2(17, 112, 14, 15)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_friends_n"]
-region = Rect2(0, 88, 88, 88)
+atlas = ExtResource("3_ey1tb")
+region = Rect2(97, 80, 14, 15)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_friends_p"]
-region = Rect2(176, 88, 88, 88)
+atlas = ExtResource("4_siy43")
+region = Rect2(97, 80, 14, 15)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_friends_h"]
-region = Rect2(88, 88, 88, 88)
+atlas = ExtResource("4_siy43")
+region = Rect2(97, 80, 14, 15)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_chars_n"]
-region = Rect2(0, 176, 88, 88)
+atlas = ExtResource("3_ey1tb")
+region = Rect2(81, 80, 14, 15)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_chars_p"]
-region = Rect2(176, 176, 88, 88)
+atlas = ExtResource("4_siy43")
+region = Rect2(81, 80, 14, 15)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_chars_h"]
-region = Rect2(88, 176, 88, 88)
+atlas = ExtResource("4_siy43")
+region = Rect2(81, 80, 14, 15)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_party_n"]
-region = Rect2(0, 264, 88, 88)
+atlas = ExtResource("3_ey1tb")
+region = Rect2(33, 128, 14, 15)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_party_p"]
-region = Rect2(176, 264, 88, 88)
+atlas = ExtResource("4_siy43")
+region = Rect2(33, 128, 14, 15)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_party_h"]
-region = Rect2(88, 264, 88, 88)
+atlas = ExtResource("4_siy43")
+region = Rect2(33, 128, 14, 15)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_wish_n"]
-region = Rect2(0, 352, 88, 88)
+atlas = ExtResource("3_ey1tb")
+region = Rect2(113, 96, 14, 15)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_wish_p"]
-region = Rect2(176, 352, 88, 88)
+atlas = ExtResource("4_siy43")
+region = Rect2(113, 96, 14, 15)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_wish_h"]
-region = Rect2(88, 352, 88, 88)
+atlas = ExtResource("4_siy43")
+region = Rect2(113, 96, 14, 15)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_missions_n"]
-region = Rect2(0, 440, 88, 88)
+atlas = ExtResource("3_ey1tb")
+region = Rect2(1, 64, 14, 15)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_missions_p"]
-region = Rect2(176, 440, 88, 88)
+atlas = ExtResource("4_siy43")
+region = Rect2(1, 64, 14, 15)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_missions_h"]
-region = Rect2(88, 440, 88, 88)
+atlas = ExtResource("4_siy43")
+region = Rect2(1, 64, 14, 15)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_inv_n"]
-region = Rect2(0, 528, 88, 88)
+atlas = ExtResource("3_ey1tb")
+region = Rect2(49, 64, 14, 15)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_inv_p"]
-region = Rect2(176, 528, 88, 88)
+atlas = ExtResource("4_siy43")
+region = Rect2(49, 64, 14, 15)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_inv_h"]
-region = Rect2(88, 528, 88, 88)
+atlas = ExtResource("4_siy43")
+region = Rect2(49, 64, 14, 14)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_settings_n"]
-region = Rect2(0, 616, 88, 88)
+atlas = ExtResource("3_ey1tb")
+region = Rect2(1, 80, 14, 15)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_settings_p"]
-region = Rect2(176, 616, 88, 88)
+atlas = ExtResource("4_siy43")
+region = Rect2(1, 80, 14, 15)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_settings_h"]
-region = Rect2(88, 616, 88, 88)
+atlas = ExtResource("4_siy43")
+region = Rect2(1, 80, 14, 15)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_quit_n"]
-region = Rect2(0, 704, 120, 44)
+atlas = ExtResource("3_ey1tb")
+region = Rect2(65, 96, 14, 15)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_quit_p"]
-region = Rect2(240, 704, 120, 44)
+atlas = ExtResource("4_siy43")
+region = Rect2(65, 96, 14, 15)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_quit_h"]
-region = Rect2(120, 704, 120, 44)
+atlas = ExtResource("4_siy43")
+region = Rect2(65, 96, 14, 15)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_resume_n"]
-region = Rect2(0, 748, 140, 44)
+atlas = ExtResource("3_ey1tb")
+region = Rect2(1, 48, 14, 15)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_resume_p"]
-region = Rect2(280, 748, 140, 44)
+atlas = ExtResource("4_siy43")
+region = Rect2(1, 48, 14, 15)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_resume_h"]
-region = Rect2(140, 748, 140, 44)
+atlas = ExtResource("4_siy43")
+region = Rect2(1, 48, 14, 15)
 
 [node name="PauseMenu" type="Control" unique_id=1712898475]
 process_mode = 3
@@ -177,7 +206,7 @@ theme_override_styles/separator = SubResource("StyleBoxLine_GoldSep")
 
 [node name="HeaderLabel" type="Label" parent="RightPanel/Margin/VBox/HeaderRow" unique_id=1148511525]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.85, 0.75, 0.45, 0.85)
+theme_override_colors/font_color = Color(0, 0, 0, 0.8509804)
 theme_override_font_sizes/font_size = 11
 text = "P A U S E D"
 
@@ -217,13 +246,13 @@ alignment = 1
 
 [node name="NameLabel" type="Label" parent="RightPanel/Margin/VBox/ProfileSection/Info" unique_id=43158730]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.95, 0.94, 1, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 22
 text = "Trailblazer"
 
 [node name="LevelUID" type="Label" parent="RightPanel/Margin/VBox/ProfileSection/Info" unique_id=1159176831]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.55, 0.6, 0.72, 1)
+theme_override_colors/font_color = Color(0.3082763, 0.35366216, 0.4642768, 1)
 theme_override_font_sizes/font_size = 13
 text = "Lv. 60  |  UID: 800012345"
 
@@ -248,7 +277,7 @@ expand_mode = 1
 
 [node name="XPLabel" type="Label" parent="RightPanel/Margin/VBox/ProfileSection/Info" unique_id=886423035]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.85, 0.75, 0.45, 0.55)
+theme_override_colors/font_color = Color(0.32432047, 0.4051312, 0.16431865, 0.54901963)
 theme_override_font_sizes/font_size = 10
 text = "EXP  6500 / 10000"
 
