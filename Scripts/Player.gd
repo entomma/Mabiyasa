@@ -51,15 +51,14 @@ func _ready():
 
 
 func _physics_process(delta):
-	var diag = get_node_or_null("/root/DialogueManager")
-	var is_dialogue_active = diag and diag.is_dialogue_active
-	
-	# DETECT WHEN DIALOGUE CLOSES:
-	if was_dialogue_active and not is_dialogue_active:
+	var is_dialogue_active = DialogueManager.is_active
+
+	# DETECT WHEN DIALOGUE CLOSES
+	if was_dialogue_active and !is_dialogue_active:
 		if TutorialManager.current_active_step == "interact":
-			TutorialManager.record_interaction() # Completes the tutorial step when conversation ends!
-			
-	was_dialogue_active = is_dialogue_active # Keep tracking state
+			TutorialManager.record_interaction()
+
+	was_dialogue_active = is_dialogue_active
 
 	if is_dialogue_active:
 		velocity = Vector3.ZERO
@@ -70,27 +69,27 @@ func _physics_process(delta):
 	var input = Vector2.ZERO
 	if TutorialManager.movement_allowed:
 		input = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
-	
+
 	var direction = (transform.basis * Vector3(input.x, 0, input.y)).normalized()
 
 	if direction:
 		var current_speed = SPEED
-		
+
 		if Input.is_action_pressed("Sprint") and TutorialManager.sprint_allowed:
 			current_speed = SPRINT_SPEED
 			TutorialManager.record_sprint()
-			
+
 		velocity.x = direction.x * current_speed
 		velocity.z = direction.z * current_speed
 		current_facing_direction = input.normalized()
-		
+
 		var horizontal_velocity = Vector3(velocity.x, 0, velocity.z)
 		TutorialManager.record_walk(horizontal_velocity.length() * delta)
 	else:
 		velocity.x = 0
 		velocity.z = 0
 
-	if not is_on_floor():
+	if !is_on_floor():
 		velocity.y -= gravity * delta
 	else:
 		velocity.y = 0
@@ -105,7 +104,6 @@ func _physics_process(delta):
 		play_idle()
 	else:
 		play_walk(input)
-
 
 func _input(event):
 	if event.is_action_pressed("ui_cancel"):
