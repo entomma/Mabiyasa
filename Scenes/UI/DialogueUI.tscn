@@ -1,0 +1,32 @@
+[gd_scene format=3 uid="uid://ch43gbxrduyko"]
+
+[ext_resource type="Script" uid="uid://calxmrj75v0wc" path="res://Dialogue/DialogueUI.gd" id="1_4rmbr"]
+
+[node name="CanvasLayer" type="CanvasLayer" unique_id=1117773471]
+script = ExtResource("1_4rmbr")
+
+[node name="DialogueUI" type="Control" parent="." unique_id=2010267832]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Panel" type="Panel" parent="DialogueUI" unique_id=2041720270]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="NameLabel" type="Label" parent="DialogueUI/Panel" unique_id=1405701740]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="RichTextLabel" type="RichTextLabel" parent="DialogueUI/Panel" unique_id=683303473]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="NextIndicator" type="TextureRect" parent="DialogueUI/Panel" unique_id=899114720]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
