@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="DialogueResource" format=3 uid="uid://c5l2yl72mhb1n"]
+
+[ext_resource type="Script" uid="uid://dw51fp8y7rjgq" path="res://Dialogue/DialogueEvent.gd" id="1_5g2vm"]
+[ext_resource type="Script" uid="uid://np707jfh3yx7" path="res://Dialogue/DialogueResource.gd" id="2_3pngx"]
+[ext_resource type="Script" uid="uid://dwkfkil0ox4oc" path="res://Dialogue/DialogueChoice.gd" id="2_35cv4"]
+
+[sub_resource type="Resource" id="Resource_35cv4"]
+script = ExtResource("1_5g2vm")
+id = &"start"
+next_id = &"end"
+speaker = "Victor"
+text = "Hello, Traveler"
+metadata/_custom_type_script = "uid://dw51fp8y7rjgq"
+
+[sub_resource type="Resource" id="Resource_770yy"]
+script = ExtResource("1_5g2vm")
+id = &"end"
+type = 3
+metadata/_custom_type_script = "uid://dw51fp8y7rjgq"
+
+[resource]
+script = ExtResource("2_3pngx")
+dialogue_name = "Victor"
+events = Array[ExtResource("1_5g2vm")]([SubResource("Resource_35cv4"), SubResource("Resource_770yy")])
+metadata/_custom_type_script = "uid://np707jfh3yx7"

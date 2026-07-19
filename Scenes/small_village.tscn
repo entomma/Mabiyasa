@@ -24,6 +24,7 @@
 [ext_resource type="PackedScene" uid="uid://bmf06vxipsji" path="res://Scenes/npc.tscn" id="21_d0wvm"]
 [ext_resource type="Texture2D" uid="uid://c4s31ertvkt5e" path="res://Assets/npcgirl.png" id="23_8lmlf"]
 [ext_resource type="Texture2D" uid="uid://dom6yammb7rht" path="res://Assets/childnpc.png" id="25_htv3o"]
+[ext_resource type="Resource" uid="uid://c5l2yl72mhb1n" path="res://Dialogue/NPCDialogues/VictorDialogue.tres" id="25_joktk"]
 [ext_resource type="Texture2D" uid="uid://48whcg8eu3vv" path="res://Assets/knight.png" id="26_rc433"]
 [ext_resource type="Texture2D" uid="uid://ce8ac1qdqyky1" path="res://Assets/gentleman-nobg.png" id="26_y8wv4"]
 
@@ -2072,6 +2073,12 @@ transform = Transform3D(7, 0, 0, 0, 7, 0, 0, 0, 7, -16.998533, 0.92608285, 33.13
 npc_frames = SubResource("SpriteFrames_34roi")
 can_wander = true
 
+[node name="AnimatedSprite3D" parent="Victor" index="0" unique_id=826435045]
+sprite_frames = SubResource("SpriteFrames_34roi")
+
+[node name="NPCDialogue" parent="Victor" index="3" unique_id=1622345075]
+dialogue = ExtResource("25_joktk")
+
 [node name="John" parent="." unique_id=917965914 instance=ExtResource("21_d0wvm")]
 transform = Transform3D(7, 0, 0, 0, 7, 0, 0, 0, 7, -32.711212, 0.8157613, -62.69553)
 npc_frames = SubResource("SpriteFrames_cla81")
@@ -2081,3 +2088,5 @@ can_wander = true
 transform = Transform3D(7, 0, 0, 0, 7, 0, 0, 0, 7, -65.26065, 0.8157613, 55.191044)
 npc_frames = SubResource("SpriteFrames_5huw7")
 can_wander = true
+
+[editable path="Victor"]
