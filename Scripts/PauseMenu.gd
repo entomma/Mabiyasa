@@ -2,25 +2,25 @@ extends Control
 
 # ─── Node References ──────────────────────────────────────────────────────────
 @onready var overlay: ColorRect = $Overlay
-@onready var right_panel: PanelContainer = $RightPanel
+@onready var right_panel: NinePatchRect = $RightPanel
 
-@onready var btn_resume: Button = $RightPanel/Margin/VBox/BottomBar/BtnResume
-@onready var btn_quit: Button = $RightPanel/Margin/VBox/BottomBar/BtnQuit
+@onready var btn_resume: TextureButton = $RightPanel/Margin/VBox/BottomBar/BtnResume
+@onready var btn_quit: TextureButton = $RightPanel/Margin/VBox/BottomBar/BtnQuit
 
-@onready var btn_store: Button = $RightPanel/Margin/VBox/GridMenu/BtnStore
-@onready var btn_friends: Button = $RightPanel/Margin/VBox/GridMenu/BtnFriends
-@onready var btn_chars: Button = $RightPanel/Margin/VBox/GridMenu/BtnCharacters
-@onready var btn_party: Button = $RightPanel/Margin/VBox/GridMenu/BtnParty
-@onready var btn_wish: Button = $RightPanel/Margin/VBox/GridMenu/BtnWish
-@onready var btn_missions: Button = $RightPanel/Margin/VBox/GridMenu/BtnMissions
-@onready var btn_inventory: Button = $RightPanel/Margin/VBox/GridMenu/BtnInventory
-@onready var btn_settings: Button = $RightPanel/Margin/VBox/GridMenu/BtnSettings
+@onready var btn_store: TextureButton = $RightPanel/Margin/VBox/GridMenu/BtnStore
+@onready var btn_friends: TextureButton = $RightPanel/Margin/VBox/GridMenu/BtnFriends
+@onready var btn_chars: TextureButton = $RightPanel/Margin/VBox/GridMenu/BtnCharacters
+@onready var btn_party: TextureButton = $RightPanel/Margin/VBox/GridMenu/BtnParty
+@onready var btn_wish: TextureButton = $RightPanel/Margin/VBox/GridMenu/BtnWish
+@onready var btn_missions: TextureButton = $RightPanel/Margin/VBox/GridMenu/BtnMissions
+@onready var btn_inventory: TextureButton = $RightPanel/Margin/VBox/GridMenu/BtnInventory
+@onready var btn_settings: TextureButton = $RightPanel/Margin/VBox/GridMenu/BtnSettings
 
-# Profile labels
+# Profile UI
 @onready var name_label: Label = $RightPanel/Margin/VBox/ProfileSection/Info/NameLabel
 @onready var level_uid_label: Label = $RightPanel/Margin/VBox/ProfileSection/Info/LevelUID
 @onready var xp_label: Label = $RightPanel/Margin/VBox/ProfileSection/Info/XPLabel
-@onready var xp_bar_fill: Panel = $RightPanel/Margin/VBox/ProfileSection/Info/XPBarBG/XPBarFill
+@onready var xp_bar_fill: TextureRect = $RightPanel/Margin/VBox/ProfileSection/Info/XPBarBG/XPBarFill
 
 # ─── State ───────────────────────────────────────────────────────────────────
 var is_quitting := false
@@ -142,6 +142,7 @@ func _on_party_pressed() -> void:
 		get_tree().paused = false
 		get_tree().change_scene_to_file("res://Scenes/PartySelect.tscn")
 	)
+
 func _on_inventory_pressed() -> void:
 	_close(func():
 		_save_current_state()

@@ -1,147 +1,121 @@
-[gd_scene format=3 uid="uid://cogawfdmo4qwa"]
+[gd_scene format=3 uid="uid://cbvrdx8tilurg"]
 
 [ext_resource type="Script" uid="uid://d33m65exq11te" path="res://Scripts/PauseMenu.gd" id="1_lj4oq"]
+[ext_resource type="Texture2D" uid="uid://cc84myi1mwhko" path="res://Assets/UIBundleFree/freefantasy.png" id="2_5w4ur"]
+[ext_resource type="Texture2D" uid="uid://cjmejjayq52vi" path="res://Assets/UIBundleFree/MediavelFree.png" id="3_ey1tb"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_RightPanel"]
-bg_color = Color(0.04, 0.05, 0.09, 0.98)
-border_width_left = 3
-border_color = Color(0.85, 0.75, 0.45, 0.85)
-shadow_color = Color(0, 0, 0, 0.65)
-shadow_size = 60
-shadow_offset = Vector2(-12, 0)
+[sub_resource type="AtlasTexture" id="AtlasTexture_panel_bg"]
+atlas = ExtResource("2_5w4ur")
+region = Rect2(92, 70, 55, 90)
 
 [sub_resource type="StyleBoxLine" id="StyleBoxLine_GoldSep"]
 color = Color(0.85, 0.75, 0.45, 0.25)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_Avatar"]
-bg_color = Color(0.1, 0.13, 0.2, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.85, 0.75, 0.45, 1)
-corner_radius_top_left = 100
-corner_radius_top_right = 100
-corner_radius_bottom_right = 100
-corner_radius_bottom_left = 100
-shadow_color = Color(0.85, 0.75, 0.45, 0.2)
-shadow_size = 8
+[sub_resource type="AtlasTexture" id="AtlasTexture_avatar_frame"]
+atlas = ExtResource("2_5w4ur")
+region = Rect2(96, 2, 32, 29)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_XPBg"]
-bg_color = Color(0.1, 0.12, 0.18, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
+[sub_resource type="AtlasTexture" id="AtlasTexture_xp_bg"]
+region = Rect2(384, 800, 120, 16)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_XPFill"]
-bg_color = Color(0.85, 0.75, 0.45, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-shadow_color = Color(0.85, 0.75, 0.45, 0.35)
-shadow_size = 4
+[sub_resource type="AtlasTexture" id="AtlasTexture_xp_fill"]
+atlas = ExtResource("2_5w4ur")
+region = Rect2(5, 3, 68, 21)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_GridBtn"]
-bg_color = Color(0.09, 0.11, 0.17, 0.75)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.35, 0.4, 0.52, 0.22)
-corner_radius_top_left = 14
-corner_radius_top_right = 14
-corner_radius_bottom_right = 14
-corner_radius_bottom_left = 14
+[sub_resource type="AtlasTexture" id="AtlasTexture_store_n"]
+atlas = ExtResource("3_ey1tb")
+region = Rect2(177, 49, 14, 14)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_GridBtnPressed"]
-bg_color = Color(0.06, 0.07, 0.11, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.85, 0.75, 0.45, 0.35)
-corner_radius_top_left = 14
-corner_radius_top_right = 14
-corner_radius_bottom_right = 14
-corner_radius_bottom_left = 14
+[sub_resource type="AtlasTexture" id="AtlasTexture_store_p"]
+atlas = ExtResource("3_ey1tb")
+region = Rect2(193, 50, 14, 13)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_GridBtnHover"]
-bg_color = Color(0.85, 0.75, 0.45, 0.12)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.85, 0.75, 0.45, 0.65)
-corner_radius_top_left = 14
-corner_radius_top_right = 14
-corner_radius_bottom_right = 14
-corner_radius_bottom_left = 14
-shadow_color = Color(0.85, 0.75, 0.45, 0.2)
-shadow_size = 8
+[sub_resource type="AtlasTexture" id="AtlasTexture_store_h"]
+atlas = ExtResource("3_ey1tb")
+region = Rect2(193, 50, 14, 13)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_SystemBtn"]
-content_margin_left = 18.0
-content_margin_top = 9.0
-content_margin_right = 18.0
-content_margin_bottom = 9.0
-bg_color = Color(0.09, 0.11, 0.17, 0.75)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.4, 0.43, 0.55, 0.28)
-corner_radius_top_left = 24
-corner_radius_top_right = 24
-corner_radius_bottom_right = 24
-corner_radius_bottom_left = 24
+[sub_resource type="AtlasTexture" id="AtlasTexture_friends_n"]
+region = Rect2(0, 88, 88, 88)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_SystemBtnHover"]
-content_margin_left = 18.0
-content_margin_top = 9.0
-content_margin_right = 18.0
-content_margin_bottom = 9.0
-bg_color = Color(0.5, 0.1, 0.1, 0.9)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.8, 0.25, 0.25, 0.55)
-corner_radius_top_left = 24
-corner_radius_top_right = 24
-corner_radius_bottom_right = 24
-corner_radius_bottom_left = 24
-shadow_color = Color(0.7, 0.1, 0.1, 0.25)
-shadow_size = 8
+[sub_resource type="AtlasTexture" id="AtlasTexture_friends_p"]
+region = Rect2(176, 88, 88, 88)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ResumeBtn"]
-content_margin_left = 26.0
-content_margin_top = 9.0
-content_margin_right = 26.0
-content_margin_bottom = 9.0
-bg_color = Color(0.85, 0.75, 0.45, 1)
-corner_radius_top_left = 24
-corner_radius_top_right = 24
-corner_radius_bottom_right = 24
-corner_radius_bottom_left = 24
-shadow_color = Color(0.85, 0.75, 0.45, 0.35)
-shadow_size = 12
+[sub_resource type="AtlasTexture" id="AtlasTexture_friends_h"]
+region = Rect2(88, 88, 88, 88)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ResumeBtnHover"]
-content_margin_left = 26.0
-content_margin_top = 9.0
-content_margin_right = 26.0
-content_margin_bottom = 9.0
-bg_color = Color(0.95, 0.88, 0.58, 1)
-corner_radius_top_left = 24
-corner_radius_top_right = 24
-corner_radius_bottom_right = 24
-corner_radius_bottom_left = 24
-shadow_color = Color(0.95, 0.88, 0.58, 0.5)
-shadow_size = 18
+[sub_resource type="AtlasTexture" id="AtlasTexture_chars_n"]
+region = Rect2(0, 176, 88, 88)
 
-[node name="PauseMenu" type="Control" unique_id=68005745]
+[sub_resource type="AtlasTexture" id="AtlasTexture_chars_p"]
+region = Rect2(176, 176, 88, 88)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_chars_h"]
+region = Rect2(88, 176, 88, 88)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_party_n"]
+region = Rect2(0, 264, 88, 88)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_party_p"]
+region = Rect2(176, 264, 88, 88)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_party_h"]
+region = Rect2(88, 264, 88, 88)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wish_n"]
+region = Rect2(0, 352, 88, 88)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wish_p"]
+region = Rect2(176, 352, 88, 88)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wish_h"]
+region = Rect2(88, 352, 88, 88)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_missions_n"]
+region = Rect2(0, 440, 88, 88)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_missions_p"]
+region = Rect2(176, 440, 88, 88)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_missions_h"]
+region = Rect2(88, 440, 88, 88)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_inv_n"]
+region = Rect2(0, 528, 88, 88)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_inv_p"]
+region = Rect2(176, 528, 88, 88)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_inv_h"]
+region = Rect2(88, 528, 88, 88)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_settings_n"]
+region = Rect2(0, 616, 88, 88)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_settings_p"]
+region = Rect2(176, 616, 88, 88)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_settings_h"]
+region = Rect2(88, 616, 88, 88)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_quit_n"]
+region = Rect2(0, 704, 120, 44)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_quit_p"]
+region = Rect2(240, 704, 120, 44)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_quit_h"]
+region = Rect2(120, 704, 120, 44)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_resume_n"]
+region = Rect2(0, 748, 140, 44)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_resume_p"]
+region = Rect2(280, 748, 140, 44)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_resume_h"]
+region = Rect2(140, 748, 140, 44)
+
+[node name="PauseMenu" type="Control" unique_id=1712898475]
 process_mode = 3
 layout_mode = 3
 anchors_preset = 15
@@ -151,16 +125,16 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_lj4oq")
 
-[node name="Overlay" type="ColorRect" parent="." unique_id=1940983792]
+[node name="Overlay" type="ColorRect" parent="." unique_id=241957450]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 0)
+color = Color(0, 0, 0, 0.4)
 
-[node name="RightPanel" type="PanelContainer" parent="." unique_id=1467814367]
+[node name="RightPanel" type="NinePatchRect" parent="." unique_id=1897280428]
 layout_mode = 1
 anchors_preset = 11
 anchor_left = 1.0
@@ -169,50 +143,61 @@ anchor_bottom = 1.0
 offset_left = -480.0
 grow_horizontal = 0
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_RightPanel")
+texture = SubResource("AtlasTexture_panel_bg")
+patch_margin_left = 24
+patch_margin_top = 24
+patch_margin_right = 24
+patch_margin_bottom = 24
 
-[node name="Margin" type="MarginContainer" parent="RightPanel" unique_id=300454909]
-layout_mode = 2
+[node name="Margin" type="MarginContainer" parent="RightPanel" unique_id=1432291089]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_constants/margin_left = 32
 theme_override_constants/margin_top = 44
 theme_override_constants/margin_right = 32
 theme_override_constants/margin_bottom = 32
 
-[node name="VBox" type="VBoxContainer" parent="RightPanel/Margin" unique_id=540792453]
+[node name="VBox" type="VBoxContainer" parent="RightPanel/Margin" unique_id=335154603]
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="HeaderRow" type="HBoxContainer" parent="RightPanel/Margin/VBox" unique_id=111111001]
+[node name="HeaderRow" type="HBoxContainer" parent="RightPanel/Margin/VBox" unique_id=1053789154]
 layout_mode = 2
 theme_override_constants/separation = 10
 alignment = 1
 
-[node name="HeaderLineLeft" type="HSeparator" parent="RightPanel/Margin/VBox/HeaderRow" unique_id=111111002]
+[node name="HeaderLineLeft" type="HSeparator" parent="RightPanel/Margin/VBox/HeaderRow" unique_id=1382914049]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/separator = SubResource("StyleBoxLine_GoldSep")
 
-[node name="HeaderLabel" type="Label" parent="RightPanel/Margin/VBox/HeaderRow" unique_id=111111003]
+[node name="HeaderLabel" type="Label" parent="RightPanel/Margin/VBox/HeaderRow" unique_id=1148511525]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.75, 0.45, 0.85)
 theme_override_font_sizes/font_size = 11
 text = "P A U S E D"
 
-[node name="HeaderLineRight" type="HSeparator" parent="RightPanel/Margin/VBox/HeaderRow" unique_id=111111004]
+[node name="HeaderLineRight" type="HSeparator" parent="RightPanel/Margin/VBox/HeaderRow" unique_id=1400849785]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/separator = SubResource("StyleBoxLine_GoldSep")
 
-[node name="ProfileSection" type="HBoxContainer" parent="RightPanel/Margin/VBox" unique_id=445236614]
+[node name="ProfileSection" type="HBoxContainer" parent="RightPanel/Margin/VBox" unique_id=1389974363]
 layout_mode = 2
 theme_override_constants/separation = 18
 
-[node name="Avatar" type="Panel" parent="RightPanel/Margin/VBox/ProfileSection" unique_id=1922103157]
+[node name="Avatar" type="TextureRect" parent="RightPanel/Margin/VBox/ProfileSection" unique_id=1165597810]
 custom_minimum_size = Vector2(76, 76)
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_Avatar")
+texture = SubResource("AtlasTexture_avatar_frame")
+expand_mode = 1
+stretch_mode = 5
 
-[node name="Icon" type="Label" parent="RightPanel/Margin/VBox/ProfileSection/Avatar" unique_id=1077559254]
+[node name="Icon" type="Label" parent="RightPanel/Margin/VBox/ProfileSection/Avatar" unique_id=1737070532]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -224,178 +209,156 @@ text = "👤"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Info" type="VBoxContainer" parent="RightPanel/Margin/VBox/ProfileSection" unique_id=1588434173]
+[node name="Info" type="VBoxContainer" parent="RightPanel/Margin/VBox/ProfileSection" unique_id=346653902]
 layout_mode = 2
 size_flags_vertical = 4
 theme_override_constants/separation = 4
 alignment = 1
 
-[node name="NameLabel" type="Label" parent="RightPanel/Margin/VBox/ProfileSection/Info" unique_id=1297436815]
+[node name="NameLabel" type="Label" parent="RightPanel/Margin/VBox/ProfileSection/Info" unique_id=43158730]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.95, 0.94, 1, 1)
 theme_override_font_sizes/font_size = 22
 text = "Trailblazer"
 
-[node name="LevelUID" type="Label" parent="RightPanel/Margin/VBox/ProfileSection/Info" unique_id=1889333320]
+[node name="LevelUID" type="Label" parent="RightPanel/Margin/VBox/ProfileSection/Info" unique_id=1159176831]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.55, 0.6, 0.72, 1)
 theme_override_font_sizes/font_size = 13
 text = "Lv. 60  |  UID: 800012345"
 
-[node name="XPBarBG" type="Panel" parent="RightPanel/Margin/VBox/ProfileSection/Info" unique_id=111111005]
-custom_minimum_size = Vector2(0, 5)
+[node name="XPBarBG" type="TextureRect" parent="RightPanel/Margin/VBox/ProfileSection/Info" unique_id=1624810175]
+custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
-size_flags_horizontal = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_XPBg")
+texture = SubResource("AtlasTexture_xp_bg")
+expand_mode = 1
 
-[node name="XPBarFill" type="Panel" parent="RightPanel/Margin/VBox/ProfileSection/Info/XPBarBG" unique_id=111111006]
+[node name="XPBarFill" type="TextureRect" parent="RightPanel/Margin/VBox/ProfileSection/Info/XPBarBG" unique_id=40156796]
 layout_mode = 1
 anchors_preset = -1
-anchor_right = 0.65
-anchor_bottom = 1.0
+anchor_right = 0.66200006
+anchor_bottom = 1.5000001
+offset_left = 2.0
+offset_top = -9.0
+offset_right = 0.051994324
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_XPFill")
+texture = SubResource("AtlasTexture_xp_fill")
+expand_mode = 1
 
-[node name="XPLabel" type="Label" parent="RightPanel/Margin/VBox/ProfileSection/Info" unique_id=111111007]
+[node name="XPLabel" type="Label" parent="RightPanel/Margin/VBox/ProfileSection/Info" unique_id=886423035]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.75, 0.45, 0.55)
 theme_override_font_sizes/font_size = 10
 text = "EXP  6500 / 10000"
 
-[node name="HSeparator" type="HSeparator" parent="RightPanel/Margin/VBox" unique_id=401793729]
+[node name="HSeparator" type="HSeparator" parent="RightPanel/Margin/VBox" unique_id=1614072340]
 layout_mode = 2
 theme_override_styles/separator = SubResource("StyleBoxLine_GoldSep")
 
-[node name="GridMenu" type="GridContainer" parent="RightPanel/Margin/VBox" unique_id=86712178]
+[node name="GridMenu" type="GridContainer" parent="RightPanel/Margin/VBox" unique_id=218160448]
 layout_mode = 2
 theme_override_constants/h_separation = 10
 theme_override_constants/v_separation = 10
 columns = 4
 
-[node name="BtnStore" type="Button" parent="RightPanel/Margin/VBox/GridMenu" unique_id=420973864]
+[node name="BtnStore" type="TextureButton" parent="RightPanel/Margin/VBox/GridMenu" unique_id=1025478292]
 custom_minimum_size = Vector2(88, 88)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.88, 0.88, 0.95, 1)
-theme_override_colors/font_hover_color = Color(0.95, 0.88, 0.58, 1)
-theme_override_font_sizes/font_size = 13
-theme_override_styles/normal = SubResource("StyleBoxFlat_GridBtn")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_GridBtnPressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_GridBtnHover")
-text = "🏬
-Store"
+texture_normal = SubResource("AtlasTexture_store_n")
+texture_pressed = SubResource("AtlasTexture_store_p")
+texture_hover = SubResource("AtlasTexture_store_h")
+ignore_texture_size = true
+stretch_mode = 5
 
-[node name="BtnFriends" type="Button" parent="RightPanel/Margin/VBox/GridMenu" unique_id=967581723]
+[node name="BtnFriends" type="TextureButton" parent="RightPanel/Margin/VBox/GridMenu" unique_id=390032456]
 custom_minimum_size = Vector2(88, 88)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.88, 0.88, 0.95, 1)
-theme_override_colors/font_hover_color = Color(0.95, 0.88, 0.58, 1)
-theme_override_font_sizes/font_size = 13
-theme_override_styles/normal = SubResource("StyleBoxFlat_GridBtn")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_GridBtnPressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_GridBtnHover")
-text = "👥
-Friends"
+texture_normal = SubResource("AtlasTexture_friends_n")
+texture_pressed = SubResource("AtlasTexture_friends_p")
+texture_hover = SubResource("AtlasTexture_friends_h")
+ignore_texture_size = true
+stretch_mode = 5
 
-[node name="BtnCharacters" type="Button" parent="RightPanel/Margin/VBox/GridMenu" unique_id=188675060]
+[node name="BtnCharacters" type="TextureButton" parent="RightPanel/Margin/VBox/GridMenu" unique_id=605309007]
 custom_minimum_size = Vector2(88, 88)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.88, 0.88, 0.95, 1)
-theme_override_colors/font_hover_color = Color(0.95, 0.88, 0.58, 1)
-theme_override_font_sizes/font_size = 13
-theme_override_styles/normal = SubResource("StyleBoxFlat_GridBtn")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_GridBtnPressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_GridBtnHover")
-text = "👤
-Characters"
+texture_normal = SubResource("AtlasTexture_chars_n")
+texture_pressed = SubResource("AtlasTexture_chars_p")
+texture_hover = SubResource("AtlasTexture_chars_h")
+ignore_texture_size = true
+stretch_mode = 5
 
-[node name="BtnParty" type="Button" parent="RightPanel/Margin/VBox/GridMenu" unique_id=1147277545]
+[node name="BtnParty" type="TextureButton" parent="RightPanel/Margin/VBox/GridMenu" unique_id=660936272]
 custom_minimum_size = Vector2(88, 88)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.88, 0.88, 0.95, 1)
-theme_override_colors/font_hover_color = Color(0.95, 0.88, 0.58, 1)
-theme_override_font_sizes/font_size = 13
-theme_override_styles/normal = SubResource("StyleBoxFlat_GridBtn")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_GridBtnPressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_GridBtnHover")
-text = "🚩
-Team"
+texture_normal = SubResource("AtlasTexture_party_n")
+texture_pressed = SubResource("AtlasTexture_party_p")
+texture_hover = SubResource("AtlasTexture_party_h")
+ignore_texture_size = true
+stretch_mode = 5
 
-[node name="BtnWish" type="Button" parent="RightPanel/Margin/VBox/GridMenu" unique_id=118777040]
+[node name="BtnWish" type="TextureButton" parent="RightPanel/Margin/VBox/GridMenu" unique_id=422060320]
 custom_minimum_size = Vector2(88, 88)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.88, 0.88, 0.95, 1)
-theme_override_colors/font_hover_color = Color(0.95, 0.88, 0.58, 1)
-theme_override_font_sizes/font_size = 13
-theme_override_styles/normal = SubResource("StyleBoxFlat_GridBtn")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_GridBtnPressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_GridBtnHover")
-text = "✦
-Wish"
+texture_normal = SubResource("AtlasTexture_wish_n")
+texture_pressed = SubResource("AtlasTexture_wish_p")
+texture_hover = SubResource("AtlasTexture_wish_h")
+ignore_texture_size = true
+stretch_mode = 5
 
-[node name="BtnMissions" type="Button" parent="RightPanel/Margin/VBox/GridMenu" unique_id=737525669]
+[node name="BtnMissions" type="TextureButton" parent="RightPanel/Margin/VBox/GridMenu" unique_id=1098294718]
 custom_minimum_size = Vector2(88, 88)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.88, 0.88, 0.95, 1)
-theme_override_colors/font_hover_color = Color(0.95, 0.88, 0.58, 1)
-theme_override_font_sizes/font_size = 13
-theme_override_styles/normal = SubResource("StyleBoxFlat_GridBtn")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_GridBtnPressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_GridBtnHover")
-text = "📜
-Missions"
+texture_normal = SubResource("AtlasTexture_missions_n")
+texture_pressed = SubResource("AtlasTexture_missions_p")
+texture_hover = SubResource("AtlasTexture_missions_h")
+ignore_texture_size = true
+stretch_mode = 5
 
-[node name="BtnInventory" type="Button" parent="RightPanel/Margin/VBox/GridMenu" unique_id=1680595065]
+[node name="BtnInventory" type="TextureButton" parent="RightPanel/Margin/VBox/GridMenu" unique_id=1750869186]
 custom_minimum_size = Vector2(88, 88)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.88, 0.88, 0.95, 1)
-theme_override_colors/font_hover_color = Color(0.95, 0.88, 0.58, 1)
-theme_override_font_sizes/font_size = 13
-theme_override_styles/normal = SubResource("StyleBoxFlat_GridBtn")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_GridBtnPressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_GridBtnHover")
-text = "🎒
-Inventory"
+texture_normal = SubResource("AtlasTexture_inv_n")
+texture_pressed = SubResource("AtlasTexture_inv_p")
+texture_hover = SubResource("AtlasTexture_inv_h")
+ignore_texture_size = true
+stretch_mode = 5
 
-[node name="BtnSettings" type="Button" parent="RightPanel/Margin/VBox/GridMenu" unique_id=111111008]
+[node name="BtnSettings" type="TextureButton" parent="RightPanel/Margin/VBox/GridMenu" unique_id=419852284]
 custom_minimum_size = Vector2(88, 88)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.88, 0.88, 0.95, 1)
-theme_override_colors/font_hover_color = Color(0.95, 0.88, 0.58, 1)
-theme_override_font_sizes/font_size = 13
-theme_override_styles/normal = SubResource("StyleBoxFlat_GridBtn")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_GridBtnPressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_GridBtnHover")
-text = "⚙
-Settings"
+texture_normal = SubResource("AtlasTexture_settings_n")
+texture_pressed = SubResource("AtlasTexture_settings_p")
+texture_hover = SubResource("AtlasTexture_settings_h")
+ignore_texture_size = true
+stretch_mode = 5
 
-[node name="Spacer" type="Control" parent="RightPanel/Margin/VBox" unique_id=1330112721]
+[node name="Spacer" type="Control" parent="RightPanel/Margin/VBox" unique_id=562686202]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="BottomBar" type="HBoxContainer" parent="RightPanel/Margin/VBox" unique_id=105789848]
+[node name="BottomBar" type="HBoxContainer" parent="RightPanel/Margin/VBox" unique_id=100164559]
 layout_mode = 2
 theme_override_constants/separation = 12
 alignment = 2
 
-[node name="BtnQuit" type="Button" parent="RightPanel/Margin/VBox/BottomBar" unique_id=413817909]
+[node name="BtnQuit" type="TextureButton" parent="RightPanel/Margin/VBox/BottomBar" unique_id=272941182]
+custom_minimum_size = Vector2(120, 44)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.8, 0.8, 0.88, 1)
-theme_override_colors/font_hover_color = Color(1, 0.6, 0.6, 1)
-theme_override_font_sizes/font_size = 14
-theme_override_styles/normal = SubResource("StyleBoxFlat_SystemBtn")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_SystemBtn")
-theme_override_styles/hover = SubResource("StyleBoxFlat_SystemBtnHover")
-text = "⏻  Quit"
+texture_normal = SubResource("AtlasTexture_quit_n")
+texture_pressed = SubResource("AtlasTexture_quit_p")
+texture_hover = SubResource("AtlasTexture_quit_h")
+ignore_texture_size = true
+stretch_mode = 5
 
-[node name="BtnResume" type="Button" parent="RightPanel/Margin/VBox/BottomBar" unique_id=558049199]
+[node name="BtnResume" type="TextureButton" parent="RightPanel/Margin/VBox/BottomBar" unique_id=80303139]
+custom_minimum_size = Vector2(140, 44)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.08, 0.07, 0.04, 1)
-theme_override_colors/font_hover_color = Color(0.04, 0.04, 0.02, 1)
-theme_override_font_sizes/font_size = 14
-theme_override_styles/normal = SubResource("StyleBoxFlat_ResumeBtn")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_ResumeBtn")
-theme_override_styles/hover = SubResource("StyleBoxFlat_ResumeBtnHover")
-text = "▶  Resume"
+texture_normal = SubResource("AtlasTexture_resume_n")
+texture_pressed = SubResource("AtlasTexture_resume_p")
+texture_hover = SubResource("AtlasTexture_resume_h")
+ignore_texture_size = true
+stretch_mode = 5
 
 [connection signal="pressed" from="RightPanel/Margin/VBox/GridMenu/BtnInventory" to="." method="_on_inventory_pressed"]
