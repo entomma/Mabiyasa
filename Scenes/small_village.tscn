@@ -28,7 +28,7 @@
 [ext_resource type="Texture2D" uid="uid://48whcg8eu3vv" path="res://Assets/knight.png" id="26_rc433"]
 [ext_resource type="Texture2D" uid="uid://ce8ac1qdqyky1" path="res://Assets/gentleman-nobg.png" id="26_y8wv4"]
 [ext_resource type="Script" uid="uid://dqgoaflpryikd" path="res://Scripts/npc_dialogue_resource.gd" id="27_8jqiu"]
-[ext_resource type="PackedScene" uid="uid://b3htx74bdqrtu" path="res://Scenes/HUD.tscn" id="28_ivykw"]
+[ext_resource type="PackedScene" uid="uid://hrox1jyjl0sw" path="res://Scenes/HUD.tscn" id="28_ivykw"]
 [ext_resource type="PackedScene" uid="uid://d1qpmrj6vid8d" path="res://Scenes/tutorial_overlay.tscn" id="29_jnab0"]
 [ext_resource type="PackedScene" uid="uid://b8x2k8m4y3q6p" path="res://Scenes/TutorialUI.tscn" id="30_y8wv4"]
 
@@ -43,8 +43,6 @@ sky_material = SubResource("ProceduralSkyMaterial_i7xru")
 background_mode = 2
 sky = SubResource("Sky_rkkpx")
 tonemap_mode = 2
-glow_enabled = true
-fog_enabled = true
 fog_mode = 1
 fog_density = 1.0
 fog_aerial_perspective = 0.618
