@@ -53,8 +53,9 @@ func _on_start_pressed():
 			# Clear teleport spawn (use saved position instead)
 			GameManager.next_spawn = ""
 			
-			# Load the scene
-			get_tree().change_scene_to_file(last_scene)
+			# Route into the persistent Game.tscn shell, which will load this zone
+			GameManager.pending_zone = last_scene
+			get_tree().change_scene_to_file("res://Scenes/Game.tscn")
 			return
 		else:
 				
@@ -63,7 +64,8 @@ func _on_start_pressed():
 	# Fallback to village
 	print("No valid saved scene found, loading default village")
 	GameManager.next_spawn = "VillageSpawn"
-	get_tree().change_scene_to_file("res://Scenes/small_village.tscn")
+	GameManager.pending_zone = "res://Scenes/small_village.tscn"
+	get_tree().change_scene_to_file("res://Scenes/Game.tscn")
 
 func _on_settings_pressed():
 	pass

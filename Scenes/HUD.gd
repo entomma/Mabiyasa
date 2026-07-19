@@ -78,10 +78,9 @@ func _save_current_state():
 	var player = get_tree().get_first_node_in_group("player")
 	if player:
 		GameManager.set_saved_position(player.global_position)
-		var current_scene = get_tree().current_scene
-		if current_scene and current_scene.scene_file_path != "":
-			GameManager.set_meta("return_scene", current_scene.scene_file_path)
-			print("HUD: Saved state returning to ", current_scene.scene_file_path)
+		if GameManager.current_zone_path != "":
+			GameManager.set_meta("return_scene", GameManager.current_zone_path)
+			print("HUD: Saved state returning to ", GameManager.current_zone_path)
 			
 	if SupabaseManager.has_method("save_current_scene_and_position"):
 		SupabaseManager.save_current_scene_and_position()

@@ -21,12 +21,17 @@ layout_mode = 0
 offset_right = 40.0
 offset_bottom = 23.0
 
-[node name="RichTextLabel" type="RichTextLabel" parent="DialogueUI/Panel" unique_id=683303473]
+[node name="DialogueLabel" type="RichTextLabel" parent="DialogueUI/Panel" unique_id=683303473]
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
 [node name="NextIndicator" type="TextureRect" parent="DialogueUI/Panel" unique_id=899114720]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ChoiceContainer" type="VBoxContainer" parent="DialogueUI/Panel" unique_id=165635385]
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0

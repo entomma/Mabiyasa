@@ -21,6 +21,36 @@ var player_party: Array = []
 var transition: Node = null
 
 var origin_scene: String = "res://Scenes/small_village.tscn"
+var zone_container: Node = null
+var current_zone_path: String = ""
+var pending_zone: String = ""
+
+func load_zone(zone_path: String, spawn_point: String = "") -> void:
+	if zone_container == null:
+		push_error("load_zone called before Game.tscn registered its zone container")
+		return
+
+	next_spawn = spawn_point
+
+	if transition:
+		await transition.fade_to_black()
+
+	for child in zone_container.get_children():
+		child.queue_free()
+	await get_tree().process_frame
+
+	var zone_scene: PackedScene = load(zone_path)
+	if zone_scene == null:
+		push_error("Zone not found: " + zone_path)
+		return
+
+	var zone_instance = zone_scene.instantiate()
+	zone_container.add_child(zone_instance)
+	current_zone_path = zone_path
+	origin_scene = zone_path
+
+	if transition:
+		transition.fade_in()
 
 func _ready():
 	var transition_scene = preload("res://Scenes/Transition.tscn")

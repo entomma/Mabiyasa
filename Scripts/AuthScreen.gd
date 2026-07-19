@@ -106,9 +106,10 @@ func _on_login_pressed():
 		print("Login - Has saved pos: ", has_saved_position)
 		
 		if saved_scene != "" and has_saved_position:
-			get_tree().change_scene_to_file(saved_scene)
+			GameManager.pending_zone = saved_scene
 		else:
-			get_tree().change_scene_to_file(MAIN_SCENE)
+			GameManager.pending_zone = MAIN_SCENE
+		get_tree().change_scene_to_file("res://Scenes/Game.tscn")
 	else:
 		if result.has("msg"):
 			status_label.text = "Failed: " + result.msg

@@ -4,20 +4,28 @@ signal dialogue_started
 signal dialogue_finished
 signal action_requested(action: String, parameter: String)
 
-@export var dialogue_ui: DialogueUI
+var dialogue_ui: DialogueUI
 
 var current_dialogue: DialogueResource
 var current_event: DialogueEvent
 
 var events := {}
 
-func _ready():
-	if dialogue_ui:
+func register_ui(ui: DialogueUI):
+	dialogue_ui = ui
+
+	if !dialogue_ui.next_pressed.is_connected(_on_next_pressed):
 		dialogue_ui.next_pressed.connect(_on_next_pressed)
+
+	if !dialogue_ui.choice_selected.is_connected(_on_choice_selected):
 		dialogue_ui.choice_selected.connect(_on_choice_selected)
 
 
 func start(dialogue: DialogueResource):
+
+	if dialogue_ui == null:
+		push_error("DialogueUI has not been registered.")
+		return
 
 	if dialogue == null:
 		return
@@ -51,7 +59,6 @@ func _show_current_event():
 			)
 
 		DialogueEvent.EventType.ACTION:
-
 			action_requested.emit(
 				current_event.action,
 				current_event.parameter
@@ -90,7 +97,8 @@ func _go_to(id: StringName):
 
 func end_dialogue():
 
-	dialogue_ui.hide_dialogue()
+	if dialogue_ui:
+		dialogue_ui.hide_dialogue()
 
 	current_dialogue = null
 	current_event = null

@@ -219,7 +219,8 @@ func _display_character(char_data: CharacterData) -> void:
 func _on_close_pressed() -> void:
 	_animate_out(func():
 		if GameManager.has_meta("return_scene"):
-			get_tree().change_scene_to_file(GameManager.get_meta("return_scene"))
+			GameManager.pending_zone = GameManager.get_meta("return_scene")
+			get_tree().change_scene_to_file("res://Scenes/Game.tscn")
 		else:
 			get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
 	)

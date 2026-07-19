@@ -56,7 +56,11 @@ func start_transition_fade():
 	
 	# ✅ ADD THIS: Load the battle scene
 	get_tree().change_scene_to_file("res://Scenes/Battle.tscn")
-
+func fade_to_black() -> void:
+	color_rect.modulate.a = 0
+	var tween = create_tween()
+	tween.tween_property(color_rect, "modulate:a", 1.0, 0.4)
+	await tween.finished
 func fade_in():
 	color_rect.modulate.a = 1.0
 	anim_player.play("fade_in")

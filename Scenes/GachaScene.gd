@@ -468,7 +468,8 @@ func _on_back() -> void:
 	var t := create_tween()
 	t.tween_property(self, "modulate:a", 0.0, 0.30)
 	t.tween_callback(func():
-		get_tree().change_scene_to_file(return_scene)
+		GameManager.pending_zone = return_scene
+		get_tree().change_scene_to_file("res://Scenes/Game.tscn")
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	)
 

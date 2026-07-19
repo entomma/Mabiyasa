@@ -32,21 +32,11 @@ func teleport():
 
 	print("🚪 Teleport preparing...")
 
-	# Tell spawn system BEFORE switching
-	GameManager.next_spawn = spawn_name
-
-	# ─────────────────────────────
-	# WAIT WHILE TREE IS STILL VALID
-	# ─────────────────────────────
+	# Small buffer so the interact input doesn't fire twice
 	await get_tree().create_timer(0.05).timeout
 
-	# ─────────────────────────────
-	# SAFE SCENE SWITCH (NO AWAIT AFTER THIS)
-	# ─────────────────────────────
-	print("🚀 Switching scene...")
-	get_tree().change_scene_to_file(target_scene)
-
-	# DO NOT PUT ANY CODE AFTER THIS THAT USES get_tree()
+	print("🚀 Switching zone...")
+	await GameManager.load_zone(target_scene, spawn_name)
 
 	is_teleporting = false
 

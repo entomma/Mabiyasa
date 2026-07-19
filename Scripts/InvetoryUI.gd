@@ -36,4 +36,5 @@ func _on_items_received(data: Array):
 		slot.setup_slot(id, qty)
 
 func _on_close_pressed() -> void:
-	get_tree().change_scene_to_file(GameManager.get_return_scene())
+	GameManager.pending_zone = GameManager.get_return_scene()
+	get_tree().change_scene_to_file("res://Scenes/Game.tscn")

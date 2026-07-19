@@ -1,44 +1,51 @@
-extends Control
+extends CanvasLayer
 class_name DialogueUI
 
 signal next_pressed
 signal choice_selected(next_id: StringName)
 
-@onready var name_label: Label = $Panel/NameLabel
-@onready var dialogue_label: RichTextLabel = $Panel/DialogueLabel
-@onready var next_indicator: Control = $Panel/NextIndicator
-@onready var choice_container: VBoxContainer = $Panel/ChoiceContainer
+@onready var name_label: Label = $DialogueUI/Panel/NameLabel
+@onready var dialogue_label: RichTextLabel = $DialogueUI/Panel/DialogueLabel
+@onready var next_indicator: Control = $DialogueUI/Panel/NextIndicator
+@onready var choice_container: VBoxContainer = $DialogueUI/Panel/ChoiceContainer
 
 
 func _ready():
+
+	DialogueManager.register_ui(self)
+
 	hide()
 
 
 func show_line(speaker: String, text: String):
+
 	show()
 
 	name_label.text = speaker
 	dialogue_label.text = text
 
-	next_indicator.show()
-
 	clear_choices()
+
+	next_indicator.visible = true
 
 
 func show_choices(choices: Array[DialogueChoice]):
-	show()
 
-	next_indicator.hide()
+	show()
 
 	clear_choices()
 
+	next_indicator.visible = false
+
 	for choice in choices:
+
 		var button := Button.new()
 
 		button.text = choice.text
 
-		button.pressed.connect(func():
-			choice_selected.emit(choice.next_id)
+		button.pressed.connect(
+			func():
+				choice_selected.emit(choice.next_id)
 		)
 
 		choice_container.add_child(button)
@@ -65,5 +72,7 @@ func _unhandled_input(event):
 	if choice_container.get_child_count() > 0:
 		return
 
-	if event.is_action_pressed("ui_accept"):
+	if event.is_action_pressed("ui_accept") \
+	or event.is_action_pressed("click"):
+
 		next_pressed.emit()

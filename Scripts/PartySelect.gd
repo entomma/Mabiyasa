@@ -423,10 +423,12 @@ func _on_confirm_pressed() -> void:
 	GameManager.next_spawn = ""
 	
 	save_loadout_to_database()
-	get_tree().change_scene_to_file(GameManager.get_return_scene())
+	GameManager.pending_zone = GameManager.get_return_scene()
+	get_tree().change_scene_to_file("res://Scenes/Game.tscn")
 
 func _on_close_pressed() -> void:
 	save_to_loadout(current_loadout)
 	save_loadout_to_database()
 	GameManager.next_spawn = ""
-	get_tree().change_scene_to_file(GameManager.get_return_scene())
+	GameManager.pending_zone = GameManager.get_return_scene()
+	get_tree().change_scene_to_file("res://Scenes/Game.tscn")
