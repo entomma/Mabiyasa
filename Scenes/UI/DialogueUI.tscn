@@ -1,37 +1,99 @@
 [gd_scene format=3 uid="uid://ch43gbxrduyko"]
 
 [ext_resource type="Script" uid="uid://calxmrj75v0wc" path="res://Dialogue/DialogueUI.gd" id="1_4rmbr"]
+[ext_resource type="Texture2D" uid="uid://e56mdxrbu748" path="res://Assets/UIBundleFree/UiCozyFree.png" id="2_i7egk"]
 
-[node name="CanvasLayer" type="CanvasLayer" unique_id=1117773471]
+[sub_resource type="AtlasTexture" id="AtlasTexture_dialogue_box"]
+atlas = ExtResource("2_i7egk")
+region = Rect2(102, 167, 57, 81)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_next_icon"]
+region = Rect2(256, 800, 32, 32)
+
+[node name="CanvasLayer" type="CanvasLayer" unique_id=193592643]
 script = ExtResource("1_4rmbr")
 
-[node name="DialogueUI" type="Control" parent="." unique_id=2010267832]
+[node name="DialogueUI" type="Control" parent="." unique_id=446086883]
 layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="Panel" type="Panel" parent="DialogueUI" unique_id=2041720270]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+[node name="Panel" type="NinePatchRect" parent="DialogueUI" unique_id=1846470092]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -450.0
+offset_top = -220.0
+offset_right = 450.0
+offset_bottom = -40.0
+grow_horizontal = 2
+grow_vertical = 0
+texture = SubResource("AtlasTexture_dialogue_box")
+patch_margin_left = 24
+patch_margin_top = 24
+patch_margin_right = 24
+patch_margin_bottom = 24
 
-[node name="NameLabel" type="Label" parent="DialogueUI/Panel" unique_id=1405701740]
+[node name="NameLabel" type="Label" parent="DialogueUI/Panel" unique_id=2058036517]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
+offset_left = 36.0
+offset_top = 20.0
+offset_right = 300.0
+offset_bottom = 48.0
+theme_override_colors/font_color = Color(0.27919444, 0.22953981, 0.063530326, 1)
+theme_override_font_sizes/font_size = 20
+text = "Speaker Name"
 
-[node name="DialogueLabel" type="RichTextLabel" parent="DialogueUI/Panel" unique_id=683303473]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+[node name="DialogueLabel" type="RichTextLabel" parent="DialogueUI/Panel" unique_id=737829195]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 36.0
+offset_top = 60.0
+offset_right = -36.0
+offset_bottom = -24.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/default_color = Color(0.5181391, 0.29542834, 0.1255553, 1)
+theme_override_font_sizes/normal_font_size = 16
+text = "This is placeholder text for the dialogue system box."
 
-[node name="NextIndicator" type="TextureRect" parent="DialogueUI/Panel" unique_id=899114720]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+[node name="NextIndicator" type="TextureRect" parent="DialogueUI/Panel" unique_id=1994385204]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -48.0
+offset_top = -44.0
+offset_right = -24.0
+offset_bottom = -20.0
+grow_horizontal = 0
+grow_vertical = 0
+texture = SubResource("AtlasTexture_next_icon")
+expand_mode = 1
+stretch_mode = 5
 
-[node name="ChoiceContainer" type="VBoxContainer" parent="DialogueUI/Panel" unique_id=165635385]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+[node name="ChoiceContainer" type="VBoxContainer" parent="DialogueUI/Panel" unique_id=1928785265]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -320.0
+offset_top = -240.0
+offset_right = -20.0
+offset_bottom = -60.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_constants/separation = 8
+alignment = 2

@@ -4,6 +4,7 @@ class_name DialogueUI
 signal next_pressed
 signal choice_selected(next_id: StringName)
 
+@onready var panel: NinePatchRect = $DialogueUI/Panel
 @onready var name_label: Label = $DialogueUI/Panel/NameLabel
 @onready var dialogue_label: RichTextLabel = $DialogueUI/Panel/DialogueLabel
 @onready var next_indicator: Control = $DialogueUI/Panel/NextIndicator
