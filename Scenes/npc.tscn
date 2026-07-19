@@ -1,46 +1,47 @@
 [gd_scene format=3 uid="uid://bmf06vxipsji"]
 
-[ext_resource type="Script" uid="uid://d1mtxirudksa3" path="res://Scripts/npc.gd" id="1_acqhf"]
+[ext_resource type="Script" uid="uid://d1mtxirudksa3" path="res://Scripts/NPC.gd" id="1_acqhf"]
+[ext_resource type="Script" uid="uid://ca0roiocthivr" path="res://Scripts/NPCDialogue.gd" id="2_xxsvc"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_b0k6i"]
 animations = [{
 "frames": [],
-"loop": true,
+"loop": 1,
 "name": &"idle_back",
 "speed": 5.0
 }, {
 "frames": [],
-"loop": true,
+"loop": 1,
 "name": &"idle_front",
 "speed": 5.0
 }, {
 "frames": [],
-"loop": true,
+"loop": 1,
 "name": &"idle_left",
 "speed": 5.0
 }, {
 "frames": [],
-"loop": true,
+"loop": 1,
 "name": &"idle_right",
 "speed": 5.0
 }, {
 "frames": [],
-"loop": true,
+"loop": 1,
 "name": &"walk_back",
 "speed": 5.0
 }, {
 "frames": [],
-"loop": true,
+"loop": 1,
 "name": &"walk_front",
 "speed": 5.0
 }, {
 "frames": [],
-"loop": true,
+"loop": 1,
 "name": &"walk_left",
 "speed": 5.0
 }, {
 "frames": [],
-"loop": true,
+"loop": 1,
 "name": &"walk_right",
 "speed": 5.0
 }]
@@ -77,5 +78,10 @@ disable_mode = 2
 transform = Transform3D(0.001, 0, 0, 0, 0.001, 0, 0, 0, 0.001, 0, -0.000186493, 0)
 shape = SubResource("CapsuleShape3D_xxsvc")
 
+[node name="NPCDialogue" type="Node" parent="." unique_id=1622345075]
+script = ExtResource("2_xxsvc")
+
 [connection signal="body_entered" from="Area3D" to="." method="_on_area_3d_body_entered"]
+[connection signal="body_entered" from="Area3D" to="NPCDialogue" method="_on_area_3d_body_entered"]
 [connection signal="body_exited" from="Area3D" to="." method="_on_area_3d_body_exited"]
+[connection signal="body_exited" from="Area3D" to="NPCDialogue" method="_on_area_3d_body_exited"]

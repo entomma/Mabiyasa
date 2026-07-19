@@ -11,7 +11,13 @@ var current_event: DialogueEvent
 
 var events := {}
 
+var is_active: bool:
+	get:
+		return current_dialogue != null
+
+
 func register_ui(ui: DialogueUI):
+
 	dialogue_ui = ui
 
 	if !dialogue_ui.next_pressed.is_connected(_on_next_pressed):
@@ -36,6 +42,10 @@ func start(dialogue: DialogueResource):
 	for event in dialogue.events:
 		events[event.id] = event
 
+	if dialogue.events.is_empty():
+		push_error("Dialogue has no events.")
+		return
+
 	current_event = dialogue.events[0]
 
 	dialogue_started.emit()
@@ -48,17 +58,20 @@ func _show_current_event():
 	match current_event.type:
 
 		DialogueEvent.EventType.LINE:
+
 			dialogue_ui.show_line(
 				current_event.speaker,
 				current_event.text
 			)
 
 		DialogueEvent.EventType.CHOICE:
+
 			dialogue_ui.show_choices(
 				current_event.choices
 			)
 
 		DialogueEvent.EventType.ACTION:
+
 			action_requested.emit(
 				current_event.action,
 				current_event.parameter
@@ -67,6 +80,7 @@ func _show_current_event():
 			_go_to(current_event.next_id)
 
 		DialogueEvent.EventType.END:
+
 			end_dialogue()
 
 
