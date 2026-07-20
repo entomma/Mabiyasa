@@ -1,30 +1,116 @@
 extends Node
-## ProgressManager
-## Owns: account-level progression (level, exp, exp_max). Currently
-## display-only (fed by whatever the profile row contains), but this is
-## where XP-granting logic should live once it exists — not in PauseMenu
-## or scattered across gameplay scripts.
 
-signal progress_updated
+# ============================================================
+# PLAYER PROGRESSION
+# Handles:
+# - Account Level
+# - EXP
+# - Story Flags
+# - Lesson Progress
+# - Quest Progress
+#
+# Does NOT handle:
+# - Inventory
+# - Characters
+# - Party
+# ============================================================
 
-var level: int = 1
-var exp: int = 0
-var exp_max: int = 10000
+signal account_level_changed(level: int)
+signal exp_changed(current: int, max: int)
+signal flag_changed(flag: StringName, value: bool)
+
+# ==========================
+# ACCOUNT PROGRESSION
+# ==========================
+
 var account_level: int = 1
+var exp: int = 0
+var exp_max: int = 100
 
-func apply_profile(data: Dictionary) -> void:
-	if data == null:
+# ==========================
+# STORY / LESSON FLAGS
+# ==========================
+
+var flags: Dictionary = {}
+
+# ============================================================
+# LOAD DATA FROM SUPABASE
+# ============================================================
+
+func apply_profile(profile: Dictionary) -> void:
+
+	account_level = profile.get("account_level", 1)
+	exp = profile.get("account_exp", 0)
+	exp_max = profile.get("account_exp_max", 100)
+
+	# Future database column
+	flags = profile.get("progress", {}).duplicate(true)
+
+	account_level_changed.emit(account_level)
+	exp_changed.emit(exp, exp_max)
+
+# ============================================================
+# EXP
+# ============================================================
+
+func add_exp(amount: int):
+
+	exp += amount
+
+	while exp >= exp_max:
+
+		exp -= exp_max
+		account_level += 1
+
+		account_level_changed.emit(account_level)
+
+	exp_changed.emit(exp, exp_max)
+
+# ============================================================
+# FLAGS
+# ============================================================
+
+func has_flag(flag: StringName) -> bool:
+
+	return flags.get(flag, false)
+
+
+func set_flag(flag: StringName):
+
+	if has_flag(flag):
 		return
-	level = int(data.get("level", 1))
-	exp = int(data.get("exp", 0))
-	exp_max = int(data.get("exp_max", 10000))
-	account_level = int(data.get("account_level", 1))
-	progress_updated.emit()
 
-func get_persistable_fields() -> Dictionary:
+	flags[flag] = true
+
+	flag_changed.emit(flag, true)
+
+
+func clear_flag(flag: StringName):
+
+	if !flags.has(flag):
+		return
+
+	flags.erase(flag)
+
+	flag_changed.emit(flag, false)
+
+
+func toggle_flag(flag: StringName):
+
+	if has_flag(flag):
+		clear_flag(flag)
+	else:
+		set_flag(flag)
+
+# ============================================================
+# SAVE DATA
+# ============================================================
+
+func get_progress_data() -> Dictionary:
+
 	return {
-		"level": level,
-		"exp": exp,
-		"exp_max": exp_max,
 		"account_level": account_level,
+		"account_exp": exp,
+		"account_exp_max": exp_max,
+		"progress": flags
 	}
