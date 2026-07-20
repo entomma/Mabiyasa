@@ -1,7 +1,160 @@
 [gd_scene format=3 uid="uid://ckd5ccifbxth4"]
 
 [ext_resource type="Script" uid="uid://c6ear2eku2n7u" path="res://Scripts/PartySelect.gd" id="1_cdbme"]
-[ext_resource type="Texture2D" uid="uid://bdqndhwj8t7cd" path="res://Assets/landscape.png" id="2_jf25b"]
+[ext_resource type="Texture2D" uid="uid://b6okuvtw7kn88" path="res://Assets/UI Assets pack_v.1_st/Gemini_Generated_Image_lgo22qlgo22qlgo2.png" id="2_ct8g1"]
+[ext_resource type="Texture2D" uid="uid://e56mdxrbu748" path="res://Assets/UIBundleFree/UiCozyFree.png" id="3_cozy"]
+[ext_resource type="Texture2D" uid="uid://dbjgc5q1n5mp8" path="res://Assets/UI Assets pack_v.1_st/UI.png" id="3_ymsdx"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aq4ye"]
+atlas = ExtResource("2_ct8g1")
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tab1_n"]
+atlas = ExtResource("3_ymsdx")
+region = Rect2(48, 257, 16, 15)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tab1_p"]
+atlas = ExtResource("3_ymsdx")
+region = Rect2(32, 257, 16, 15)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tab1_h"]
+atlas = ExtResource("3_ymsdx")
+region = Rect2(32, 257, 16, 15)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tab2_n"]
+atlas = ExtResource("3_ymsdx")
+region = Rect2(48, 257, 16, 15)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tab2_p"]
+atlas = ExtResource("3_ymsdx")
+region = Rect2(32, 257, 16, 15)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tab2_h"]
+atlas = ExtResource("3_ymsdx")
+region = Rect2(32, 257, 16, 15)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tab3_n"]
+atlas = ExtResource("3_ymsdx")
+region = Rect2(48, 257, 16, 15)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tab3_p"]
+atlas = ExtResource("3_ymsdx")
+region = Rect2(32, 257, 16, 15)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tab3_h"]
+atlas = ExtResource("3_ymsdx")
+region = Rect2(32, 257, 16, 15)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tab4_n"]
+atlas = ExtResource("3_ymsdx")
+region = Rect2(48, 257, 16, 15)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tab4_p"]
+atlas = ExtResource("3_ymsdx")
+region = Rect2(32, 257, 16, 15)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tab4_h"]
+atlas = ExtResource("3_ymsdx")
+region = Rect2(32, 257, 16, 15)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tab5_n"]
+atlas = ExtResource("3_ymsdx")
+region = Rect2(48, 257, 16, 15)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tab5_p"]
+atlas = ExtResource("3_ymsdx")
+region = Rect2(32, 257, 16, 15)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tab5_h"]
+atlas = ExtResource("3_ymsdx")
+region = Rect2(32, 257, 16, 15)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tab6_n"]
+atlas = ExtResource("3_ymsdx")
+region = Rect2(48, 257, 16, 15)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tab6_p"]
+atlas = ExtResource("3_ymsdx")
+region = Rect2(32, 257, 16, 15)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tab6_h"]
+atlas = ExtResource("3_ymsdx")
+region = Rect2(32, 257, 16, 15)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_close_n"]
+atlas = ExtResource("3_cozy")
+region = Rect2(1, 65, 14, 14)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_close_p"]
+atlas = ExtResource("3_cozy")
+region = Rect2(17, 66, 14, 13)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_close_h"]
+atlas = ExtResource("3_cozy")
+region = Rect2(17, 66, 14, 13)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_left_n"]
+atlas = ExtResource("3_cozy")
+region = Rect2(1, 33, 14, 14)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_left_p"]
+atlas = ExtResource("3_cozy")
+region = Rect2(17, 34, 14, 13)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_left_h"]
+atlas = ExtResource("3_cozy")
+region = Rect2(17, 34, 14, 13)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_plus1"]
+atlas = ExtResource("3_cozy")
+region = Rect2(1, 49, 14, 14)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_plus2"]
+atlas = ExtResource("3_cozy")
+region = Rect2(1, 49, 14, 14)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_plus3"]
+atlas = ExtResource("3_cozy")
+region = Rect2(1, 49, 14, 14)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_plus4"]
+atlas = ExtResource("3_cozy")
+region = Rect2(1, 49, 14, 14)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_right_n"]
+atlas = ExtResource("3_cozy")
+region = Rect2(1, 33, 14, 14)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_right_p"]
+atlas = ExtResource("3_cozy")
+region = Rect2(17, 34, 14, 13)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_right_h"]
+atlas = ExtResource("3_cozy")
+region = Rect2(17, 34, 14, 13)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_quick_n"]
+atlas = ExtResource("3_ymsdx")
+region = Rect2(145, 129, 46, 14)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_quick_p"]
+atlas = ExtResource("3_ymsdx")
+region = Rect2(209, 130, 46, 13)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_quick_h"]
+atlas = ExtResource("3_ymsdx")
+region = Rect2(209, 130, 46, 13)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_conf_n"]
+atlas = ExtResource("3_ymsdx")
+region = Rect2(145, 129, 46, 14)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_conf_p"]
+atlas = ExtResource("3_ymsdx")
+region = Rect2(209, 130, 46, 13)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_conf_h"]
+atlas = ExtResource("3_ymsdx")
+region = Rect2(209, 130, 46, 13)
 
 [node name="PartySelect" type="Control" unique_id=1938133594]
 layout_mode = 3
@@ -17,10 +170,14 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = -1.0
+offset_bottom = 2.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-texture = ExtResource("2_jf25b")
+texture = SubResource("AtlasTexture_aq4ye")
+expand_mode = 5
+stretch_mode = 6
 
 [node name="TopBar" type="HBoxContainer" parent="." unique_id=2088495641]
 custom_minimum_size = Vector2(0, 70)
@@ -36,47 +193,154 @@ layout_mode = 2
 
 [node name="TeamLabel" type="Label" parent="TopBar/TeamInfo" unique_id=1162653787]
 layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "| Kawani 1"
 
 [node name="TeamName" type="Label" parent="TopBar/TeamInfo" unique_id=979968854]
 layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 
 [node name="TeamTabs" type="HBoxContainer" parent="TopBar" unique_id=1433811545]
 layout_mode = 2
 
-[node name="Tab1" type="Button" parent="TopBar/TeamTabs" unique_id=390864353]
+[node name="Tab1" type="TextureButton" parent="TopBar/TeamTabs" unique_id=390864353]
 custom_minimum_size = Vector2(60, 40)
 layout_mode = 2
+texture_normal = SubResource("AtlasTexture_tab1_n")
+texture_pressed = SubResource("AtlasTexture_tab1_p")
+texture_hover = SubResource("AtlasTexture_tab1_h")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="TopBar/TeamTabs/Tab1" unique_id=1738043770]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "01"
+horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="Tab2" type="Button" parent="TopBar/TeamTabs" unique_id=532033215]
+[node name="Tab2" type="TextureButton" parent="TopBar/TeamTabs" unique_id=532033215]
 custom_minimum_size = Vector2(60, 40)
 layout_mode = 2
+texture_normal = SubResource("AtlasTexture_tab2_n")
+texture_pressed = SubResource("AtlasTexture_tab2_p")
+texture_hover = SubResource("AtlasTexture_tab2_h")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="TopBar/TeamTabs/Tab2" unique_id=1089859229]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "02"
+horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="Tab3" type="Button" parent="TopBar/TeamTabs" unique_id=771983644]
+[node name="Tab3" type="TextureButton" parent="TopBar/TeamTabs" unique_id=771983644]
 custom_minimum_size = Vector2(60, 40)
 layout_mode = 2
+texture_normal = SubResource("AtlasTexture_tab3_n")
+texture_pressed = SubResource("AtlasTexture_tab3_p")
+texture_hover = SubResource("AtlasTexture_tab3_h")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="TopBar/TeamTabs/Tab3" unique_id=508598488]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "03"
+horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="Tab4" type="Button" parent="TopBar/TeamTabs" unique_id=275340753]
+[node name="Tab4" type="TextureButton" parent="TopBar/TeamTabs" unique_id=275340753]
 custom_minimum_size = Vector2(60, 40)
 layout_mode = 2
+texture_normal = SubResource("AtlasTexture_tab4_n")
+texture_pressed = SubResource("AtlasTexture_tab4_p")
+texture_hover = SubResource("AtlasTexture_tab4_h")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="TopBar/TeamTabs/Tab4" unique_id=1316441599]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "04"
+horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="Tab5" type="Button" parent="TopBar/TeamTabs" unique_id=1299918745]
+[node name="Tab5" type="TextureButton" parent="TopBar/TeamTabs" unique_id=1299918745]
 custom_minimum_size = Vector2(60, 40)
 layout_mode = 2
+texture_normal = SubResource("AtlasTexture_tab5_n")
+texture_pressed = SubResource("AtlasTexture_tab5_p")
+texture_hover = SubResource("AtlasTexture_tab5_h")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="TopBar/TeamTabs/Tab5" unique_id=690629185]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "05"
+horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="Tab6" type="Button" parent="TopBar/TeamTabs" unique_id=1506086463]
+[node name="Tab6" type="TextureButton" parent="TopBar/TeamTabs" unique_id=1506086463]
 custom_minimum_size = Vector2(60, 40)
 layout_mode = 2
-text = "06"
+texture_normal = SubResource("AtlasTexture_tab6_n")
+texture_pressed = SubResource("AtlasTexture_tab6_p")
+texture_hover = SubResource("AtlasTexture_tab6_h")
+ignore_texture_size = true
+stretch_mode = 5
 
-[node name="CloseButton" type="Button" parent="TopBar" unique_id=1515284753]
+[node name="Label" type="Label" parent="TopBar/TeamTabs/Tab6" unique_id=276301983]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "06"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CloseButton" type="TextureButton" parent="TopBar" unique_id=1515284753]
 layout_mode = 2
-text = "X"
+size_flags_horizontal = 8
+size_flags_vertical = 4
+offset_transform_enabled = true
+offset_transform_position = Vector2(300, 0)
+offset_transform_scale = Vector2(3, 3)
+offset_transform_visual_only = false
+texture_normal = SubResource("AtlasTexture_close_n")
+texture_pressed = SubResource("AtlasTexture_close_p")
+texture_hover = SubResource("AtlasTexture_close_h")
+stretch_mode = 6
 
 [node name="CharacterDisplay" type="HBoxContainer" parent="." unique_id=1532457737]
 layout_mode = 1
@@ -88,10 +352,15 @@ offset_top = 3.199997
 offset_bottom = 40.0
 alignment = 1
 
-[node name="LeftArrow" type="Button" parent="CharacterDisplay" unique_id=14757037]
+[node name="LeftArrow" type="TextureButton" parent="CharacterDisplay" unique_id=14757037]
 custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
-text = "<"
+texture_normal = SubResource("AtlasTexture_left_n")
+texture_pressed = SubResource("AtlasTexture_left_p")
+texture_hover = SubResource("AtlasTexture_left_h")
+ignore_texture_size = true
+stretch_mode = 5
+flip_h = true
 
 [node name="SlotsContainer" type="HBoxContainer" parent="CharacterDisplay" unique_id=174331924]
 layout_mode = 2
@@ -113,21 +382,18 @@ grow_vertical = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="PlusIcon1" type="Label" parent="CharacterDisplay/SlotsContainer/Slot1" unique_id=578882034]
+[node name="PlusIcon1" type="TextureRect" parent="CharacterDisplay/SlotsContainer/Slot1" unique_id=578882034]
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -11.5
-offset_right = 20.0
-offset_bottom = 11.5
 grow_horizontal = 2
 grow_vertical = 2
-text = "+"
-horizontal_alignment = 1
+texture = SubResource("AtlasTexture_plus1")
+stretch_mode = 5
 
 [node name="SlotInfo1" type="VBoxContainer" parent="CharacterDisplay/SlotsContainer/Slot1" unique_id=983862542]
 layout_mode = 1
@@ -143,11 +409,13 @@ offset_bottom = -12.0
 [node name="SlotName1" type="Label" parent="CharacterDisplay/SlotsContainer/Slot1/SlotInfo1" unique_id=1414836882]
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 horizontal_alignment = 1
 
 [node name="SlotPath1" type="Label" parent="CharacterDisplay/SlotsContainer/Slot1/SlotInfo1" unique_id=1241134903]
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 
 [node name="Slot2" type="Control" parent="CharacterDisplay/SlotsContainer" unique_id=1416327997]
 custom_minimum_size = Vector2(250, 500)
@@ -164,21 +432,18 @@ grow_vertical = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="PlusIcon2" type="Label" parent="CharacterDisplay/SlotsContainer/Slot2" unique_id=1160641624]
+[node name="PlusIcon2" type="TextureRect" parent="CharacterDisplay/SlotsContainer/Slot2" unique_id=1160641624]
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -11.5
-offset_right = 20.0
-offset_bottom = 11.5
 grow_horizontal = 2
 grow_vertical = 2
-text = "+"
-horizontal_alignment = 1
+texture = SubResource("AtlasTexture_plus2")
+stretch_mode = 5
 
 [node name="SlotInfo2" type="VBoxContainer" parent="CharacterDisplay/SlotsContainer/Slot2" unique_id=1720947656]
 layout_mode = 1
@@ -194,11 +459,13 @@ offset_bottom = -12.0
 [node name="SlotName2" type="Label" parent="CharacterDisplay/SlotsContainer/Slot2/SlotInfo2" unique_id=1187417211]
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 horizontal_alignment = 1
 
 [node name="SlotPath2" type="Label" parent="CharacterDisplay/SlotsContainer/Slot2/SlotInfo2" unique_id=723092745]
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 
 [node name="Slot3" type="Control" parent="CharacterDisplay/SlotsContainer" unique_id=1451063480]
 custom_minimum_size = Vector2(250, 500)
@@ -215,21 +482,18 @@ grow_vertical = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="PlusIcon3" type="Label" parent="CharacterDisplay/SlotsContainer/Slot3" unique_id=929194444]
+[node name="PlusIcon3" type="TextureRect" parent="CharacterDisplay/SlotsContainer/Slot3" unique_id=929194444]
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -11.5
-offset_right = 20.0
-offset_bottom = 11.5
 grow_horizontal = 2
 grow_vertical = 2
-text = "+"
-horizontal_alignment = 1
+texture = SubResource("AtlasTexture_plus3")
+stretch_mode = 5
 
 [node name="SlotInfo3" type="VBoxContainer" parent="CharacterDisplay/SlotsContainer/Slot3" unique_id=2010136160]
 layout_mode = 1
@@ -245,11 +509,13 @@ offset_bottom = -12.0
 [node name="SlotName3" type="Label" parent="CharacterDisplay/SlotsContainer/Slot3/SlotInfo3" unique_id=1782988680]
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 horizontal_alignment = 1
 
 [node name="SlotPath3" type="Label" parent="CharacterDisplay/SlotsContainer/Slot3/SlotInfo3" unique_id=684467425]
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 
 [node name="Slot4" type="Control" parent="CharacterDisplay/SlotsContainer" unique_id=1477984503]
 custom_minimum_size = Vector2(250, 500)
@@ -266,21 +532,18 @@ grow_vertical = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="PlusIcon4" type="Label" parent="CharacterDisplay/SlotsContainer/Slot4" unique_id=348371873]
+[node name="PlusIcon4" type="TextureRect" parent="CharacterDisplay/SlotsContainer/Slot4" unique_id=348371873]
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -11.5
-offset_right = 20.0
-offset_bottom = 11.5
 grow_horizontal = 2
 grow_vertical = 2
-text = "+"
-horizontal_alignment = 1
+texture = SubResource("AtlasTexture_plus4")
+stretch_mode = 5
 
 [node name="SlotInfo4" type="VBoxContainer" parent="CharacterDisplay/SlotsContainer/Slot4" unique_id=892437209]
 layout_mode = 1
@@ -295,16 +558,22 @@ offset_bottom = -12.0
 [node name="SlotName4" type="Label" parent="CharacterDisplay/SlotsContainer/Slot4/SlotInfo4" unique_id=43693354]
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 horizontal_alignment = 1
 
 [node name="SlotPath4" type="Label" parent="CharacterDisplay/SlotsContainer/Slot4/SlotInfo4" unique_id=1063927252]
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 
-[node name="RightArrow" type="Button" parent="CharacterDisplay" unique_id=1938820629]
+[node name="RightArrow" type="TextureButton" parent="CharacterDisplay" unique_id=1938820629]
 custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
-text = ">"
+texture_normal = SubResource("AtlasTexture_right_n")
+texture_pressed = SubResource("AtlasTexture_right_p")
+texture_hover = SubResource("AtlasTexture_right_h")
+ignore_texture_size = true
+stretch_mode = 5
 
 [node name="CharacterSelectPanel" type="PanelContainer" parent="." unique_id=19205702]
 visible = false
@@ -328,18 +597,63 @@ anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -23.0
+offset_top = -44.0
 grow_horizontal = 2
 grow_vertical = 0
 
 [node name="UIDLabel" type="Label" parent="BottomBar" unique_id=252910047]
 layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "UID: 00000"
 
-[node name="QuickSetupButton" type="Button" parent="BottomBar" unique_id=1646742730]
+[node name="QuickSetupButton" type="TextureButton" parent="BottomBar" unique_id=1646742730]
+custom_minimum_size = Vector2(140, 44)
 layout_mode = 2
-text = "Quick Setup"
+texture_normal = SubResource("AtlasTexture_quick_n")
+texture_pressed = SubResource("AtlasTexture_quick_p")
+texture_hover = SubResource("AtlasTexture_quick_h")
+ignore_texture_size = true
+stretch_mode = 5
 
-[node name="ConfirmButton" type="Button" parent="BottomBar" unique_id=406424434]
+[node name="Label" type="Label" parent="BottomBar/QuickSetupButton" unique_id=1834012169]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 1.0
+offset_top = -4.0
+offset_right = 1.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "Quick Setup"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ConfirmButton" type="TextureButton" parent="BottomBar" unique_id=406424434]
+custom_minimum_size = Vector2(140, 44)
 layout_mode = 2
-text = "Confirm TEam"
+texture_normal = SubResource("AtlasTexture_conf_n")
+texture_pressed = SubResource("AtlasTexture_conf_p")
+texture_hover = SubResource("AtlasTexture_conf_h")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="BottomBar/ConfirmButton" unique_id=2075065646]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 1.0
+offset_top = -4.0
+offset_right = 1.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "Confirm Team"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="pressed" from="TopBar/TeamTabs/Tab1" to="." method="_on_loadout_pressed" binds= [1]]

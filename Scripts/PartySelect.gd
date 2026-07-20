@@ -19,7 +19,11 @@ var active_slot: int = -1
 var current_loadout: int = 1
 var loadouts: Dictionary = {}
 
-# --- UI UI Nodes Bindings ---
+# --- Network Debouncing Nodes ---
+var db_sync_timer: Timer
+var db_http_request: HTTPRequest
+
+# --- UI Nodes Bindings ---
 @onready var slot_textures: Array[TextureRect] = [
 	$CharacterDisplay/SlotsContainer/Slot1/SlotTexture1,
 	$CharacterDisplay/SlotsContainer/Slot2/SlotTexture2,
@@ -44,7 +48,9 @@ var loadouts: Dictionary = {}
 	$CharacterDisplay/SlotsContainer/Slot3/SlotInfo3/SlotPath3,
 	$CharacterDisplay/SlotsContainer/Slot4/SlotInfo4/SlotPath4
 ]
-@onready var loadout_buttons: Array[Button] = [
+
+# FIXED: Array strict-typing changed from Button to TextureButton
+@onready var loadout_buttons: Array[TextureButton] = [
 	$TopBar/TeamTabs/Tab1,
 	$TopBar/TeamTabs/Tab2,
 	$TopBar/TeamTabs/Tab3,
@@ -55,15 +61,18 @@ var loadouts: Dictionary = {}
 
 @onready var available_list: BoxContainer = $CharacterSelectPanel/ScrollContainer/AvailableList
 @onready var char_select_panel: Control = $CharacterSelectPanel
-@onready var confirm_btn: Button = $BottomBar/ConfirmButton
+
+# FIXED: Strict-typing updated to TextureButton
+@onready var confirm_btn: TextureButton = $BottomBar/ConfirmButton
 @onready var uid_label: Label = $BottomBar/UIDLabel
-@onready var close_btn: Button = $TopBar/CloseButton
+@onready var close_btn: TextureButton = $TopBar/CloseButton
 
 # --- Lifecycle Methods ---
 
 func _ready() -> void:
 	_setup_connections()
 	_initialize_ui_state()
+	_setup_network_nodes()
 	
 	# Live updates: listen to GameManager if characters change while this screen is loaded
 	if GameManager.has_signal("characters_updated"):
@@ -97,6 +106,17 @@ func _initialize_ui_state() -> void:
 	uid_label.text = "UID: %d" % int(GameManager.player_profile.get("uid", 0))
 	for tex in slot_textures:
 		tex.visible = false
+
+## OPTIMIZATION: Configures shared asynchronous environment properties
+func _setup_network_nodes() -> void:
+	db_http_request = HTTPRequest.new()
+	add_child(db_http_request)
+	
+	db_sync_timer = Timer.new()
+	db_sync_timer.one_shot = true
+	db_sync_timer.wait_time = 0.5  # Postpones syncing to database until 500ms after last tab shift
+	db_sync_timer.timeout.connect(_execute_db_save)
+	add_child(db_sync_timer)
 
 ## FIXES THE BUG: This pulls fresh data from the GameManager core anytime it runs
 func refresh_character_data() -> void:
@@ -349,35 +369,38 @@ func save_to_loadout(loadout_num: int) -> void:
 		party_ids.append(selected_party[i].character_id if selected_party[i] != null else null)
 	loadouts[str(loadout_num)] = party_ids
 
+# FIXED: Now fetches child labels dynamically before applying color overrides to bypass TextureButton deficiencies
 func update_loadout_buttons() -> void:
 	var active_profile_loadout = GameManager.player_profile.get("current_loadout", 1)
 	for i in range(MAX_LOADOUTS):
 		var btn = loadout_buttons[i]
 		if not btn: continue
 		
+		# Centralized fix: Reset modulate to white (neutral/transparent overlay)
+		# This stops the script from forcing green/yellow tints over your atlas textures.
+		btn.modulate = Color.WHITE
+		
 		var num = i + 1
 		var is_current = (num == current_loadout)
 		var is_deployed = (num == active_profile_loadout)
 		
+		var label = btn.get_node_or_null("Label") as Label
+		
 		if is_current and is_deployed:
-			btn.modulate = Color(0.8, 1.2, 0.8)
-			btn.add_theme_color_override("font_color", Color(0.2, 0.9, 0.2))
+			if label: label.add_theme_color_override("font_color", Color(0.2, 0.9, 0.2))
 		elif is_current:
-			btn.modulate = Color(1.3, 1.3, 0.5)
-			btn.add_theme_color_override("font_color", Color.WHITE)
+			if label: label.add_theme_color_override("font_color", Color.WHITE)
 		elif is_deployed:
-			btn.modulate = Color.WHITE
-			btn.add_theme_color_override("font_color", Color(0.4, 0.8, 0.4))
+			if label: label.add_theme_color_override("font_color", Color(0.2, 1.0, 0.2))
 		else:
-			btn.modulate = Color.WHITE
 			var has_chars = false
 			if loadouts.has(str(num)):
 				for id in loadouts[str(num)]:
 					if id != null and id != 0:
 						has_chars = true
 						break
-			btn.add_theme_color_override("font_color", Color(0.7, 0.9, 1.0) if has_chars else Color(0.5, 0.5, 0.5))
-
+			if label:
+				label.add_theme_color_override("font_color", Color(0.7, 0.9, 1.0) if has_chars else Color(0.5, 0.5, 0.5))
 # --- Helpers & Data Communication ---
 
 func get_char_from_list(char_id: int) -> CharacterData:
@@ -391,9 +414,15 @@ func _get_slot_control(index: int) -> Control:
 
 # --- Database / Networking Persistence ---
 
+# OPTIMIZATION: Implements network safety filters to eliminate out-of-order execution risk
 func save_loadout_to_database() -> void:
-	var http = HTTPRequest.new()
-	add_child(http)
+	if db_sync_timer:
+		db_sync_timer.start()
+
+func _execute_db_save() -> void:
+	if not db_http_request: return
+	db_http_request.cancel_request() 
+	
 	var headers = [
 		"Content-Type: application/json",
 		"apikey: " + SupabaseManager.SUPABASE_ANON_KEY,
@@ -405,10 +434,7 @@ func save_loadout_to_database() -> void:
 		"current_loadout": current_loadout
 	})
 	
-	http.request_completed.connect(func(_result, _response_code, _headers, _body):
-		http.queue_free()
-	)
-	http.request(SupabaseManager.SUPABASE_URL + "/rest/v1/player_profile?uid=eq." + str(int(uid)), headers, HTTPClient.METHOD_PATCH, body)
+	db_http_request.request(SupabaseManager.SUPABASE_URL + "/rest/v1/player_profile?uid=eq." + str(int(uid)), headers, HTTPClient.METHOD_PATCH, body)
 
 func _on_confirm_pressed() -> void:
 	save_to_loadout(current_loadout)
@@ -422,13 +448,13 @@ func _on_confirm_pressed() -> void:
 	GameManager.player_profile["party_loadouts"] = loadouts.duplicate()
 	GameManager.next_spawn = ""
 	
-	save_loadout_to_database()
+	_execute_db_save()
 	GameManager.pending_zone = GameManager.get_return_scene()
 	get_tree().change_scene_to_file("res://Scenes/Game.tscn")
 
 func _on_close_pressed() -> void:
 	save_to_loadout(current_loadout)
-	save_loadout_to_database()
+	_execute_db_save()
 	GameManager.next_spawn = ""
 	GameManager.pending_zone = GameManager.get_return_scene()
 	get_tree().change_scene_to_file("res://Scenes/Game.tscn")
