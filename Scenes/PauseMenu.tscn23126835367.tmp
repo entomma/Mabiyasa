@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://d33m65exq11te" path="res://Scripts/PauseMenu.gd" id="1_lj4oq"]
 [ext_resource type="Texture2D" uid="uid://e56mdxrbu748" path="res://Assets/UIBundleFree/UiCozyFree.png" id="2_5w4ur"]
-[ext_resource type="Texture2D" uid="uid://msr8w5hrnsrg" path="res://Assets/lightuiICONS-unpressed.png" id="3_ey1tb"]
+[ext_resource type="Texture2D" uid="uid://msr8w5hrnsrg" path="res://Assets/UIIcons_1 (2).png" id="3_ey1tb"]
 [ext_resource type="Texture2D" uid="uid://dc4qx73rogyvq" path="res://Assets/lightuiICONS.png" id="4_siy43"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_panel_bg"]

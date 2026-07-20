@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://msr8w5hrnsrg"
-path="res://.godot/imported/UIIcons_1 (2).png-788fd438b4c9c57c2458a107d856d65f.ctex"
+uid="uid://curqhw5sifqms"
+path="res://.godot/imported/Weather_UI_Free.png-335a1e79c8ae4da284f50b35dc96e41b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/UIIcons_1 (2).png"
-dest_files=["res://.godot/imported/UIIcons_1 (2).png-788fd438b4c9c57c2458a107d856d65f.ctex"]
+source_file="res://Assets/Sprout Lands - UI Pack - Basic pack/emojis-free/emoji style ui/weather/Weather_UI_Free.png"
+dest_files=["res://.godot/imported/Weather_UI_Free.png-335a1e79c8ae4da284f50b35dc96e41b.ctex"]
 
 [params]
 

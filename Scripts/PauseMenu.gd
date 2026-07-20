@@ -8,7 +8,6 @@ extends Control
 @onready var btn_quit: TextureButton = $RightPanel/Margin/VBox/BottomBar/BtnQuit
 
 @onready var btn_store: TextureButton = $RightPanel/Margin/VBox/GridMenu/BtnStore
-@onready var btn_friends: TextureButton = $RightPanel/Margin/VBox/GridMenu/BtnFriends
 @onready var btn_chars: TextureButton = $RightPanel/Margin/VBox/GridMenu/BtnCharacters
 @onready var btn_party: TextureButton = $RightPanel/Margin/VBox/GridMenu/BtnParty
 @onready var btn_wish: TextureButton = $RightPanel/Margin/VBox/GridMenu/BtnWish
@@ -56,21 +55,38 @@ func _connect_buttons() -> void:
 
 	# Placeholders — replace with real handlers when scenes are ready
 	btn_store.pressed.connect(func(): print("Store (WIP)"))
-	btn_friends.pressed.connect(func(): print("Friends (WIP)"))
 	btn_missions.pressed.connect(func(): print("Missions (WIP)"))
 	btn_settings.pressed.connect(func(): print("Settings (WIP)"))
 
 # ─── Profile data ─────────────────────────────────────────────────────────────
 func _load_profile_data() -> void:
-	var p_name := AccountManager.username if AccountManager.username != "" else "Trailblazer"
-	var p_uid := str(AccountManager.uid) if AccountManager.is_logged_in() else "000000000"
-	var p_level := ProgressManager.level
-	var p_exp := ProgressManager.exp
-	var p_exp_max := ProgressManager.exp_max
+	var is_logged_in: bool = AccountManager.is_logged_in() if AccountManager.has_method("is_logged_in") else false
+	
+	# ─── Username & UID Fallbacks ───
+	var p_name := "Trailblazer (Test)"
+	if AccountManager.username != "":
+		p_name = AccountManager.username
+		
+	var p_uid := "999999999"
+	if is_logged_in:
+		p_uid = str(AccountManager.uid)
 
+	# ─── Level & EXP Testing Fallbacks ───
+	var p_level: int = 1
+	var p_exp: int = 35
+	var p_exp_max: int = 100
+
+	# If ProgressManager actually holds progress records, update mock details
+	if ProgressManager.account_level > 0:
+		p_level = ProgressManager.account_level
+		p_exp = ProgressManager.exp
+		p_exp_max = ProgressManager.exp_max if ProgressManager.exp_max > 0 else 100
+
+	# Apply properties to text layout elements
 	name_label.text = p_name
 	level_uid_label.text = "Lv. %d  |  UID: %s" % [p_level, p_uid]
 
+	# Handle the scaling math for progress bars safely
 	var xp_ratio := clampf(float(p_exp) / float(p_exp_max), 0.0, 1.0)
 	if is_instance_valid(xp_bar_fill):
 		xp_bar_fill.anchor_right = xp_ratio
@@ -160,7 +176,7 @@ func _on_quit_pressed() -> void:
 # ─── Helpers ─────────────────────────────────────────────────────────────────
 
 func _disable_all_buttons() -> void:
-	for btn in [btn_resume, btn_quit, btn_store, btn_friends, btn_chars,
+	for btn in [btn_resume, btn_quit, btn_store, btn_chars,
 				btn_party, btn_wish, btn_missions, btn_inventory, btn_settings]:
 		btn.disabled = true
 
