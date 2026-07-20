@@ -74,9 +74,9 @@ func _ready() -> void:
 	_initialize_ui_state()
 	_setup_network_nodes()
 	
-	# Live updates: listen to GameManager if characters change while this screen is loaded
-	if GameManager.has_signal("characters_updated"):
-		GameManager.characters_updated.connect(refresh_character_data)
+	# Live updates: listen to CharacterManager if the roster changes while this screen is loaded
+	if CharacterManager.has_signal("characters_updated"):
+		CharacterManager.characters_updated.connect(refresh_character_data)
 		
 	refresh_character_data()
 
@@ -103,7 +103,7 @@ func _setup_connections() -> void:
 			slot.gui_input.connect(_on_slot_clicked.bind(i))
 
 func _initialize_ui_state() -> void:
-	uid_label.text = "UID: %d" % int(GameManager.player_profile.get("uid", 0))
+	uid_label.text = "UID: %d" % AccountManager.uid
 	for tex in slot_textures:
 		tex.visible = false
 
@@ -129,10 +129,10 @@ func refresh_character_data() -> void:
 func load_characters() -> void:
 	all_characters.clear()
 	
-	# Ensures we're reading the absolute latest roster state from GameManager
-	for db_char in GameManager.player_characters:
+	# Ensures we're reading the absolute latest roster state from CharacterManager
+	for db_char in CharacterManager.player_characters:
 		var char_id = db_char.get("character_id", 0)
-		var char_resource = GameManager.get_character_by_id(char_id)
+		var char_resource = CharacterManager.get_character_by_id(char_id)
 		if char_resource:
 			var instance = char_resource.duplicate()
 			instance.current_level = db_char.get("current_level", 1)
@@ -141,22 +141,16 @@ func load_characters() -> void:
 	populate_available_list()
 
 func initialize_loadouts() -> void:
-	var saved_loadouts = GameManager.player_profile.get("party_loadouts", {})
 	loadouts.clear()
-	
-	if saved_loadouts is Dictionary:
-		for key in saved_loadouts:
-			loadouts[str(key)] = saved_loadouts[key]
-	
+	for key in PartyManager.party_loadouts:
+		loadouts[str(key)] = PartyManager.party_loadouts[key].duplicate()
+
 	for i in range(1, MAX_LOADOUTS + 1):
 		var key = str(i)
 		if not loadouts.has(key) or not (loadouts[key] is Array):
 			loadouts[key] = [null, null, null, null]
-		else:
-			loadouts[key] = loadouts[key].duplicate()
-	
-	current_loadout = int(GameManager.player_profile.get("current_loadout", 1))
-	current_loadout = clampi(current_loadout, 1, MAX_LOADOUTS)
+
+	current_loadout = clampi(PartyManager.current_loadout, 1, MAX_LOADOUTS)
 
 # --- UI List Rendering (Genshin/HSR Pool Optimization) ---
 
@@ -275,7 +269,7 @@ func _on_available_char_pressed(char_data: CharacterData) -> void:
 	update_slots()
 	update_loadout_buttons()
 	save_to_loadout(current_loadout)
-	GameManager.player_profile["party_loadouts"] = loadouts.duplicate()
+	PartyManager.party_loadouts = loadouts.duplicate()
 	
 	save_loadout_to_database()
 
@@ -328,20 +322,10 @@ func _on_loadout_pressed(loadout_num: int) -> void:
 	save_loadout_to_database()
 
 func restore_party() -> void:
+	# PartyManager.apply_loadouts() always fills every loadout key on login,
+	# so `loadouts` here is guaranteed populated — no legacy fallback needed.
 	var loadout_key = str(current_loadout)
-	var party_ids: Array = []
-	
-	if loadouts.has(loadout_key):
-		party_ids = loadouts[loadout_key]
-	else:
-		var legacy_party = GameManager.player_profile.get("saved_party", [])
-		if legacy_party is Array:
-			party_ids = legacy_party
-		elif legacy_party is String:
-			var cleaned = legacy_party.replace("{", "").replace("}", "").strip_edges()
-			if cleaned != "":
-				for id_str in cleaned.split(","):
-					party_ids.append(int(float(id_str.strip_edges())))
+	var party_ids: Array = loadouts.get(loadout_key, [])
 					
 	selected_party = [null, null, null, null]
 	
@@ -371,7 +355,7 @@ func save_to_loadout(loadout_num: int) -> void:
 
 # FIXED: Now fetches child labels dynamically before applying color overrides to bypass TextureButton deficiencies
 func update_loadout_buttons() -> void:
-	var active_profile_loadout = GameManager.player_profile.get("current_loadout", 1)
+	var active_profile_loadout = PartyManager.current_loadout
 	for i in range(MAX_LOADOUTS):
 		var btn = loadout_buttons[i]
 		if not btn: continue
@@ -428,7 +412,7 @@ func _execute_db_save() -> void:
 		"apikey: " + SupabaseManager.SUPABASE_ANON_KEY,
 		"Authorization: Bearer " + SupabaseManager.auth_token
 	]
-	var uid = GameManager.player_profile.get("uid", 0)
+	var uid = AccountManager.uid
 	var body = JSON.stringify({
 		"party_loadouts": loadouts,
 		"current_loadout": current_loadout
@@ -443,9 +427,9 @@ func _on_confirm_pressed() -> void:
 	if deployed_party.size() == 0:
 		return
 		
-	GameManager.set_party(deployed_party)
-	GameManager.player_profile["current_loadout"] = current_loadout
-	GameManager.player_profile["party_loadouts"] = loadouts.duplicate()
+	PartyManager.set_party(deployed_party)
+	PartyManager.current_loadout = current_loadout
+	PartyManager.party_loadouts = loadouts.duplicate()
 	GameManager.next_spawn = ""
 	
 	_execute_db_save()

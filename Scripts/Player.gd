@@ -37,8 +37,8 @@ func _ready():
 			global_position = sp.global_position
 			spawned = true
 			break
-	if not spawned and GameManager.has_saved_position:
-		global_position = GameManager.saved_player_position
+	if not spawned and AccountManager.has_saved_position:
+		global_position = AccountManager.saved_position
 
 	if TutorialManager.current_step == "intro" or TutorialManager.current_step == "":
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)

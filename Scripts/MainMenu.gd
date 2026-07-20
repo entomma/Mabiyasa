@@ -5,21 +5,20 @@ extends Control
 @onready var account_level = $TopBar/AccountLevel
 
 func _ready():
-	print("Player profile in GameManager: ", GameManager.player_profile)
-	var profile = GameManager.player_profile
+	print("Account loaded: uid=", AccountManager.uid, " username=", AccountManager.username)
 	
-	if profile.size() > 0:
-		username_label.text = profile.get("username", "Player")
-		uid_label.text = "UID: " + str(int(profile.get("uid", 0)))
-		account_level.text = "Level " + str(int(profile.get("account_level", 1)))
+	if AccountManager.is_logged_in():
+		username_label.text = AccountManager.username if AccountManager.username != "" else "Player"
+		uid_label.text = "UID: " + str(AccountManager.uid)
+		account_level.text = "Level " + str(ProgressManager.account_level)
 	else:
 		username_label.text = "Player"
 		uid_label.text = "UID: 00000"
 		account_level.text = "Antas 1"
 
 func _on_start_pressed():
-	# Get saved scene from profile
-	var last_scene = GameManager.player_profile.get("current_scene", "")
+	# Get saved scene from AccountManager
+	var last_scene = AccountManager.current_scene
 	
 	# Debug: Print what we're trying to load
 	print("Raw saved scene path: '", last_scene, "'")
@@ -41,14 +40,9 @@ func _on_start_pressed():
 		if ResourceLoader.exists(last_scene):
 			print("Loading saved scene: ", last_scene)
 			
-			# Restore saved position
-			var last_pos_x = float(GameManager.player_profile.get("last_pos_x", 0))
-			var last_pos_y = float(GameManager.player_profile.get("last_pos_y", 0))
-			var last_pos_z = float(GameManager.player_profile.get("last_pos_z", 0))
-			
-			if last_pos_x != 0 or last_pos_y != 0 or last_pos_z != 0:
-				GameManager.set_saved_position(Vector3(last_pos_x, last_pos_y, last_pos_z))
-				print("Restoring position: ", Vector3(last_pos_x, last_pos_y, last_pos_z))
+			# Restore saved position (AccountManager already parsed this at login)
+			if AccountManager.has_saved_position:
+				print("Restoring position: ", AccountManager.saved_position)
 			
 			# Clear teleport spawn (use saved position instead)
 			GameManager.next_spawn = ""
@@ -71,7 +65,7 @@ func _on_settings_pressed():
 	pass
 
 func _on_logout_pressed():
-	GameManager.player_profile = {}
+	AccountManager.clear()
 	SupabaseManager.auth_token = ""
 	SupabaseManager.current_uid = 0
 	SupabaseManager.current_user_id = ""

@@ -31,7 +31,9 @@ const CARD_POOL_PATH := "res://Resources/GachaCards/"
 # ── Preload result type ───────────────────────────────────────────────────────
 const GachaResultData := preload("res://Scripts/GachaResultData.gd")
 
-# ── Pity state (synced to DB after every batch) ──────────────────────────────
+# ── Currency + pity state (owned here, synced to DB after every batch) ──────
+var pulls:               int  = 0
+var stella_shards:       int  = 0
 var pity_count:          int  = 0
 var pity_count_4star:    int  = 0
 var guaranteed_featured: bool = false
@@ -90,17 +92,20 @@ func _build_pools() -> void:
 # ═════════════════════════════════════════════════════════════════════════════
 #  INITIALISATION  (call once after login)
 # ═════════════════════════════════════════════════════════════════════════════
-func load_pity_from_profile() -> void:
-	var p := GameManager.player_profile
-	pity_count          = int(p.get("pity_count", 0))
-	pity_count_4star    = int(p.get("pity_count_4star", 0))
-	guaranteed_featured = bool(p.get("guaranteed_featured", false))
+## Called by SupabaseManager with the raw profile row after fetch/login.
+## GachaManager owns these fields — it just needs the initial values.
+func load_from_profile(profile: Dictionary) -> void:
+	pulls                = int(profile.get("pulls", 0))
+	stella_shards        = int(profile.get("stella_shards", 0))
+	pity_count           = int(profile.get("pity_count", 0))
+	pity_count_4star     = int(profile.get("pity_count_4star", 0))
+	guaranteed_featured  = bool(profile.get("guaranteed_featured", false))
 	await _load_collection_cache()
-	print("GachaManager ready | 5★pity:%d  4★pity:%d  guaranteed:%s" % [
-		pity_count, pity_count_4star, guaranteed_featured])
+	print("GachaManager ready | pulls:%d  5★pity:%d  4★pity:%d  guaranteed:%s" % [
+		pulls, pity_count, pity_count_4star, guaranteed_featured])
 
 func _load_collection_cache() -> void:
-	var uid := int(GameManager.player_profile.get("uid", 0))
+	var uid := AccountManager.uid
 	if uid == 0: return
 
 	# Characters
@@ -138,14 +143,13 @@ func do_single_pull() -> Array: return await do_single_pull_typed()
 func do_ten_pull()   -> Array:  return await do_ten_pull_typed()
 
 func can_pull(count: int) -> bool:
-	return int(GameManager.player_profile.get("pulls", 0)) >= count
+	return pulls >= count
 
 func deduct_pulls(count: int) -> void:
-	var new_val := maxi(0, int(GameManager.player_profile.get("pulls", 0)) - count)
-	GameManager.player_profile["pulls"] = new_val
-	var uid := int(GameManager.player_profile.get("uid", 0))
+	pulls = maxi(0, pulls - count)
+	var uid := AccountManager.uid
 	if uid == 0: return
-	await _http_patch("/rest/v1/player_profile?uid=eq.%d" % uid, {"pulls": new_val})
+	await _http_patch("/rest/v1/player_profile?uid=eq.%d" % uid, {"pulls": pulls})
 
 # ═════════════════════════════════════════════════════════════════════════════
 #  PULL EXECUTION
@@ -268,7 +272,7 @@ func _resolve_character(r: GachaResultData) -> void:
 			r.duplicate_outcome   = GachaResultData.DuplicateOutcome.CONSTELLATION
 			r.constellation_level = c
 			await _db_patch("/rest/v1/player_characters?uid=eq.%d&character_id=eq.%d" % [
-				int(GameManager.player_profile.get("uid", 0)), cid],
+				AccountManager.uid, cid],
 				{"constellation": c})
 		else:
 			# ── C6 overflow → Stella Fortuna shards ────────────────────────
@@ -296,7 +300,7 @@ func _resolve_card(r: GachaResultData) -> void:
 			r.duplicate_outcome = GachaResultData.DuplicateOutcome.REFINEMENT
 			r.refinement_rank   = s
 			await _db_patch("/rest/v1/player_cards_owned?uid=eq.%d&card_item_id=eq.%d" % [
-				int(GameManager.player_profile.get("uid", 0)), cid],
+				AccountManager.uid, cid],
 				{"stack_count": s})
 		else:
 			# ── R5 overflow → pull refund ───────────────────────────────────
@@ -309,7 +313,7 @@ func _resolve_card(r: GachaResultData) -> void:
 #  DB WRITE HELPERS
 # ═════════════════════════════════════════════════════════════════════════════
 func _db_insert_character(data: CharacterData) -> void:
-	var uid := int(GameManager.player_profile.get("uid", 0))
+	var uid := AccountManager.uid
 	await _http_post("/rest/v1/player_characters", {
 		"uid":           uid,
 		"character_id":  data.character_id,
@@ -323,7 +327,7 @@ func _db_insert_character(data: CharacterData) -> void:
 	})
 
 func _db_insert_card(data: GachaCard) -> void:
-	var uid := int(GameManager.player_profile.get("uid", 0))
+	var uid := AccountManager.uid
 	await _http_post("/rest/v1/player_cards_owned", {
 		"uid":          uid,
 		"card_item_id": data.card_item_id,
@@ -331,23 +335,43 @@ func _db_insert_card(data: GachaCard) -> void:
 	})
 
 func _save_pity_to_db() -> void:
-	var uid := int(GameManager.player_profile.get("uid", 0))
+	var uid := AccountManager.uid
 	if uid == 0: return
 	await _db_patch("/rest/v1/player_profile?uid=eq.%d" % uid, {
 		"pity_count":          pity_count,
 		"pity_count_4star":    pity_count_4star,
 		"guaranteed_featured": guaranteed_featured,
 	})
-	GameManager.player_profile["pity_count"]          = pity_count
-	GameManager.player_profile["pity_count_4star"]    = pity_count_4star
-	GameManager.player_profile["guaranteed_featured"] = guaranteed_featured
+	# No mirroring elsewhere — GachaManager is the only owner of these fields.
 
+## Adds gacha currency (pulls, stella_shards). GachaManager owns both, so this
+## just needs the matching local field name and a DB column of the same name.
 func _add_currency(key: String, amount: int) -> void:
-	var new_val := int(GameManager.player_profile.get(key, 0)) + amount
-	GameManager.player_profile[key] = new_val
-	var uid := int(GameManager.player_profile.get("uid", 0))
+	var new_val: int
+	match key:
+		"pulls":
+			pulls += amount
+			new_val = pulls
+		"stella_shards":
+			stella_shards += amount
+			new_val = stella_shards
+		_:
+			push_error("GachaManager: unknown currency key '%s'" % key)
+			return
+
+	var uid := AccountManager.uid
 	if uid == 0: return
 	await _db_patch("/rest/v1/player_profile?uid=eq.%d" % uid, {key: new_val})
+
+## Returns the dict of fields this manager is responsible for persisting.
+func get_persistable_fields() -> Dictionary:
+	return {
+		"pulls":               pulls,
+		"stella_shards":       stella_shards,
+		"pity_count":          pity_count,
+		"pity_count_4star":    pity_count_4star,
+		"guaranteed_featured": guaranteed_featured,
+	}
 
 func _db_patch(endpoint: String, payload: Dictionary) -> void:
 	await _http_patch(endpoint, payload)

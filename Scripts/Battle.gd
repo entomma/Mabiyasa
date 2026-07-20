@@ -181,7 +181,7 @@ func _stabilize_terrain() -> void:
 func _init_character_hp() -> void:
 	character_hp.clear()
 	character_shields.clear()
-	for character in GameManager.player_party:
+	for character in PartyManager.player_party:
 		character_hp.append(float(character.get_actual_hp()))
 		character_shields.append(0.0)
 
@@ -365,7 +365,7 @@ func _begin_ally_targeting() -> void:
 	_pan_camera(CAM_ALLY_POS, CAM_ALLY_TARGET, CAM_DEFAULT_TARGET)
 
 func _navigate_ally(dir: int) -> void:
-	targeted_ally_index = clamp(targeted_ally_index + dir, 0, GameManager.player_party.size() - 1)
+	targeted_ally_index = clamp(targeted_ally_index + dir, 0, PartyManager.player_party.size() - 1)
 	_refresh_ally_highlight()
 
 func _confirm_ally_target() -> void:
@@ -380,7 +380,7 @@ func _refresh_ally_highlight() -> void:
 		portrait_containers[i].modulate = Color(1.5, 1.3, 0.5) if is_targeted else Color.WHITE
 
 func _index_of_current_char() -> int:
-	return GameManager.player_party.find(current_character)
+	return PartyManager.player_party.find(current_character)
 
 func _pan_camera(to_pos: Vector3, to_target: Vector3, from_target: Vector3) -> void:
 	if not camera: return
@@ -432,8 +432,8 @@ func _restyle_slot_btn(btn: Button, color: Color, active: bool) -> void:
 
 func _trigger_ult(idx: int) -> void:
 	if _is_selecting_skill or _is_processing_turn: return
-	if idx >= GameManager.player_party.size():       return
-	var cd: CharacterData = GameManager.player_party[idx]
+	if idx >= PartyManager.player_party.size():       return
+	var cd: CharacterData = PartyManager.player_party[idx]
 	if cd.ultimate == null or not cd.is_ult_ready():
 		print("Ult not ready for ", cd.character_name)
 		return
@@ -518,7 +518,7 @@ func _weighted_count() -> int:
 # ═══════════════════════════════════════════════════════
 func _build_turn_queue() -> void:
 	turn_queue.clear()
-	for character in GameManager.player_party:
+	for character in PartyManager.player_party:
 		var spd := int(character.speed * (1.0 + randf_range(-SPEED_JITTER, SPEED_JITTER)))
 		turn_queue.append({"type": "player", "data": character, "speed": spd})
 	for enemy in enemies:
@@ -671,8 +671,8 @@ func _shatter_shield(idx: int) -> void:
 #  Portrait HP / Shield
 # ═══════════════════════════════════════════════════════
 func _update_portrait_hp(char_idx: int) -> void:
-	if char_idx >= GameManager.player_party.size(): return
-	var cd:     CharacterData = GameManager.player_party[char_idx]
+	if char_idx >= PartyManager.player_party.size(): return
+	var cd:     CharacterData = PartyManager.player_party[char_idx]
 	var max_hp: float = float(cd.get_actual_hp())
 	var cur_hp: float = character_hp[char_idx]
 	var shield: float = character_shields[char_idx]
@@ -692,8 +692,8 @@ func _update_portrait_hp(char_idx: int) -> void:
 
 
 func _update_energy_display(char_idx: int) -> void:
-	if char_idx >= GameManager.player_party.size() or char_idx >= ult_buttons.size(): return
-	var cd:  CharacterData = GameManager.player_party[char_idx]
+	if char_idx >= PartyManager.player_party.size() or char_idx >= ult_buttons.size(): return
+	var cd:  CharacterData = PartyManager.player_party[char_idx]
 	var btn: Button = ult_buttons[char_idx]
 	var pct: float = cd.current_energy / cd.max_energy
 	btn.text     = "[%d] ULT\n%d%%" % [char_idx + 1, int(pct * 100)]
@@ -705,13 +705,13 @@ func _update_energy_display(char_idx: int) -> void:
 # ═══════════════════════════════════════════════════════
 func _give_energy_action(char_data: CharacterData, base_amount: float) -> void:
 	char_data.gain_energy(base_amount, true)
-	var idx := GameManager.player_party.find(char_data)
+	var idx := PartyManager.player_party.find(char_data)
 	if idx >= 0:
 		_update_energy_display(idx)
 
 func _give_energy_hit_taken(char_data: CharacterData) -> void:
 	char_data.gain_energy(ENERGY_FROM_HIT_TAKEN, false)
-	var idx := GameManager.player_party.find(char_data)
+	var idx := PartyManager.player_party.find(char_data)
 	if idx >= 0:
 		_update_energy_display(idx)
 
@@ -761,8 +761,8 @@ func _setup_character_portraits() -> void:
 	portrait_hp_labels.clear()
 	portrait_shields.clear()
 
-	for i in range(GameManager.player_party.size()):
-		var cd: CharacterData = GameManager.player_party[i]
+	for i in range(PartyManager.player_party.size()):
+		var cd: CharacterData = PartyManager.player_party[i]
 
 		var panel := PanelContainer.new()
 		var ps    := _make_rounded_stylebox(Color(0.12, 0.13, 0.18, 0.85), 12)
@@ -949,7 +949,7 @@ func show_skill_buttons() -> void:
 
 	for i in range(portrait_containers.size()):
 		portrait_containers[i].modulate = \
-			Color(1.3, 1.3, 1.3) if GameManager.player_party[i] == current_character \
+			Color(1.3, 1.3, 1.3) if PartyManager.player_party[i] == current_character \
 			else Color.WHITE
 
 	_refresh_skill_highlights()
@@ -1273,18 +1273,18 @@ func resolve_skill_effects() -> void:
 
 func _get_ally_target_indices() -> Array:
 	if current_skill.is_aoe() or current_skill.target_type == "Team":
-		return range(GameManager.player_party.size())
+		return range(PartyManager.player_party.size())
 	return [targeted_ally_index]
 
 func _get_buff_targets() -> Array:
 	if current_skill.is_aoe() or current_skill.target_type == "Team":
-		return GameManager.player_party
-	return [GameManager.player_party[targeted_ally_index]]
+		return PartyManager.player_party
+	return [PartyManager.player_party[targeted_ally_index]]
 
 
 func _apply_heal(char_idx: int) -> void:
-	if char_idx >= GameManager.player_party.size(): return
-	var cd:     CharacterData = GameManager.player_party[char_idx]
+	if char_idx >= PartyManager.player_party.size(): return
+	var cd:     CharacterData = PartyManager.player_party[char_idx]
 	var max_hp: float = float(cd.get_actual_hp())
 	var heal:   float = float(current_skill.get_actual_heal_flat()) + max_hp * current_skill.get_actual_heal_scaling()
 	character_hp[char_idx] = min(character_hp[char_idx] + heal, max_hp)
@@ -1292,7 +1292,7 @@ func _apply_heal(char_idx: int) -> void:
 	_show_floating_text("+%d HP" % int(heal), Color(0.3, 1.0, 0.5), _ally_screen_pos(char_idx))
 
 func _apply_shield(char_idx: int) -> void:
-	if char_idx >= GameManager.player_party.size(): return
+	if char_idx >= PartyManager.player_party.size(): return
 	var shield_val := float(current_skill.get_actual_shield_flat()) + \
 		float(current_character.get_actual_defense()) * current_skill.get_actual_shield_scaling()
 	character_shields[char_idx] += shield_val
@@ -1439,13 +1439,13 @@ func show_feedback_popup(damage: int, quality: Dictionary) -> void:
 func enemy_turn(entry: Dictionary) -> void:
 	print(entry.data.enemy_name + " attacks!")
 	await get_tree().create_timer(1.5).timeout
-	if GameManager.player_party.is_empty():
+	if PartyManager.player_party.is_empty():
 		current_turn_index += 1
 		process_next_turn()
 		return
 
-	var target_idx := randi() % GameManager.player_party.size()
-	var cd:      CharacterData = GameManager.player_party[target_idx]
+	var target_idx := randi() % PartyManager.player_party.size()
+	var cd:      CharacterData = PartyManager.player_party[target_idx]
 	var raw_dmg: int = entry.data.base_attack
 
 	# Absorb with shield first
@@ -1475,14 +1475,14 @@ func enemy_turn(entry: Dictionary) -> void:
 		if target_idx < portrait_containers.size() and is_instance_valid(portrait_containers[target_idx]):
 			var t := create_tween()
 			t.tween_property(portrait_containers[target_idx], "modulate:a", 0.3, 0.4)
-		GameManager.player_party.remove_at(target_idx)
+		PartyManager.player_party.remove_at(target_idx)
 		character_hp.remove_at(target_idx)
 		character_shields.remove_at(target_idx)
 		turn_queue = turn_queue.filter(func(t):
-			return t.type != "player" or GameManager.player_party.has(t.data)
+			return t.type != "player" or PartyManager.player_party.has(t.data)
 		)
 		check_battle_end()
-		if enemies.is_empty() or GameManager.player_party.is_empty():
+		if enemies.is_empty() or PartyManager.player_party.is_empty():
 			return
 
 	current_turn_index += 1
@@ -1498,7 +1498,7 @@ func check_battle_end() -> void:
 		await SupabaseManager.add_pulls(1)
 		GameManager.end_combat()
 		get_tree().change_scene_to_file(origin_scene)
-	elif GameManager.player_party.is_empty():
+	elif PartyManager.player_party.is_empty():
 		print("Defeat!")
 		await get_tree().create_timer(2.0).timeout
 		GameManager.end_combat()
@@ -1581,8 +1581,8 @@ func _setup_battle_sprites() -> void:
 		if child.name.begins_with("player_") or child.name.begins_with("enemy_") \
 				or child.name.begins_with("Placeholder_"):
 			child.queue_free()
-	for i in range(GameManager.player_party.size()):
-		_spawn_character(GameManager.player_party[i], i)
+	for i in range(PartyManager.player_party.size()):
+		_spawn_character(PartyManager.player_party[i], i)
 	for i in range(enemies.size()):
 		_spawn_enemy_sprite(i)
 	_build_enemy_ui()

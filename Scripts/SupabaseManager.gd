@@ -84,7 +84,7 @@ func login(email: String, password: String) -> Dictionary:
 		auth_token = result.access_token
 		current_user_id = result.user.id
 		await fetch_player_profile()
-		print("Profile after fetch: ", GameManager.player_profile)
+		print("Profile after fetch: uid=", AccountManager.uid, " scene=", AccountManager.current_scene)
 	
 	return result
 
@@ -159,8 +159,8 @@ func give_starter_characters() -> void:
 	while retry_count < max_retries and not profile_fetched:
 		await fetch_player_profile()
 		
-		if GameManager.player_profile and GameManager.player_profile.has("uid"):
-			uid = GameManager.player_profile.get("uid", 0)
+		if AccountManager.is_logged_in():
+			uid = AccountManager.uid
 			if uid != 0:
 				profile_fetched = true
 				print("Profile fetched successfully on attempt ", retry_count + 1, " with UID: ", uid)
@@ -238,11 +238,11 @@ func give_starter_characters() -> void:
 	# Reload profile to get updated data
 	await get_tree().create_timer(0.5).timeout
 	await fetch_player_profile()
-	print("Final profile after giving characters: ", GameManager.player_profile)
+	print("Final profile after giving characters: uid=", AccountManager.uid)
 	
 	# Verify character was added
 	await fetch_player_characters()
-	print("Characters after giving Manasan: ", GameManager.player_characters)
+	print("Characters after giving Manasan: ", CharacterManager.player_characters)
 
 func fetch_player_profile() -> void:
 	var http = HTTPRequest.new()
@@ -262,19 +262,26 @@ func fetch_player_profile() -> void:
 	
 	var result = JSON.parse_string(response_body)
 	if result != null and result.size() > 0:
-		current_uid = result[0].uid
-		GameManager.player_profile = result[0]
-		
+		var profile: Dictionary = result[0]
+		current_uid = int(profile.get("uid", 0))
+
+		# Each manager pulls only the fields it owns out of the raw row.
+		AccountManager.apply_profile(profile)
+		ProgressManager.apply_profile(profile)
+		PartyManager.apply_loadouts(
+			profile.get("party_loadouts", {}),
+			int(profile.get("current_loadout", 1))
+		)
+		await GachaManager.load_from_profile(profile)
+
 		# FIX: Check if the saved scene is hubtown and replace with small_village
-		var saved_scene = GameManager.player_profile.get("current_scene", "")
-		if saved_scene == "res://Scenes/hubtown.tscn" or saved_scene == "hubtown.tscn":
+		if AccountManager.current_scene == "res://Scenes/hubtown.tscn" or AccountManager.current_scene == "hubtown.tscn":
 			print("WARNING: Found hubtown reference, replacing with small_village")
-			GameManager.player_profile["current_scene"] = "res://Scenes/small_village.tscn"
+			AccountManager.set_current_scene("res://Scenes/small_village.tscn")
 			# Optionally save this change back to database
 			await update_current_scene_to_small_village()
-		
+
 		await fetch_player_characters()
-		GameManager.load_character_resources()
 		load_player_state()
 		print("Profile, characters and state loaded!")
 
@@ -289,7 +296,7 @@ func update_current_scene_to_small_village() -> void:
 		"Authorization: Bearer " + auth_token
 	]
 	
-	var uid = GameManager.player_profile.get("uid", 0)
+	var uid = AccountManager.uid
 	if uid == 0:
 		print("Cannot update scene - no UID")
 		http.queue_free()
@@ -310,78 +317,31 @@ func update_current_scene_to_small_village() -> void:
 	else:
 		print("Failed to update current_scene: ", response_code)
 
+## Position/scene are already restored by AccountManager.apply_profile().
+## This is left to load the deployed party from the current loadout, since
+## that needs CharacterManager's roster to be populated first.
 func load_player_state() -> void:
-	var profile = GameManager.player_profile
-	
-	# Restore position
-	var pos_x = float(profile.get("last_pos_x", 0.0))
-	var pos_y = float(profile.get("last_pos_y", 0.0))
-	var pos_z = float(profile.get("last_pos_z", 0.0))
-	var pos = Vector3(pos_x, pos_y, pos_z)
-	
-	if pos != Vector3.ZERO:
-		GameManager.saved_player_position = pos
-		GameManager.has_saved_position = true
-		print("Position loaded: ", pos)
-	
-	# Load party from current loadout
-	var current_loadout_raw = profile.get("current_loadout", 1)
-	
-	# Convert to integer properly
-	var current_loadout = 1
-	if typeof(current_loadout_raw) == TYPE_FLOAT:
-		current_loadout = int(current_loadout_raw)
-	elif typeof(current_loadout_raw) == TYPE_INT:
-		current_loadout = current_loadout_raw
-	elif typeof(current_loadout_raw) == TYPE_STRING:
-		current_loadout = int(current_loadout_raw)
+	var party_ids = PartyManager.get_loadout(PartyManager.current_loadout)
+	print("Loading party from current loadout ", PartyManager.current_loadout, ": ", party_ids)
+
+	var party = []
+	for i in range(min(party_ids.size(), 4)):
+		var char_id = party_ids[i]
+		if char_id != null and char_id != 0:
+			# Handle float/string IDs (1.0 or "1" -> 1)
+			if typeof(char_id) == TYPE_FLOAT or typeof(char_id) == TYPE_STRING:
+				char_id = int(char_id)
+
+			var char_resource = CharacterManager.get_character_by_id(char_id)
+			if char_resource:
+				party.append(char_resource)
+				print("Loaded slot ", i, ": ", char_resource.character_name)
+
+	if party.size() > 0:
+		PartyManager.set_party(party)
+		print("Party loaded: ", party.size(), " characters")
 	else:
-		current_loadout = 1
-	
-	var party_loadouts = profile.get("party_loadouts", {})
-	
-	var party_ids = []
-	
-	if party_loadouts is Dictionary:
-		var loadout_key = str(current_loadout)
-		if party_loadouts.has(loadout_key):
-			var loadout_data = party_loadouts[loadout_key]
-			if loadout_data is Array:
-				party_ids = loadout_data
-				print("Loading party from current loadout ", current_loadout, ": ", party_ids)
-		else:
-			print("Loadout key not found: ", loadout_key)
-			print("Available keys: ", party_loadouts.keys())
-	
-	print("Parsed party IDs: ", party_ids)
-	
-	if party_ids.size() > 0:
-		var party = []
-		var slot_party = [null, null, null, null]
-		
-		for i in range(min(party_ids.size(), 4)):
-			var char_id = party_ids[i]
-			if char_id != null and char_id != 0:
-				# Handle float IDs (1.0 -> 1)
-				if typeof(char_id) == TYPE_FLOAT:
-					char_id = int(char_id)
-				elif typeof(char_id) == TYPE_STRING:
-					char_id = int(char_id)
-				
-				var char_resource = GameManager.get_character_by_id(char_id)
-				if char_resource:
-					slot_party[i] = char_resource
-					party.append(char_resource)
-					print("Loaded slot ", i, ": ", char_resource.character_name)
-		
-		if party.size() > 0:
-			GameManager.player_party = party
-			GameManager.saved_party_slots = slot_party
-			print("Party loaded: ", party.size(), " characters")
-		else:
-			print("No valid characters found in loadout")
-	else:
-		print("No party found in current loadout ", current_loadout)
+		print("No valid characters found in loadout ", PartyManager.current_loadout)
 
 func fetch_player_characters() -> Array:
 	var http = HTTPRequest.new()
@@ -392,7 +352,7 @@ func fetch_player_characters() -> Array:
 		"Authorization: Bearer " + auth_token
 	]
 	
-	var uid = GameManager.player_profile.get("uid", 0)
+	var uid = AccountManager.uid
 	http.request(SUPABASE_URL + "/rest/v1/player_characters?uid=eq." + str(int(uid)), headers, HTTPClient.METHOD_GET, "")
 	var response = await http.request_completed
 	http.queue_free()
@@ -401,7 +361,7 @@ func fetch_player_characters() -> Array:
 	print("Player characters from DB: ", result)
 	
 	if result != null and result is Array:
-		GameManager.player_characters = result
+		CharacterManager.set_characters(result)
 		return result
 	return []
 
@@ -416,7 +376,7 @@ func give_tanud() -> void:
 		"Authorization: Bearer " + auth_token
 	]
 	
-	var uid = GameManager.player_profile.get("uid", 0)
+	var uid = AccountManager.uid
 	var body = JSON.stringify({
 		"uid": int(uid),
 		"character_id": 6,
@@ -433,13 +393,14 @@ func give_tanud() -> void:
 	http.queue_free()
 	print("Tanud given: ", response[3].get_string_from_utf8())
 
-# Save pull currency (pulls)
+# Save pull currency (pulls) — GachaManager owns the `pulls` count itself;
+# SupabaseManager only does the actual network write.
 func spend_pulls(amount: int) -> bool:
-	var current_pulls = GameManager.player_profile.get("pulls", 0)
-	if current_pulls < amount:
+	if GachaManager.pulls < amount:
 		print("Not enough pulls!")
 		return false
 	
+	var new_val = GachaManager.pulls - amount
 	var http = HTTPRequest.new()
 	add_child(http)
 	
@@ -449,16 +410,16 @@ func spend_pulls(amount: int) -> bool:
 		"Authorization: Bearer " + auth_token
 	]
 	
-	var uid = GameManager.player_profile.get("uid", 0)
+	var uid = AccountManager.uid
 	var body = JSON.stringify({
-		"pulls": current_pulls - amount
+		"pulls": new_val
 	})
 	
 	http.request(SUPABASE_URL + "/rest/v1/player_profile?uid=eq." + str(int(uid)), headers, HTTPClient.METHOD_PATCH, body)
 	var _response = await http.request_completed
 	http.queue_free()
 	
-	GameManager.player_profile["pulls"] = current_pulls - amount
+	GachaManager.pulls = new_val
 	return true
 
 # Save checkpoint function (fixed)
@@ -472,7 +433,7 @@ func save_checkpoint(checkpoint_id: String, scene_name: String, pos: Vector3):
 		"Authorization: Bearer " + auth_token
 	]
 	
-	var uid = GameManager.player_profile.get("uid", 0)
+	var uid = AccountManager.uid
 	
 	# IMPORTANT: Ensure scene_name has .tscn extension
 	var full_scene_path = scene_name
@@ -493,12 +454,10 @@ func save_checkpoint(checkpoint_id: String, scene_name: String, pos: Vector3):
 	var response = await http.request_completed
 	http.queue_free()
 	
-	# Update local profile too
-	GameManager.player_profile["last_checkpoint"] = checkpoint_id
-	GameManager.player_profile["current_scene"] = full_scene_path
-	GameManager.player_profile["last_pos_x"] = pos.x
-	GameManager.player_profile["last_pos_y"] = pos.y
-	GameManager.player_profile["last_pos_z"] = pos.z
+	# Update AccountManager, the owner of this state
+	AccountManager.set_last_checkpoint(checkpoint_id)
+	AccountManager.set_current_scene(full_scene_path)
+	AccountManager.set_saved_position(pos)
 	
 	print("Checkpoint saved: ", checkpoint_id, " in ", full_scene_path)
 
@@ -513,18 +472,19 @@ func add_pulls(amount: int) -> void:
 		"Authorization: Bearer " + auth_token
 	]
 	
-	var current_pulls = GameManager.player_profile.get("pulls", 0)
-	var uid = GameManager.player_profile.get("uid", 0)
+	var current_pulls = GachaManager.pulls
+	var uid = AccountManager.uid
+	var new_val = current_pulls + amount
 	var body = JSON.stringify({
-		"pulls": current_pulls + amount
+		"pulls": new_val
 	})
 	
 	http.request(SUPABASE_URL + "/rest/v1/player_profile?uid=eq." + str(int(uid)), headers, HTTPClient.METHOD_PATCH, body)
 	var response = await http.request_completed
 	http.queue_free()
 	
-	GameManager.player_profile["pulls"] = current_pulls + amount
-	print("Pulls added: ", amount, " Total: ", current_pulls + amount)
+	GachaManager.pulls = new_val
+	print("Pulls added: ", amount, " Total: ", new_val)
 	print("Pulls save response code: ", response[1])
 
 # Auto-save player state (FIXED - proper connection handling)
@@ -546,11 +506,9 @@ func save_current_scene_and_position():
 	
 	var pos = player.global_position
 	
-	# Update local cache
-	GameManager.player_profile["current_scene"] = scene_path
-	GameManager.player_profile["last_pos_x"] = pos.x
-	GameManager.player_profile["last_pos_y"] = pos.y
-	GameManager.player_profile["last_pos_z"] = pos.z
+	# Update AccountManager, the owner of this state
+	AccountManager.set_current_scene(scene_path)
+	AccountManager.set_saved_position(pos)
 	
 	print("💾 Saving state - Scene: ", scene_path, " Position: ", pos)
 	
@@ -564,7 +522,7 @@ func save_current_scene_and_position():
 		"Authorization: Bearer " + auth_token
 	]
 	
-	var uid = GameManager.player_profile.get("uid", 0)
+	var uid = AccountManager.uid
 	if uid == 0:
 		print("⚠ Cannot save - no UID found!")
 		http.queue_free()
@@ -598,10 +556,10 @@ func save_current_scene_and_position():
 func auto_save_player_state():
 	await save_current_scene_and_position()
 func fetch_inventory_items(callback: Callable) -> void:
-	if GameManager.player_profile == null or not GameManager.player_profile.has("uid"):
+	if not AccountManager.is_logged_in():
 		return
 
-	var uid = GameManager.player_profile.uid
+	var uid = AccountManager.uid
 	
 	# Filter explicitly by uid AND item_type = 'item'
 	var url = SUPABASE_URL + "/rest/v1/player_inventory?uid=eq." + str(uid) + "&item_type=eq.item&select=item_id,quantity"
@@ -626,10 +584,10 @@ func fetch_inventory_items(callback: Callable) -> void:
 
 # Function to easily add or update an item in the database
 func add_item(item_id: int, quantity: int = 1) -> void:
-	if GameManager.player_profile == null or not GameManager.player_profile.has("uid"):
+	if not AccountManager.is_logged_in():
 		return
 		
-	var uid = GameManager.player_profile.uid
+	var uid = AccountManager.uid
 	var url = SUPABASE_URL + "/rest/v1/player_inventory"
 	
 	var headers = [
@@ -655,11 +613,11 @@ func add_item(item_id: int, quantity: int = 1) -> void:
 func debug_check_characters():
 	print("=== DEBUG: Checking characters in database ===")
 	await fetch_player_characters()
-	print("Characters in DB: ", GameManager.player_characters)
+	print("Characters in DB: ", CharacterManager.player_characters)
 	
-	if GameManager.player_characters.size() == 0:
+	if CharacterManager.player_characters.size() == 0:
 		print("WARNING: No characters found in database!")
-		print("Profile UID: ", GameManager.player_profile.get("uid", 0) if GameManager.player_profile else "No profile")
+		print("Profile UID: ", AccountManager.uid if AccountManager.is_logged_in() else "No profile")
 	else:
-		for char in GameManager.player_characters:
+		for char in CharacterManager.player_characters:
 			print("Character: ID=", char.get("character_id"), " Level=", char.get("current_level"))

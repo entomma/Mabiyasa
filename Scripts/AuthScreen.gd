@@ -99,8 +99,8 @@ func _on_login_pressed():
 		TutorialManager.load_tutorial_status(user_id)
 		
 		# Check if we have a saved scene in the profile
-		var saved_scene = GameManager.player_profile.get("current_scene", "")
-		var has_saved_position = GameManager.has_saved_position
+		var saved_scene = AccountManager.current_scene
+		var has_saved_position = AccountManager.has_saved_position
 		
 		print("Login - Saved scene: ", saved_scene)
 		print("Login - Has saved pos: ", has_saved_position)
@@ -144,7 +144,7 @@ func _on_register_pressed():
 			print("Profile result: ", profile_result)
 			
 			await SupabaseManager.fetch_player_profile()
-			print("Profile after fetch: ", GameManager.player_profile)
+			print("Profile after fetch: uid=", AccountManager.uid, " scene=", AccountManager.current_scene)
 			
 			# --- FEED NEW USER ID TO TUTORIAL MANAGER ---
 			var user_id = ""

@@ -24,6 +24,10 @@ SupabaseManager="*uid://bms3e5iclmhme"
 GachaManager="*uid://cv0qkm50dk4oa"
 FpsManager="*uid://ehpweucl5f26"
 TutorialManager="*uid://diflss7ek6qaf"
+AccountManager="*res://Scripts/AccountManager.gd"
+CharacterManager="*res://Scripts/CharacterManager.gd"
+PartyManager="*res://Scripts/PartyManager.gd"
+ProgressManager="*res://Scripts/ProgressManager.gd"
 
 [display]
 

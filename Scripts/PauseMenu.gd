@@ -62,22 +62,11 @@ func _connect_buttons() -> void:
 
 # ─── Profile data ─────────────────────────────────────────────────────────────
 func _load_profile_data() -> void:
-	var p_name := "Trailblazer"
-	var p_uid := "000000000"
-	var p_level := 1
-	var p_exp := 0
-	var p_exp_max := 10000
-
-	if GameManager.player_profile.has("username"):
-		p_name = GameManager.player_profile["username"]
-	if GameManager.player_profile.has("uid"):
-		p_uid = str(GameManager.player_profile["uid"])
-	if GameManager.player_profile.has("level"):
-		p_level = GameManager.player_profile["level"]
-	if GameManager.player_profile.has("exp"):
-		p_exp = GameManager.player_profile["exp"]
-	if GameManager.player_profile.has("exp_max"):
-		p_exp_max = GameManager.player_profile["exp_max"]
+	var p_name := AccountManager.username if AccountManager.username != "" else "Trailblazer"
+	var p_uid := str(AccountManager.uid) if AccountManager.is_logged_in() else "000000000"
+	var p_level := ProgressManager.level
+	var p_exp := ProgressManager.exp
+	var p_exp_max := ProgressManager.exp_max
 
 	name_label.text = p_name
 	level_uid_label.text = "Lv. %d  |  UID: %s" % [p_level, p_uid]
@@ -178,7 +167,7 @@ func _disable_all_buttons() -> void:
 func _save_current_state() -> void:
 	var player = get_tree().get_first_node_in_group("player")
 	if player:
-		GameManager.set_saved_position(player.global_position)
+		AccountManager.set_saved_position(player.global_position)
 
 		if GameManager.current_zone_path != "":
 			GameManager.set_meta("return_scene", GameManager.current_zone_path)

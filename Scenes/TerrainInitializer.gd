@@ -5,9 +5,9 @@ func _ready():
 	# ==================================
 	# EXISTING USER: LOAD SAVED POSITION
 	# ==================================
-	if GameManager.has_saved_position:
-		$Player.global_position = GameManager.saved_player_position
-		print("✓ Loaded saved position:", GameManager.saved_player_position)
+	if AccountManager.has_saved_position:
+		$Player.global_position = AccountManager.saved_position
+		print("✓ Loaded saved position:", AccountManager.saved_position)
 
 	# ==================================
 	# TELEPORT SPAWN (From Forest, HubTown, etc.)

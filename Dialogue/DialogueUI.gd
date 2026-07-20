@@ -73,7 +73,11 @@ func _unhandled_input(event):
 	if choice_container.get_child_count() > 0:
 		return
 
-	if event.is_action_pressed("ui_accept") \
-	or event.is_action_pressed("click"):
+	if event.is_action_pressed("ui_accept"):
+		next_pressed.emit()
+		return
 
+	if event is InputEventMouseButton \
+	and event.button_index == MOUSE_BUTTON_LEFT \
+	and event.pressed:
 		next_pressed.emit()

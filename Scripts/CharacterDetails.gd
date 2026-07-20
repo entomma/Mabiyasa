@@ -51,9 +51,9 @@ func _ready() -> void:
 	if is_instance_valid(return_btn):
 		return_btn.pressed.connect(_on_close_pressed)
 
-	if GameManager.has_signal("characters_updated"):
-		if not GameManager.characters_updated.is_connected(refresh_character_data):
-			GameManager.characters_updated.connect(refresh_character_data)
+	if CharacterManager.has_signal("characters_updated"):
+		if not CharacterManager.characters_updated.is_connected(refresh_character_data):
+			CharacterManager.characters_updated.connect(refresh_character_data)
 
 	refresh_character_data()
 
@@ -107,9 +107,9 @@ func _get_roster_style(is_active: bool) -> StyleBoxFlat:
 func refresh_character_data() -> void:
 	all_characters.clear()
 
-	for db_char in GameManager.player_characters:
+	for db_char in CharacterManager.player_characters:
 		var char_id = db_char.get("character_id", 0)
-		var char_resource = GameManager.get_character_by_id(char_id)
+		var char_resource = CharacterManager.get_character_by_id(char_id)
 
 		if char_resource:
 			var instance = char_resource.duplicate()
