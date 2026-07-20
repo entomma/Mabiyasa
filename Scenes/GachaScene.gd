@@ -6,7 +6,7 @@ extends Control
 #
 #  Depends on:
 #    • GachaManager   (autoload) – pull logic, pity tracking
-#    • GameManager    (autoload) – player_profile, scene routing
+#    • GameManager    (autoload) – scene routing (next_spawn, return scene)
 #    • GachaResultData           – typed result object (GachaResultData.gd)
 #    • CharacterData, GachaCard  – your existing Resource types
 #
@@ -81,7 +81,6 @@ var _awaiting_tap:   bool   = false   ## true while showing a card, waiting for 
 #  LIFECYCLE
 # ═════════════════════════════════════════════════════════════════════════════
 func _ready() -> void:
-	GachaManager.load_pity_from_profile()
 	_apply_theme()
 	_connect_signals()
 	_refresh_ui()
@@ -145,7 +144,7 @@ func _connect_signals() -> void:
 #  UI REFRESH
 # ═════════════════════════════════════════════════════════════════════════════
 func _refresh_ui() -> void:
-	var pulls: int = int(GameManager.player_profile.get("pulls", 0))
+	var pulls: int = GachaManager.pulls
 	pulls_label.text = "✦ " + str(pulls) + " Pulls"
 
 	var to5: int = GachaManager.HARD_PITY_5STAR - GachaManager.pity_count
@@ -483,7 +482,7 @@ func _rarity_color(rarity: int) -> Color:
 		_: return C3
 
 func _set_pull_buttons_enabled(enabled: bool) -> void:
-	var pulls: int = int(GameManager.player_profile.get("pulls", 0))
+	var pulls: int = GachaManager.pulls
 	pull1_btn.disabled  = not enabled or pulls < 1
 	pull10_btn.disabled = not enabled or pulls < 10
 

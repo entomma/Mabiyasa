@@ -77,7 +77,7 @@ func _on_wish_pressed():
 func _save_current_state():
 	var player = get_tree().get_first_node_in_group("player")
 	if player:
-		GameManager.set_saved_position(player.global_position)
+		AccountManager.set_saved_position(player.global_position)
 		if GameManager.current_zone_path != "":
 			GameManager.set_meta("return_scene", GameManager.current_zone_path)
 			print("HUD: Saved state returning to ", GameManager.current_zone_path)
