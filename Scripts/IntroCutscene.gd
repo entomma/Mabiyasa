@@ -10,7 +10,7 @@ var current_state: State = State.TYPING
 
 # --- CONFIGURATION ---
 @export var bgm_path: String = "res://Assets/intro_music.mp3"
-@export var next_scene_path: String = "res://Scenes/small_village.tscn"
+@export var next_scene_path: String = "res://Scenes/Game.tscn"
 @export var typewriter_speed: float = 0.04
 @export var fade_speed: float = 0.6
 

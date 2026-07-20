@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="DialogueResource" format=3 uid="uid://cuo1l0vjnsbwj"]
+
+[ext_resource type="Script" uid="uid://dw51fp8y7rjgq" path="res://Dialogue/DialogueEvent.gd" id="1_40gcg"]
+[ext_resource type="Script" uid="uid://dwkfkil0ox4oc" path="res://Dialogue/DialogueChoice.gd" id="2_4c60u"]
+[ext_resource type="Script" uid="uid://np707jfh3yx7" path="res://Dialogue/DialogueResource.gd" id="2_c0swl"]
+
+[sub_resource type="Resource" id="Resource_4c60u"]
+script = ExtResource("1_40gcg")
+id = &"start"
+next_id = &"john2"
+speaker = "John"
+text = "Hello"
+metadata/_custom_type_script = "uid://dw51fp8y7rjgq"
+
+[sub_resource type="Resource" id="Resource_1ma23"]
+script = ExtResource("2_4c60u")
+metadata/_custom_type_script = "uid://dwkfkil0ox4oc"
+
+[sub_resource type="Resource" id="Resource_rsp5j"]
+script = ExtResource("1_40gcg")
+id = &"john2"
+next_id = &"john3"
+type = 1
+speaker = "John"
+choices = Array[ExtResource("2_4c60u")]([SubResource("Resource_1ma23")])
+metadata/_custom_type_script = "uid://dw51fp8y7rjgq"
+
+[resource]
+script = ExtResource("2_c0swl")
+dialogue_name = "John"
+events = Array[ExtResource("1_40gcg")]([SubResource("Resource_4c60u"), SubResource("Resource_rsp5j")])
+metadata/_custom_type_script = "uid://np707jfh3yx7"

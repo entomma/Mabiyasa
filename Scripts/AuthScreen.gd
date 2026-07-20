@@ -22,7 +22,7 @@ extends Control
 # Status
 @onready var status_label = $CenterContainer/Wrapper/MainPanel/Margin/VBox/StatusLabel
 
-const MAIN_SCENE = "res://Scenes/small_village.tscn"
+const MAIN_SCENE = "res://Scenes/Game.tscn"
 
 # --- Styling References ---
 var style_active: StyleBoxFlat
