@@ -15,7 +15,9 @@ metadata/_custom_type_script = "uid://dw51fp8y7rjgq"
 [sub_resource type="Resource" id="Resource_770yy"]
 script = ExtResource("1_5g2vm")
 id = &"end"
-type = 3
+type = 2
+action = "SET_FLAG"
+parameter = "met_victor"
 metadata/_custom_type_script = "uid://dw51fp8y7rjgq"
 
 [resource]
