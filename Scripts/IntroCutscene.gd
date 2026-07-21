@@ -14,6 +14,9 @@ var current_state: State = State.TYPING
 @export var typewriter_speed: float = 0.04
 @export var fade_speed: float = 0.6
 
+# --- ADMIN / DEBUG CONFIGURATION ---
+@export var enable_admin_skip: bool = true
+
 @export var intro_slides: Array[Dictionary] = [
 	{
 		"text": "[center]Long ago, every living being spoke its own language.\nHumans, animals, and nature each carried voices of their own.[/center]"
@@ -65,6 +68,7 @@ var current_state: State = State.TYPING
 # --- INTERNAL STATE ---
 var current_index: int = 0
 var active_tween: Tween = null
+var is_transitioning: bool = false
 
 func _ready() -> void:
 	if intro_slides.is_empty():
@@ -88,10 +92,34 @@ func _ready() -> void:
 	_load_current_step()
 
 func _input(event: InputEvent) -> void:
+	if is_transitioning:
+		return
+
+	# --- ADMIN SKIP CHECK ---
+	if enable_admin_skip and (event.is_action_pressed("ui_cancel") or (event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE)):
+		get_viewport().set_input_as_handled()
+		_admin_skip_cinematic()
+		return
+
+	# --- REGULAR PLAYER CLICK/ADVANCE ---
 	if event.is_action_pressed("ui_accept") or (event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT):
 		_handle_player_click()
 
+func _admin_skip_cinematic() -> void:
+	# Kill active animations and stop media
+	if active_tween and active_tween.is_running():
+		active_tween.kill()
+
+	if story_video and story_video.is_playing():
+		story_video.stop()
+
+	# Immediately jump to game scene transition
+	_transition_to_game()
+
 func _load_current_step() -> void:
+	if is_transitioning:
+		return
+
 	var data = intro_slides[current_index]
 	
 	if data.has("text") and data["text"] != "":
@@ -206,6 +234,9 @@ func _fade_out_video() -> void:
 	)
 
 func _advance_timeline() -> void:
+	if is_transitioning:
+		return
+
 	current_index += 1
 	if current_index >= intro_slides.size():
 		_transition_to_game()
@@ -213,10 +244,15 @@ func _advance_timeline() -> void:
 		_load_current_step()
 
 func _transition_to_game() -> void:
+	if is_transitioning:
+		return
+	is_transitioning = true
 	set_process_input(false)
+	
 	if bgm_player and bgm_player.playing:
 		var audio_tween = create_tween()
-		audio_tween.tween_property(bgm_player, "volume_db", -80.0, fade_speed)
+		# Fast fade audio on skip
+		audio_tween.tween_property(bgm_player, "volume_db", -80.0, 0.3)
 		audio_tween.finished.connect(func():
 			bgm_player.stop()
 			get_tree().change_scene_to_file(next_scene_path)

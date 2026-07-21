@@ -4,6 +4,14 @@
 [ext_resource type="Texture2D" uid="uid://bihl47orp223j" path="res://Assets/ChatGPT Image Apr 6, 2026, 04_34_28 PM.png" id="2_d5n1h"]
 [ext_resource type="Texture2D" uid="uid://b5vl4nmc4w5ik" path="res://Assets/mabiyasaWHITE.png" id="3_7hhil"]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_Background"]
+atlas = ExtResource("2_d5n1h")
+region = Rect2(0, 0, 1536, 1024)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_Logo"]
+atlas = ExtResource("3_7hhil")
+region = Rect2(52, 116, 2914, 715)
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_GlassPanel"]
 bg_color = Color(0.08, 0.1, 0.15, 0.85)
 border_width_left = 1
@@ -98,7 +106,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_d5n1h")
+texture = SubResource("AtlasTexture_Background")
 expand_mode = 1
 stretch_mode = 6
 
@@ -111,48 +119,43 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.05, 0.05, 0.08, 0.6)
 
-[node name="Logo" type="TextureRect" parent="." unique_id=788257062]
-custom_minimum_size = Vector2(0, 300)
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_top = 64.0
-offset_bottom = 364.0
-grow_horizontal = 2
-texture = ExtResource("3_7hhil")
-expand_mode = 3
-stretch_mode = 5
-
 [node name="CenterContainer" type="CenterContainer" parent="." unique_id=832424622]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = 64.0
-offset_bottom = 64.0
 grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Wrapper" type="VBoxContainer" parent="CenterContainer" unique_id=820332533]
 layout_mode = 2
-theme_override_constants/separation = 32
+theme_override_constants/separation = 24
 alignment = 1
 
-[node name="MainPanel" type="PanelContainer" parent="CenterContainer/Wrapper" unique_id=1295507659]
-custom_minimum_size = Vector2(420, 0)
+[node name="Logo" type="TextureRect" parent="CenterContainer/Wrapper" unique_id=788257062]
+custom_minimum_size = Vector2(0, 140)
 layout_mode = 2
+size_flags_horizontal = 3
+texture = SubResource("AtlasTexture_Logo")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="MainPanel" type="PanelContainer" parent="CenterContainer/Wrapper" unique_id=1295507659]
+custom_minimum_size = Vector2(360, 0)
+layout_mode = 2
+size_flags_horizontal = 4
 theme_override_styles/panel = SubResource("StyleBoxFlat_GlassPanel")
 
 [node name="Margin" type="MarginContainer" parent="CenterContainer/Wrapper/MainPanel" unique_id=2087026034]
 layout_mode = 2
-theme_override_constants/margin_left = 40
-theme_override_constants/margin_top = 40
-theme_override_constants/margin_right = 40
-theme_override_constants/margin_bottom = 40
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 32
 
 [node name="VBox" type="VBoxContainer" parent="CenterContainer/Wrapper/MainPanel/Margin" unique_id=469720927]
 layout_mode = 2
-theme_override_constants/separation = 24
+theme_override_constants/separation = 20
 
 [node name="CustomTabs" type="HBoxContainer" parent="CenterContainer/Wrapper/MainPanel/Margin/VBox" unique_id=1548061041]
 layout_mode = 2

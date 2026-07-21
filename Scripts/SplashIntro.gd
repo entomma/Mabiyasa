@@ -11,7 +11,7 @@ extends Control
 @export var next_scene_path: String = "res://Scenes/AuthScreen.tscn"
 
 @export var fade_duration: float = 0.6
-@export var hold_duration: float = 3
+@export var hold_duration: float = 3.0
 
 # --- NODE REFERENCES ---
 @onready var texture_rect: TextureRect = $TextureRect
@@ -19,6 +19,7 @@ extends Control
 # --- INTERNAL STATE ---
 var current_index: int = 0
 var active_tween: Tween = null
+var _is_transitioning: bool = false
 
 func _ready() -> void:
 	# Ensure the texture slot starts completely transparent
@@ -30,7 +31,21 @@ func _ready() -> void:
 		
 	_play_next_splash()
 
+# ═══════════════════════════════════════════════════════
+#  Keyboard Input (Admin Skip)
+# ═══════════════════════════════════════════════════════
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("adminskip"):
+		get_viewport().set_input_as_handled()
+		_goto_next_scene()
+
+# ═══════════════════════════════════════════════════════
+#  Splash Sequence Logic
+# ═══════════════════════════════════════════════════════
 func _play_next_splash() -> void:
+	if _is_transitioning:
+		return
+
 	# If we have run through all images, proceed to the main game layout
 	if current_index >= splash_images.size():
 		_goto_next_scene()
@@ -59,10 +74,18 @@ func _play_next_splash() -> void:
 	
 	# Move to the next sequence item when finished
 	active_tween.finished.connect(func():
-		current_index += 1
-		_play_next_splash()
+		if not _is_transitioning:
+			current_index += 1
+			_play_next_splash()
 	)
 
 func _goto_next_scene() -> void:
-	if active_tween: active_tween.kill()
+	if _is_transitioning:
+		return
+		
+	_is_transitioning = true
+	
+	if active_tween and active_tween.is_valid():
+		active_tween.kill()
+		
 	get_tree().change_scene_to_file(next_scene_path)
