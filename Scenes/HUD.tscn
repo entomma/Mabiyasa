@@ -16,11 +16,8 @@ region = Rect2(113, 64, 14, 14)
 atlas = ExtResource("3_psnte")
 region = Rect2(113, 64, 14, 14)
 
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_s3jbq"]
-load_path = "res://.godot/imported/UIIcons_1 (2).png-788fd438b4c9c57c2458a107d856d65f.ctex"
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_g8s2e"]
-atlas = SubResource("CompressedTexture2D_s3jbq")
+atlas = ExtResource("2_c3eba")
 region = Rect2(81, 80, 14, 15)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_s3jbq"]
@@ -70,6 +67,21 @@ texture_hover = SubResource("AtlasTexture_b5b84")
 ignore_texture_size = true
 stretch_mode = 5
 
+[node name="Label" type="Label" parent="Control/TopLeft/BtnPause" unique_id=584537370]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = 23.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 9
+text = "PAUSE"
+horizontal_alignment = 1
+vertical_alignment = 2
+
 [node name="TopRight" type="MarginContainer" parent="Control" unique_id=567137251]
 layout_mode = 1
 anchors_preset = 1
@@ -94,6 +106,21 @@ texture_hover = SubResource("AtlasTexture_s3jbq")
 ignore_texture_size = true
 stretch_mode = 5
 
+[node name="Label" type="Label" parent="Control/TopRight/HBox/BtnCharacters" unique_id=1076276579]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = 23.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 9
+text = "CHARACTERS"
+horizontal_alignment = 1
+vertical_alignment = 2
+
 [node name="BtnParty" type="TextureButton" parent="Control/TopRight/HBox" unique_id=1571783495]
 custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
@@ -103,6 +130,21 @@ texture_hover = SubResource("AtlasTexture_party_n")
 ignore_texture_size = true
 stretch_mode = 5
 
+[node name="Label" type="Label" parent="Control/TopRight/HBox/BtnParty" unique_id=1650520279]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = 23.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 9
+text = "PARTY"
+horizontal_alignment = 1
+vertical_alignment = 2
+
 [node name="BtnWish" type="TextureButton" parent="Control/TopRight/HBox" unique_id=1914949334]
 custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
@@ -111,6 +153,21 @@ texture_pressed = SubResource("AtlasTexture_wish_n")
 texture_hover = SubResource("AtlasTexture_wish_n")
 ignore_texture_size = true
 stretch_mode = 5
+
+[node name="Label" type="Label" parent="Control/TopRight/HBox/BtnWish" unique_id=1217459438]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = 23.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 9
+text = "GACHA"
+horizontal_alignment = 1
+vertical_alignment = 2
 
 [node name="bottomcontainer" type="VBoxContainer" parent="Control" unique_id=784183151]
 layout_mode = 1

@@ -17,7 +17,7 @@ func show_step(step_name: String):
 	if step_name == "movement":
 		title_label.text = "Mobility"
 		desc_label.text = "Use WASD to move."
-		objective_label.text = "Objective: Walk 25 meters"
+		objective_label.text = "Objective: Walk around the area"
 		panel.visible = true
 	elif step_name == "camera":
 		title_label.text = "Look Around"
