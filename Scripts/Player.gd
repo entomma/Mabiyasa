@@ -98,9 +98,7 @@ func _ready():
 func _physics_process(delta):
 	# ── Safely check dialogue state ──────────────────────────
 	# Use .get() with a single argument, then handle null
-	var is_dialogue_active = DialogueManager.get("is_dialogue_active")
-	if is_dialogue_active == null:
-		is_dialogue_active = false
+	var is_dialogue_active = DialogueManager.is_active
 
 	if was_dialogue_active and !is_dialogue_active:
 		if TutorialManager.current_active_step == "interact":

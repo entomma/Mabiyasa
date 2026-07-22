@@ -44,7 +44,7 @@ void fragment() {
 	wave +=
 		sin(
 			p.x * 0.020 +
-			p.y * 0.01 +
+			p.y * 0.5 +
 			t * move_speed * 0.5
 		) * 0.04;
 
@@ -99,7 +99,7 @@ void fragment() {
 		)
 	);
 
-	color += sparkle * 0.03;
+	color += sparkle * 0.5;
 
 	ALBEDO = color;
 	EMISSION = color * brightness;
@@ -107,5 +107,5 @@ void fragment() {
 	ROUGHNESS = 1.0;
 	SPECULAR = 0.0;
 	METALLIC = 0.0;
-	ALPHA = .5;
+	ALPHA = .9;
 }

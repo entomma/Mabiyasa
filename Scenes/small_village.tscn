@@ -23,8 +23,11 @@
 [ext_resource type="PackedScene" uid="uid://dbobaa6u56rlw" path="res://Scenes/z_1_teleporter.tscn" id="20_72y07"]
 [ext_resource type="PackedScene" uid="uid://bmf06vxipsji" path="res://Scenes/npc.tscn" id="21_d0wvm"]
 [ext_resource type="Texture2D" uid="uid://c4s31ertvkt5e" path="res://Assets/npcgirl.png" id="23_8lmlf"]
+[ext_resource type="Script" uid="uid://dw51fp8y7rjgq" path="res://Dialogue/DialogueEvent.gd" id="24_jnab0"]
+[ext_resource type="Script" uid="uid://dwkfkil0ox4oc" path="res://Dialogue/DialogueChoice.gd" id="25_8jqiu"]
 [ext_resource type="Texture2D" uid="uid://dom6yammb7rht" path="res://Assets/childnpc.png" id="25_htv3o"]
 [ext_resource type="Resource" uid="uid://c5l2yl72mhb1n" path="res://Dialogue/NPCDialogues/VictorDialogue.tres" id="25_joktk"]
+[ext_resource type="Script" uid="uid://np707jfh3yx7" path="res://Dialogue/DialogueResource.gd" id="25_y8wv4"]
 [ext_resource type="Texture2D" uid="uid://48whcg8eu3vv" path="res://Assets/knight.png" id="26_rc433"]
 [ext_resource type="Texture2D" uid="uid://ce8ac1qdqyky1" path="res://Assets/gentleman-nobg.png" id="26_y8wv4"]
 
@@ -98,10 +101,10 @@ new_textures = SubResource("Resource_658wv")
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_72y07"]
 render_priority = 0
 shader = ExtResource("19_fdwkt")
-shader_parameter/pixel_size = 0.595
-shader_parameter/move_speed = 0.12
+shader_parameter/pixel_size = 0.485
+shader_parameter/move_speed = 0.3
 shader_parameter/wave_height = 0.007
-shader_parameter/brightness = 0.905
+shader_parameter/brightness = 1.0
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_d0wvm"]
 lightmap_size_hint = Vector2i(202, 202)
@@ -457,6 +460,28 @@ animations = [{
 "name": &"walk_right",
 "speed": 5.0
 }]
+
+[sub_resource type="Resource" id="Resource_kk38i"]
+script = ExtResource("24_jnab0")
+id = &"start"
+next_id = &"next"
+speaker = "Marie"
+text = "What a lovely day!"
+metadata/_custom_type_script = "uid://dw51fp8y7rjgq"
+
+[sub_resource type="Resource" id="Resource_cispn"]
+script = ExtResource("24_jnab0")
+id = &"next"
+next_id = &"end"
+speaker = "You"
+text = "indeed"
+metadata/_custom_type_script = "uid://dw51fp8y7rjgq"
+
+[sub_resource type="Resource" id="Resource_v44bi"]
+script = ExtResource("25_y8wv4")
+dialogue_name = "Marie"
+events = Array[ExtResource("24_jnab0")]([SubResource("Resource_kk38i"), SubResource("Resource_cispn")])
+metadata/_custom_type_script = "uid://np707jfh3yx7"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_vdljx"]
 atlas = ExtResource("25_htv3o")
@@ -1968,6 +1993,8 @@ transform = Transform3D(0.0057051587, 0, 0.039591048, 0, 0.04, 0, -0.039591048, 
 
 [node name="water" type="MeshInstance3D" parent="props" unique_id=1792186591]
 transform = Transform3D(50, 0, 0, 0, 50, 0, 0, 0, 50, -113.98817, -0.6459675, 871.47)
+cast_shadow = 0
+gi_mode = 0
 mesh = SubResource("PlaneMesh_d0wvm")
 
 [node name="StaticBody3D" type="RigidBody3D" parent="props" unique_id=789155364]
@@ -2085,6 +2112,12 @@ transform = Transform3D(7, 0, 0, 0, 7, 0, 0, 0, 7, -16.213398, 2.1918004, 100.24
 npc_frames = SubResource("SpriteFrames_vdljx")
 can_wander = true
 
+[node name="AnimatedSprite3D" parent="Marie" index="0" unique_id=826435045]
+sprite_frames = SubResource("SpriteFrames_vdljx")
+
+[node name="NPCDialogue" parent="Marie" index="3" unique_id=1622345075]
+dialogue = SubResource("Resource_v44bi")
+
 [node name="NewPlayerSpawnPoint" type="Marker3D" parent="." unique_id=351524172]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.065392, 1.3561497, 81.527664)
 
@@ -2109,4 +2142,5 @@ transform = Transform3D(7, 0, 0, 0, 7, 0, 0, 0, 7, -65.26065, 0.8157613, 55.1910
 npc_frames = SubResource("SpriteFrames_5huw7")
 can_wander = true
 
+[editable path="Marie"]
 [editable path="Victor"]
