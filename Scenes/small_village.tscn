@@ -98,10 +98,10 @@ new_textures = SubResource("Resource_658wv")
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_72y07"]
 render_priority = 0
 shader = ExtResource("19_fdwkt")
-shader_parameter/pixel_size = 0.41
+shader_parameter/pixel_size = 0.595
 shader_parameter/move_speed = 0.12
-shader_parameter/wave_height = 0.006
-shader_parameter/brightness = 1.085
+shader_parameter/wave_height = 0.007
+shader_parameter/brightness = 0.905
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_d0wvm"]
 lightmap_size_hint = Vector2i(202, 202)
@@ -1858,20 +1858,8 @@ transform = Transform3D(0.4973274, 0, -14.991753, 0, 15, 0, 14.991753, 0, 0.4973
 [node name="ManyTrees5" parent="props" unique_id=484009790 instance=ExtResource("5_4ukxy")]
 transform = Transform3D(0.4973274, 0, -14.991753, 0, 15, 0, 14.991753, 0, 0.4973274, -71.37806, -0.3804903, -114.8137)
 
-[node name="ManyTrees6" parent="props" unique_id=1343948165 instance=ExtResource("5_4ukxy")]
-transform = Transform3D(0.47116092, 0, 14.992598, 0, 15, 0, -14.992598, 0, 0.47116092, -102.20822, 0, -109.661415)
-
-[node name="ManyTrees7" parent="props" unique_id=1153423160 instance=ExtResource("5_4ukxy")]
-transform = Transform3D(14.509015, 0, -3.806369, 0, 15, 0, 3.806369, 0, 14.509015, -112.26192, 0, -89.033615)
-
-[node name="ManyTrees14" parent="props" unique_id=1264127976 instance=ExtResource("5_4ukxy")]
-transform = Transform3D(0.47116092, 0, 14.992598, 0, 15, 0, -14.992598, 0, 0.47116092, 38.904453, 0, -142.24814)
-
 [node name="ManyTrees15" parent="props" unique_id=643489138 instance=ExtResource("5_4ukxy")]
 transform = Transform3D(0.4973274, 0, -14.991753, 0, 15, 0, 14.991753, 0, 0.4973274, 11.489532, -0.3804903, -147.40042)
-
-[node name="ManyTrees16" parent="props" unique_id=1811472978 instance=ExtResource("5_4ukxy")]
-transform = Transform3D(0.4973274, 0, -14.991753, 0, 15, 0, 14.991753, 0, 0.4973274, 16.43959, -0.3804903, -153.59004)
 
 [node name="ManyTrees17" parent="props" unique_id=292180534 instance=ExtResource("5_4ukxy")]
 transform = Transform3D(0.47116092, 0, 14.992598, 0, 15, 0, -14.992598, 0, 0.47116092, -19.34063, 0, -142.24814)
@@ -1882,38 +1870,8 @@ transform = Transform3D(0.4973274, 0, -14.991753, 0, 15, 0, 14.991753, 0, 0.4973
 [node name="ManyTrees19" parent="props" unique_id=1833703003 instance=ExtResource("5_4ukxy")]
 transform = Transform3D(0.4973274, 0, -14.991753, 0, 15, 0, 14.991753, 0, 0.4973274, -58.104664, -0.3804903, -151.27126)
 
-[node name="ManyTrees20" parent="props" unique_id=1416321772 instance=ExtResource("5_4ukxy")]
-transform = Transform3D(0.4973274, 0, -14.991753, 0, 15, 0, 14.991753, 0, 0.4973274, -71.37806, -0.3804903, -147.40042)
-
-[node name="ManyTrees21" parent="props" unique_id=1490685063 instance=ExtResource("5_4ukxy")]
-transform = Transform3D(0.47116092, 0, 14.992598, 0, 15, 0, -14.992598, 0, 0.47116092, -102.20822, 0, -142.24814)
-
 [node name="ManyTrees22" parent="props" unique_id=2016242668 instance=ExtResource("5_4ukxy")]
 transform = Transform3D(14.509015, 0, -3.806369, 0, 15, 0, 3.806369, 0, 14.509015, -112.26192, 0, -121.620346)
-
-[node name="ManyTrees23" parent="props" unique_id=1171745093 instance=ExtResource("5_4ukxy")]
-transform = Transform3D(0.47116092, 0, 14.992598, 0, 15, 0, -14.992598, 0, 0.47116092, 38.904453, 0, -167.22928)
-
-[node name="ManyTrees24" parent="props" unique_id=439783079 instance=ExtResource("5_4ukxy")]
-transform = Transform3D(0.4973274, 0, -14.991753, 0, 15, 0, 14.991753, 0, 0.4973274, 11.489532, -0.3804903, -172.38156)
-
-[node name="ManyTrees25" parent="props" unique_id=1942445465 instance=ExtResource("5_4ukxy")]
-transform = Transform3D(0.4973274, 0, -14.991753, 0, 15, 0, 14.991753, 0, 0.4973274, 16.43959, -0.3804903, -178.57118)
-
-[node name="ManyTrees26" parent="props" unique_id=964756656 instance=ExtResource("5_4ukxy")]
-transform = Transform3D(0.47116092, 0, 14.992598, 0, 15, 0, -14.992598, 0, 0.47116092, -19.34063, 0, -167.22928)
-
-[node name="ManyTrees27" parent="props" unique_id=455207778 instance=ExtResource("5_4ukxy")]
-transform = Transform3D(0.4973274, 0, -14.991753, 0, 15, 0, 14.991753, 0, 0.4973274, -46.75555, -0.3804903, -172.38156)
-
-[node name="ManyTrees28" parent="props" unique_id=664159560 instance=ExtResource("5_4ukxy")]
-transform = Transform3D(0.4973274, 0, -14.991753, 0, 15, 0, 14.991753, 0, 0.4973274, -58.104664, -0.3804903, -176.2524)
-
-[node name="ManyTrees29" parent="props" unique_id=81946144 instance=ExtResource("5_4ukxy")]
-transform = Transform3D(0.4973274, 0, -14.991753, 0, 15, 0, 14.991753, 0, 0.4973274, -71.37806, -0.3804903, -172.38156)
-
-[node name="ManyTrees30" parent="props" unique_id=757621508 instance=ExtResource("5_4ukxy")]
-transform = Transform3D(0.47116092, 0, 14.992598, 0, 15, 0, -14.992598, 0, 0.47116092, -102.20822, 0, -167.22928)
 
 [node name="ManyTrees31" parent="props" unique_id=1074199767 instance=ExtResource("5_4ukxy")]
 transform = Transform3D(14.509015, 0, -3.806369, 0, 15, 0, 3.806369, 0, 14.509015, -112.26192, 0, -146.60149)
@@ -1923,27 +1881,6 @@ transform = Transform3D(14.990417, 0, -0.53610766, 0, 15, 0, 0.53610766, 0, 14.9
 
 [node name="ManyTrees33" parent="props" unique_id=408786546 instance=ExtResource("5_4ukxy")]
 transform = Transform3D(-14.993766, 0, -0.4323753, 0, 15, 0, 0.4323753, 0, -14.993766, -133.32751, -0.3804903, -54.851326)
-
-[node name="ManyTrees34" parent="props" unique_id=1515790576 instance=ExtResource("5_4ukxy")]
-transform = Transform3D(-14.993766, 0, -0.4323753, 0, 15, 0, 0.4323753, 0, -14.993766, -127.15939, -0.3804903, -49.8745)
-
-[node name="ManyTrees35" parent="props" unique_id=280097689 instance=ExtResource("5_4ukxy")]
-transform = Transform3D(14.990417, 0, -0.53610766, 0, 15, 0, 0.53610766, 0, 14.990417, -138.34619, 0, -85.703514)
-
-[node name="ManyTrees36" parent="props" unique_id=525870397 instance=ExtResource("5_4ukxy")]
-transform = Transform3D(-14.993766, 0, -0.4323753, 0, 15, 0, 0.4323753, 0, -14.993766, -133.0752, -0.3804903, -113.09587)
-
-[node name="ManyTrees37" parent="props" unique_id=552909756 instance=ExtResource("5_4ukxy")]
-transform = Transform3D(-14.993766, 0, -0.4323753, 0, 15, 0, 0.4323753, 0, -14.993766, -129.15523, -0.3804903, -124.42811)
-
-[node name="ManyTrees38" parent="props" unique_id=1752565968 instance=ExtResource("5_4ukxy")]
-transform = Transform3D(-14.993766, 0, -0.4323753, 0, 15, 0, 0.4323753, 0, -14.993766, -132.9685, -0.3804903, -137.71814)
-
-[node name="ManyTrees39" parent="props" unique_id=1773075731 instance=ExtResource("5_4ukxy")]
-transform = Transform3D(14.990417, 0, -0.53610766, 0, 15, 0, 0.53610766, 0, 14.990417, -137.98718, 0, -168.57034)
-
-[node name="ManyTrees40" parent="props" unique_id=2110522680 instance=ExtResource("5_4ukxy")]
-transform = Transform3D(-3.8691895, 0, -14.49239, 0, 15, 0, 14.49239, 0, -3.8691895, -158.57123, 0, -178.71329)
 
 [node name="ManyTrees8" parent="props" unique_id=1834449456 instance=ExtResource("5_4ukxy")]
 transform = Transform3D(0.47116092, 0, 14.992598, 0, 15, 0, -14.992598, 0, 0.47116092, -102.20822, 0, -76.24874)
