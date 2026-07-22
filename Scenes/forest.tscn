@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://d1jsewohatax7" path="res://Scenes/1_tree.tscn" id="5_qq45g"]
 [ext_resource type="PackedScene" uid="uid://bpm5ktqamm0gp" path="res://Scenes/pinetree.tscn" id="6_wo0py"]
 [ext_resource type="PackedScene" uid="uid://bdfswoqyr3x6v" path="res://Scenes/Player.tscn" id="7_wo0py"]
+[ext_resource type="PackedScene" uid="uid://buoll5b84cknv" path="res://Assets/filler-trees.tscn" id="8_0jrfa"]
 [ext_resource type="Script" uid="uid://uw5d14gbouo" path="res://Scripts/Player.gd" id="8_vh310"]
 [ext_resource type="PackedScene" uid="uid://d027g76unt2h0" path="res://Scenes/Enemy.tscn" id="10_xgdwn"]
 [ext_resource type="PackedScene" uid="uid://dbobaa6u56rlw" path="res://Scenes/z_1_teleporter.tscn" id="11_y1epu"]
@@ -28,7 +29,11 @@ glow_enabled = true
 [sub_resource type="MultiMesh" id="MultiMesh_vh310"]
 transform_format = 1
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_7xnph"]
+size = Vector3(376.19812, 65.08725, 1)
+
 [node name="forest" type="Node3D" unique_id=150893921]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.04888916, 0, -0.81713104)
 script = ExtResource("1_igsr3")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1094816781]
@@ -348,6 +353,266 @@ chunk_coords = Vector2i(-3, -4)
 cast_shadow = 0
 script = ExtResource("3_u53w3")
 
+[node name="Chunk (2, -4)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=531699847 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 128, 0, -256)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(2, -4)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (2, -4)" unique_id=1007587451]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (2, -3)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=1333830448 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 128, 0, -192)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(2, -3)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (2, -3)" unique_id=493785269]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (2, -2)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=1939515488 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 128, 0, -128)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(2, -2)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (2, -2)" unique_id=217148616]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (2, -1)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=1165875495 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 128, 0, -64)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(2, -1)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (2, -1)" unique_id=1402203856]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (2, 0)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=1874224022 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 128, 0, 0)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(2, 0)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (2, 0)" unique_id=1473300985]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (2, 1)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=114932265 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 128, 0, 64)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(2, 1)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (2, 1)" unique_id=1172203680]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (2, 2)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=1265302402 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 128, 0, 128)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(2, 2)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (2, 2)" unique_id=753036202]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (1, 2)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=2083779273 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64, 0, 128)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(1, 2)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (1, 2)" unique_id=1830399933]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (0, 2)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=466481124 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 128)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(0, 2)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (0, 2)" unique_id=1010262875]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (-1, 2)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=952329044 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -64, 0, 128)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(-1, 2)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (-1, 2)" unique_id=413913967]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (-2, 2)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=1931409246 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -128, 0, 128)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(-2, 2)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (-2, 2)" unique_id=1908248140]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (-3, 2)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=1790717801 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -192, 0, 128)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(-3, 2)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (-3, 2)" unique_id=1197778616]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (-4, 2)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=1441155573 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -256, 0, 128)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(-4, 2)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (-4, 2)" unique_id=78780082]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (-4, 1)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=640054674 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -256, 0, 64)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(-4, 1)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (-4, 1)" unique_id=1986370031]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (-4, 0)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=1869220402 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -256, 0, 0)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(-4, 0)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (-4, 0)" unique_id=536367779]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (-4, -1)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=92971679 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -256, 0, -64)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(-4, -1)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (-4, -1)" unique_id=2075959016]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (-4, -2)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=856924323 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -256, 0, -128)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(-4, -2)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (-4, -2)" unique_id=1484779944]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (-4, -3)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=291618503 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -256, 0, -192)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(-4, -3)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (-4, -3)" unique_id=287047509]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (-4, -4)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=305507969 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -256, 0, -256)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(-4, -4)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (-4, -4)" unique_id=243840347]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (2, -5)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=1332484039 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 128, 0, -320)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(2, -5)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (2, -5)" unique_id=1434927781]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (1, -5)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=1378679199 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64, 0, -320)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(1, -5)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (1, -5)" unique_id=496565138]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (0, -5)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=1221443919 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -320)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(0, -5)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (0, -5)" unique_id=1199844714]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (-1, -5)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=1645989851 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -64, 0, -320)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(-1, -5)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (-1, -5)" unique_id=1938922598]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (-2, -5)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=554443929 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -128, 0, -320)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(-2, -5)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (-2, -5)" unique_id=1462588929]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (-3, -5)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=1831876349 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -192, 0, -320)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(-3, -5)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (-3, -5)" unique_id=1800469846]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
+[node name="Chunk (-4, -5)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=857268538 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -256, 0, -320)
+script = ExtResource("2_5ip0q")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(-4, -5)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (-4, -5)" unique_id=773184804]
+cast_shadow = 0
+script = ExtResource("3_u53w3")
+
 [node name="props" type="Node3D" parent="." unique_id=2038143775]
 
 [node name="MultiMeshInstance3D" type="MultiMeshInstance3D" parent="props" unique_id=616386526]
@@ -480,7 +745,7 @@ transform = Transform3D(2.855, 0, 0, 0, 2.855, 0, 0, 0, 2.855, -3.64501, 19.8947
 transform = Transform3D(4.345, 0, 0, 0, 4.345, 0, 0, 0, 4.345, 124.7581, 19.982021, -116.57044)
 
 [node name="1tree48" parent="props/MultiMeshInstance3D" unique_id=1806797335 instance=ExtResource("5_qq45g")]
-transform = Transform3D(3.605, 0, 0, 0, 3.605, 0, 0, 0, 3.605, 44.930046, 0.48373508, -131.25659)
+transform = Transform3D(3.9655, 0, 0, 0, 5.047, 0, 0, 0, 3.605, 44.930046, 0.48373508, -131.25659)
 
 [node name="1tree55" parent="props/MultiMeshInstance3D" unique_id=772256824 instance=ExtResource("5_qq45g")]
 transform = Transform3D(3.605, 0, 0, 0, 3.605, 0, 0, 0, 3.605, 59.61348, 0.48373508, -92.57903)
@@ -549,7 +814,7 @@ transform = Transform3D(2.27, 0, 0, 0, 2.27, 0, 0, 0, 2.27, 60.10133, 0.50358105
 transform = Transform3D(3.38, 0, 0, 0, 3.38, 0, 0, 0, 3.38, -27.50734, 2.6212683, -141.4571)
 
 [node name="1tree74" parent="props/MultiMeshInstance3D" unique_id=1028400465 instance=ExtResource("5_qq45g")]
-transform = Transform3D(3.38, 0, 0, 0, 3.38, 0, 0, 0, 3.38, -51.76033, 0.32038832, -142.2695)
+transform = Transform3D(4.732, 0, 0, 0, 4.732, 0, 0, 0, 3.38, -51.76033, 0.32038832, -142.2695)
 
 [node name="1tree8" parent="props/MultiMeshInstance3D" unique_id=1329852237 instance=ExtResource("5_qq45g")]
 transform = Transform3D(3.1, 0, 0, 0, 3.1, 0, 0, 0, 3.1, -24.95471, 0.2686491, -204.90297)
@@ -647,6 +912,40 @@ transform = Transform3D(0.14, 0, 0, 0, 0.14, 0, 0, 0, 0.14, 29.392849, 0, -226.6
 [node name="pinetree6" parent="props/MultiMeshInstance3D" unique_id=1927659355 instance=ExtResource("6_wo0py")]
 transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, -38.92905, 0, -216.53178)
 
+[node name="tree-mesh" parent="props/MultiMeshInstance3D" unique_id=699544491 instance=ExtResource("8_0jrfa")]
+transform = Transform3D(0.9659258, 0, 0.25881904, 0, 1, 0, -0.25881904, 0, 0.9659258, 171, 23, -133)
+
+[node name="tree-mesh4" parent="props/MultiMeshInstance3D" unique_id=1967884157 instance=ExtResource("8_0jrfa")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 151, 23, -54.000008)
+
+[node name="tree-mesh5" parent="props/MultiMeshInstance3D" unique_id=2051865744 instance=ExtResource("8_0jrfa")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 145, 23, 20.999992)
+
+[node name="tree-mesh3" parent="props/MultiMeshInstance3D" unique_id=1791949906 instance=ExtResource("8_0jrfa")]
+transform = Transform3D(-4.3711378e-08, 0, 0.9999999, 0, 1, 0, -0.9999999, 0, -4.3711378e-08, 160, 23, -212)
+
+[node name="tree-mesh2" parent="props/MultiMeshInstance3D" unique_id=1758537813 instance=ExtResource("8_0jrfa")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -2, 0, -266)
+metadata/_edit_group_ = true
+
+[node name="worldborders" type="StaticBody3D" parent="props" unique_id=1452920297]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="props/worldborders" unique_id=330706687]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27.345413, 27.085297, 125.777985)
+shape = SubResource("BoxShape3D_7xnph")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="props/worldborders" unique_id=554109813]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27.345413, 27.085297, -251.55275)
+shape = SubResource("BoxShape3D_7xnph")
+
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="props/worldborders" unique_id=820235420]
+transform = Transform3D(-0.00014941295, 0, -1, 0, 1, 0, 1, 0, -0.00014941295, 127.50746, 32.95314, -62.732143)
+shape = SubResource("BoxShape3D_7xnph")
+
+[node name="CollisionShape3D4" type="CollisionShape3D" parent="props/worldborders" unique_id=1674073251]
+transform = Transform3D(-0.00014941295, 0, -1, 0, 1, 0, 1, 0, -0.00014941295, -192.1878, 32.95314, -62.732143)
+shape = SubResource("BoxShape3D_7xnph")
+
 [node name="Player" parent="." unique_id=1607055564 instance=ExtResource("7_wo0py")]
 transform = Transform3D(10.94, 0, 0, 0, 10.94, 0, 0, 0, 10.94, 118.848816, 22.225222, -183.50317)
 script = ExtResource("8_vh310")
@@ -659,6 +958,6 @@ transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 58.44631, 10.923465, -179.069
 enemy_data = null
 
 [node name="TeleporterToVillage" parent="." unique_id=1052377900 instance=ExtResource("11_y1epu")]
-transform = Transform3D(0.09955114, 0, 7.9993806, 0, 8, 0, -7.9993806, 0, 0.09955114, 120.97496, 21.277967, -187.19746)
+transform = Transform3D(0.09955114, 0, 7.9993806, 0, 8, 0, -7.9993806, 0, 0.09955114, 121.97496, 24.277967, -186.19745)
 target_scene = "uid://bvj7hhkac3rqk"
 spawn_name = "village_entrance"
