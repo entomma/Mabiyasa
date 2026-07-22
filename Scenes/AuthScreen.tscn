@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://b5vl4nmc4w5ik" path="res://Assets/mabiyasaWHITE.png" id="3_7hhil"]
 [ext_resource type="Texture2D" uid="uid://dbjgc5q1n5mp8" path="res://Assets/UI Assets pack_v.1_st/UI.png" id="4_ul3lk"]
 [ext_resource type="Texture2D" uid="uid://bq35kttcnkdqf" path="res://Assets/Sprout Lands - UI Pack - Basic pack/Sprite sheets/UI.png" id="5_bjn1g"]
+[ext_resource type="Texture2D" uid="uid://c2v24i16ikh51" path="res://Assets/Sprout Lands - UI Pack - Basic pack/Sprite sheets/UI Big Play Button.png" id="6_min2q"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_Background"]
 atlas = ExtResource("2_d5n1h")
@@ -25,7 +26,6 @@ content_margin_right = 28.0
 content_margin_bottom = 28.0
 texture = SubResource("AtlasTexture_l04sm")
 expand_margin_top = 20.0
-expand_margin_bottom = 20.0
 region_rect = Rect2(0, 0, 46, 46)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_min2q"]
@@ -74,30 +74,9 @@ corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_BtnNormal"]
-bg_color = Color(0.85, 0.75, 0.45, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-shadow_color = Color(0.85, 0.75, 0.45, 0.3)
-shadow_size = 15
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_BtnPressed"]
-bg_color = Color(0.75, 0.65, 0.35, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_BtnHover"]
-bg_color = Color(0.95, 0.85, 0.55, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-shadow_color = Color(0.85, 0.75, 0.45, 0.5)
-shadow_size = 20
+[sub_resource type="AtlasTexture" id="AtlasTexture_bjn1g"]
+atlas = ExtResource("6_min2q")
+region = Rect2(3, 34, 90, 27)
 
 [node name="AuthScreen" type="Control" unique_id=2079343007]
 layout_mode = 3
@@ -215,15 +194,14 @@ custom_minimum_size = Vector2(0, 4)
 layout_mode = 2
 
 [node name="LoginButton" type="Button" parent="CenterContainer/Wrapper/MainPanel/VBox/FormContainer/LoginBox" unique_id=348703858]
-custom_minimum_size = Vector2(0, 46)
+custom_minimum_size = Vector2(0, 46.26)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.1, 0.1, 0.1, 1)
-theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 16
-theme_override_styles/normal = SubResource("StyleBoxFlat_BtnNormal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_BtnPressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_BtnHover")
-text = "Enter Game"
+offset_transform_enabled = true
+offset_transform_scale = Vector2(1.35, 1.09)
+icon = SubResource("AtlasTexture_bjn1g")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="RegisterBox" type="VBoxContainer" parent="CenterContainer/Wrapper/MainPanel/VBox/FormContainer" unique_id=2126557986]
 visible = false
@@ -260,15 +238,14 @@ custom_minimum_size = Vector2(0, 4)
 layout_mode = 2
 
 [node name="RegisterButton" type="Button" parent="CenterContainer/Wrapper/MainPanel/VBox/FormContainer/RegisterBox" unique_id=1076179093]
-custom_minimum_size = Vector2(0, 46)
+custom_minimum_size = Vector2(0, 46.26)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.1, 0.1, 0.1, 1)
-theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 16
-theme_override_styles/normal = SubResource("StyleBoxFlat_BtnNormal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_BtnPressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_BtnHover")
-text = "Create Account"
+offset_transform_enabled = true
+offset_transform_scale = Vector2(1.35, 1.09)
+icon = SubResource("AtlasTexture_bjn1g")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="StatusLabel" type="Label" parent="CenterContainer/Wrapper/MainPanel/VBox" unique_id=618963131]
 layout_mode = 2
