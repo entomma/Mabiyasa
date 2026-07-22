@@ -1,7 +1,7 @@
 extends Area3D
 
 @export_file("*.tscn") var target_scene: String
-@export var spawn_name: String = "default"
+@export var spawn_name: String = "default" 
 
 var player_inside := false
 var is_teleporting := false

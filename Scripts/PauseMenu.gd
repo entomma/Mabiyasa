@@ -31,8 +31,6 @@ const PANEL_WIDTH := 480.0
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	get_tree().paused = true
-	
-	# --- FIX: FREE THE MOUSE WHEN PAUSED ---
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
 	_load_profile_data()
@@ -52,6 +50,7 @@ func _connect_buttons() -> void:
 	btn_party.pressed.connect(_on_party_pressed)
 	btn_wish.pressed.connect(_on_wish_pressed)
 	btn_chars.pressed.connect(_on_characters_pressed)
+	btn_inventory.pressed.connect(_on_inventory_pressed)   # Single connection
 
 	# Placeholders — replace with real handlers when scenes are ready
 	btn_store.pressed.connect(func(): print("Store (WIP)"))
@@ -61,32 +60,27 @@ func _connect_buttons() -> void:
 # ─── Profile data ─────────────────────────────────────────────────────────────
 func _load_profile_data() -> void:
 	var is_logged_in: bool = AccountManager.is_logged_in() if AccountManager.has_method("is_logged_in") else false
-	
-	# ─── Username & UID Fallbacks ───
+
 	var p_name := "Trailblazer (Test)"
 	if AccountManager.username != "":
 		p_name = AccountManager.username
-		
+
 	var p_uid := "999999999"
 	if is_logged_in:
 		p_uid = str(AccountManager.uid)
 
-	# ─── Level & EXP Testing Fallbacks ───
 	var p_level: int = 1
 	var p_exp: int = 35
 	var p_exp_max: int = 100
 
-	# If ProgressManager actually holds progress records, update mock details
 	if ProgressManager.account_level > 0:
 		p_level = ProgressManager.account_level
 		p_exp = ProgressManager.exp
 		p_exp_max = ProgressManager.exp_max if ProgressManager.exp_max > 0 else 100
 
-	# Apply properties to text layout elements
 	name_label.text = p_name
 	level_uid_label.text = "Lv. %d  |  UID: %s" % [p_level, p_uid]
 
-	# Handle the scaling math for progress bars safely
 	var xp_ratio := clampf(float(p_exp) / float(p_exp_max), 0.0, 1.0)
 	if is_instance_valid(xp_bar_fill):
 		xp_bar_fill.anchor_right = xp_ratio
@@ -98,7 +92,6 @@ func _load_profile_data() -> void:
 # ═════════════════════════════════════════════════════════════════════════════
 
 func _animate_in() -> void:
-	# Start panel off-screen and overlay invisible
 	right_panel.offset_left = 0.0
 	overlay.color.a = 0.0
 
@@ -108,7 +101,6 @@ func _animate_in() -> void:
 	tw.tween_property(right_panel, "offset_left", -PANEL_WIDTH, 0.35)
 	tw.tween_property(overlay, "color:a", 0.6, 0.30)
 
-## Slides the panel back out, then calls [callback].
 func _close(callback: Callable) -> void:
 	_disable_all_buttons()
 
@@ -118,26 +110,23 @@ func _close(callback: Callable) -> void:
 	tw.tween_property(right_panel, "offset_left", 0.0, 0.22)
 	tw.tween_property(overlay, "color:a", 0.0, 0.20)
 
-	# Wait for the longest tween to finish before running callback
 	await get_tree().create_timer(0.25).timeout
 	callback.call()
 
 # ═════════════════════════════════════════════════════════════════════════════
-#  Button Handlers
+#  Button Handlers – ALL include queue_free() to prevent orphan nodes
 # ═════════════════════════════════════════════════════════════════════════════
 
 func _unpause_and_free() -> void:
 	get_tree().paused = false
-	
-	# --- FIX: RE-CAPTURE THE MOUSE WHEN RESUMING ---
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-	
 	queue_free()
 
 func _on_characters_pressed() -> void:
 	_close(func():
 		_save_current_state()
 		get_tree().paused = false
+		queue_free()
 		get_tree().change_scene_to_file("res://Scenes/CharacterDetails.tscn")
 	)
 
@@ -145,6 +134,7 @@ func _on_party_pressed() -> void:
 	_close(func():
 		_save_current_state()
 		get_tree().paused = false
+		queue_free()
 		get_tree().change_scene_to_file("res://Scenes/PartySelect.tscn")
 	)
 
@@ -152,6 +142,7 @@ func _on_inventory_pressed() -> void:
 	_close(func():
 		_save_current_state()
 		get_tree().paused = false
+		queue_free()
 		get_tree().change_scene_to_file("res://Scenes/InventoryUI.tscn")
 	)
 
@@ -159,6 +150,7 @@ func _on_wish_pressed() -> void:
 	_close(func():
 		_save_current_state()
 		get_tree().paused = false
+		queue_free()
 		get_tree().change_scene_to_file("res://Scenes/GachaScene.tscn")
 	)
 
@@ -170,6 +162,7 @@ func _on_quit_pressed() -> void:
 	_close(func():
 		_save_current_state()
 		get_tree().paused = false
+		queue_free()
 		get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
 	)
 

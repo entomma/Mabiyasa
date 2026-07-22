@@ -493,60 +493,58 @@ func save_current_scene_and_position():
 	if not player:
 		print("⚠ Cannot save - no player found!")
 		return
-	
-	var current_scene = get_tree().current_scene
-	if not current_scene:
-		print("⚠ Cannot save - no current scene!")
-		return
-	
-	var scene_path = current_scene.scene_file_path
+
+	# ── Use the actual zone, not the shell ──
+	var scene_path = GameManager.current_zone_path
 	if scene_path == "" or scene_path == null:
-		print("⚠ Cannot save - scene has no file path!")
+		print("⚠ Cannot save - no zone path!")
 		return
-	
+
 	var pos = player.global_position
-	
-	# Update AccountManager, the owner of this state
+
 	AccountManager.set_current_scene(scene_path)
 	AccountManager.set_saved_position(pos)
-	
-	print("💾 Saving state - Scene: ", scene_path, " Position: ", pos)
-	
-	# Save to database
+
+	print("💾 Saving state - Zone: ", scene_path, " Position: ", pos)
+
+	# Save to database (same as before)
 	var http = HTTPRequest.new()
 	add_child(http)
-	
+
 	var headers = [
 		"Content-Type: application/json",
 		"apikey: " + SUPABASE_ANON_KEY,
 		"Authorization: Bearer " + auth_token
 	]
-	
+
 	var uid = AccountManager.uid
 	if uid == 0:
 		print("⚠ Cannot save - no UID found!")
 		http.queue_free()
 		return
-	
+
 	var body = JSON.stringify({
 		"current_scene": scene_path,
 		"last_pos_x": pos.x,
 		"last_pos_y": pos.y,
 		"last_pos_z": pos.z
 	})
-	
-	var error = http.request(SUPABASE_URL + "/rest/v1/player_profile?uid=eq." + str(int(uid)), headers, HTTPClient.METHOD_PATCH, body)
-	
+
+	var error = http.request(
+		SUPABASE_URL + "/rest/v1/player_profile?uid=eq." + str(int(uid)),
+		headers,
+		HTTPClient.METHOD_PATCH,
+		body
+	)
 	if error != OK:
 		print("⚠ Failed to send save request!")
 		http.queue_free()
 		return
-	
-	# Wait for response
+
 	var response = await http.request_completed
 	var response_code = response[1]
 	http.queue_free()
-	
+
 	if response_code >= 200 and response_code < 300:
 		print("✓ Auto-save successful: ", scene_path, " at ", pos)
 	else:

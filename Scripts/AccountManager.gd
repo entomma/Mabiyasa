@@ -36,11 +36,18 @@ func _get_num(data: Dictionary, key: String, default: float = 0.0) -> float:
 func apply_profile(data: Dictionary) -> void:
 	if data == null:
 		return
+
 	uid = int(_get_num(data, "uid", 0))
 	username = _get_str(data, "username", "")
 	last_checkpoint = _get_str(data, "last_checkpoint", "start")
+
 	var saved_scene = _get_str(data, "current_scene", "")
-	current_scene = saved_scene if saved_scene != "" else "res://Scenes/small_village.tscn"
+
+	# Sanitize: if it's the shell or empty, use a default zone
+	if saved_scene == "" or saved_scene == "res://Scenes/Game.tscn":
+		saved_scene = "res://Scenes/small_village.tscn"
+
+	current_scene = saved_scene
 	var px = _get_num(data, "last_pos_x", 0)
 	var py = _get_num(data, "last_pos_y", 0)
 	var pz = _get_num(data, "last_pos_z", 0)

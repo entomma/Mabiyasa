@@ -651,14 +651,14 @@ transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, -38.92905, 0, -216.5317
 transform = Transform3D(10.94, 0, 0, 0, 10.94, 0, 0, 0, 10.94, 118.848816, 22.225222, -183.50317)
 script = ExtResource("8_vh310")
 
-[node name="SpawnPoint" type="Marker3D" parent="." unique_id=844294854]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 115.61504, 49.643284, -187.24371)
+[node name="forest_entrance" type="Marker3D" parent="." unique_id=844294854 groups=["spawn"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 113.12224, 22.547607, -187.24371)
 
 [node name="Enemy" parent="." unique_id=1716839156 instance=ExtResource("10_xgdwn")]
 transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 58.44631, 10.923465, -179.06999)
 enemy_data = null
 
 [node name="TeleporterToVillage" parent="." unique_id=1052377900 instance=ExtResource("11_y1epu")]
-transform = Transform3D(0.09955114, 0, 7.9993806, 0, 8, 0, -7.9993806, 0, 0.09955114, 123.83362, 22.038113, -187.19746)
+transform = Transform3D(0.09955114, 0, 7.9993806, 0, 8, 0, -7.9993806, 0, 0.09955114, 120.97496, 21.277967, -187.19746)
 target_scene = "uid://bvj7hhkac3rqk"
-spawn_name = "from_forest"
+spawn_name = "village_entrance"
