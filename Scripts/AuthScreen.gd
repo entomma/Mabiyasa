@@ -1,42 +1,36 @@
 extends Control
 
 # Custom Tabs
-@onready var login_tab_btn = $CenterContainer/Wrapper/MainPanel/Margin/VBox/CustomTabs/LoginTab
-@onready var register_tab_btn = $CenterContainer/Wrapper/MainPanel/Margin/VBox/CustomTabs/RegisterTab
+@onready var login_tab_btn = $CenterContainer/Wrapper/MainPanel/VBox/CustomTabs/LoginTab
+@onready var register_tab_btn = $CenterContainer/Wrapper/MainPanel/VBox/CustomTabs/RegisterTab
 
 # Containers
-@onready var login_box = $CenterContainer/Wrapper/MainPanel/Margin/VBox/FormContainer/LoginBox
-@onready var register_box = $CenterContainer/Wrapper/MainPanel/Margin/VBox/FormContainer/RegisterBox
+@onready var login_box = $CenterContainer/Wrapper/MainPanel/VBox/FormContainer/LoginBox
+@onready var register_box = $CenterContainer/Wrapper/MainPanel/VBox/FormContainer/RegisterBox
 
 # Login nodes
-@onready var login_email = $CenterContainer/Wrapper/MainPanel/Margin/VBox/FormContainer/LoginBox/EmailInput
-@onready var login_password = $CenterContainer/Wrapper/MainPanel/Margin/VBox/FormContainer/LoginBox/PasswordInput
-@onready var login_btn = $CenterContainer/Wrapper/MainPanel/Margin/VBox/FormContainer/LoginBox/LoginButton
+@onready var login_email = $CenterContainer/Wrapper/MainPanel/VBox/FormContainer/LoginBox/EmailInput
+@onready var login_password = $CenterContainer/Wrapper/MainPanel/VBox/FormContainer/LoginBox/PasswordInput
+@onready var login_btn = $CenterContainer/Wrapper/MainPanel/VBox/FormContainer/LoginBox/LoginButton
 
 # Register nodes
-@onready var reg_username = $CenterContainer/Wrapper/MainPanel/Margin/VBox/FormContainer/RegisterBox/UsernameInput
-@onready var reg_email = $CenterContainer/Wrapper/MainPanel/Margin/VBox/FormContainer/RegisterBox/EmailInput
-@onready var reg_password = $CenterContainer/Wrapper/MainPanel/Margin/VBox/FormContainer/RegisterBox/PasswordInput
-@onready var register_btn = $CenterContainer/Wrapper/MainPanel/Margin/VBox/FormContainer/RegisterBox/RegisterButton
+@onready var reg_username = $CenterContainer/Wrapper/MainPanel/VBox/FormContainer/RegisterBox/UsernameInput
+@onready var reg_email = $CenterContainer/Wrapper/MainPanel/VBox/FormContainer/RegisterBox/EmailInput
+@onready var reg_password = $CenterContainer/Wrapper/MainPanel/VBox/FormContainer/RegisterBox/PasswordInput
+@onready var register_btn = $CenterContainer/Wrapper/MainPanel/VBox/FormContainer/RegisterBox/RegisterButton
 
 # Status
-@onready var status_label = $CenterContainer/Wrapper/MainPanel/Margin/VBox/StatusLabel
+@onready var status_label = $CenterContainer/Wrapper/MainPanel/VBox/StatusLabel
 
 const MAIN_SCENE = "res://Scenes/Game.tscn"
 
-# --- Styling References ---
-var style_active: StyleBoxFlat
-var style_inactive: StyleBoxFlat
-var color_active = Color(0.85, 0.75, 0.45, 1) # Gold
-var color_inactive = Color(0.6, 0.65, 0.75, 1) # Grey
+# --- Tab Modulation Colors ---
+var color_active = Color(1.0, 1.0, 1.0, 1.0)        # Normal brightness
+var color_inactive = Color(0.55, 0.6, 0.7, 0.75)    # Dimmed state for unselected tab
 
 func _ready():
 	set_process_unhandled_input(true)
 	mouse_filter = Control.MOUSE_FILTER_PASS
-	
-	# Extract styles for dynamic switching
-	style_active = login_tab_btn.get_theme_stylebox("normal").duplicate()
-	style_inactive = register_tab_btn.get_theme_stylebox("normal").duplicate()
 	
 	# Connections
 	login_tab_btn.pressed.connect(_show_login)
@@ -54,26 +48,18 @@ func _show_login():
 	register_box.visible = false
 	status_label.text = ""
 	
-	login_tab_btn.add_theme_stylebox_override("normal", style_active)
-	login_tab_btn.add_theme_stylebox_override("hover", style_active)
-	login_tab_btn.add_theme_color_override("font_color", color_active)
-	
-	register_tab_btn.add_theme_stylebox_override("normal", style_inactive)
-	register_tab_btn.add_theme_stylebox_override("hover", style_inactive)
-	register_tab_btn.add_theme_color_override("font_color", color_inactive)
+	# Apply tab visual feedback via modulation (since these are TextureButtons)
+	login_tab_btn.self_modulate = color_active
+	register_tab_btn.self_modulate = color_inactive
 
 func _show_register():
 	login_box.visible = false
 	register_box.visible = true
 	status_label.text = ""
 	
-	register_tab_btn.add_theme_stylebox_override("normal", style_active)
-	register_tab_btn.add_theme_stylebox_override("hover", style_active)
-	register_tab_btn.add_theme_color_override("font_color", color_active)
-	
-	login_tab_btn.add_theme_stylebox_override("normal", style_inactive)
-	login_tab_btn.add_theme_stylebox_override("hover", style_inactive)
-	login_tab_btn.add_theme_color_override("font_color", color_inactive)
+	# Apply tab visual feedback via modulation
+	register_tab_btn.self_modulate = color_active
+	login_tab_btn.self_modulate = color_inactive
 
 # ═══════════════════════════════════════════════════════
 #  Authentication Logic
